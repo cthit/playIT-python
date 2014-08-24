@@ -1,0 +1,160 @@
+$color-bg: #00898B;
+$color-bg-sub: #00A7AA;
+$color-text: white;
+
+body {
+	background-color: $color-bg;
+	font: 1em Helvetica;
+	color: $color-text;
+}
+
+h1, h2, h3 {
+	font: 1.1em Ubuntu;
+	margin: 0;
+}
+
+#videofeed, header, .media {
+    background-color: $color-bg-sub;
+}
+
+#nowPlaying div {
+    padding: 5px;
+}
+
+p {
+	font-size: 0.8em;
+}
+
+#videofeed {
+	margin: 0;
+	padding: 0;
+}
+
+header {
+	margin: 10px 0;
+	padding: 40px;
+}
+
+#searchfield {
+	-webkit-justify-content: center;
+	justify-content: center;
+	display: -webkit-flex;
+	display: flex;
+}
+
+#searchfield {
+    input, button {
+        border: none;
+        height: 40px;
+        padding: 0 10px;
+        font: 1.1em Ubuntu, Helvetica;
+    }
+    button { color: white; }
+    input { min-width: 300px; }
+}
+
+section {
+	margin: 10px 0;
+	padding: 10px;
+}
+
+.admin {
+	display: none !important;
+}
+
+.media {
+	-webkit-align-items: center;
+	align-items: center;
+    
+	overflow: hidden;
+	margin: 0 0 10px;
+	display: -webkit-flex;
+	display: flex;
+	padding: 5px;
+    
+    &:last-child { margin: 0; }
+    
+    &.selected { outline: 2px solid white; }
+    
+    .image {
+        margin-right: 20px;
+        width: 140px;
+        text-align: center;
+    }
+    .info {
+	   -webkit-flex: 1;
+	   flex: 1;
+    }
+}
+.rank {
+    position: relative;
+    width: 30px;
+    
+    span {
+        position: absolute;
+        height: 20px;
+        margin: auto;
+        bottom: 0;
+        top: 0;
+    }
+}
+
+.vote {
+	min-width: 50px;
+	text-align: center;
+ 	flex-direction: column;
+	-webkit-flex-direction: column;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+    
+    span {
+        -webkit-flex: 1;
+        flex: 1;
+    }
+}
+
+.upvote, .downvote { cursor: pointer; }
+.upvoted .upvote { color: orange; }
+.downvoted .downvote { color: #4444FF; }
+
+@media all and (max-width: 720px) {
+	.media .image {
+		display: none;
+	}
+}
+.x-button {
+	display: none;
+}
+.admin .x-button {
+	font-weight: bolder;
+	position: absolute;
+	cursor: pointer;
+	color: red;
+	right: 10px;
+	top: 10px;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+    
+    &:hover { color: white; }
+}
+
+*::selection {
+	color: #fff;
+	text-shadow: none;
+	background-color: #002224; /* Safari */
+}
+*::-moz-selection {
+	color: #fff;
+	text-shadow: none;
+	background-color: #002224; /* Firefox */
+}
