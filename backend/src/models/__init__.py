@@ -18,3 +18,5 @@ if options.create_tables or None:
             logging.error("Create tables: Operational error: %s" % e)
         except peewee.IntegrityError as e:
             logging.error("Create tables: %s" % e)
+        except peewee.InternalError as e:
+            logging.error("Create tables: Internal error: %s" % e)
