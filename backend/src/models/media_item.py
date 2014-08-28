@@ -134,5 +134,5 @@ class MediaItem(BaseModel):
         from src.models.vote import Vote
         return MediaItem.fetch(
             MediaItem, fn.Sum(Vote.value).alias("value")
-        ).join(Vote).order_by(fn.Sum(Vote.value), MediaItem.created_at)
+        ).join(Vote).group_by(MediaItem.external_id).order_by(fn.Sum(Vote.value).desc(), MediaItem.created_at)
 

@@ -94,7 +94,7 @@ class Actions(BaseHandler):
             return False
 
     @staticmethod
-    def action_get_queue():
+    def action_get_queue(data):
         return MediaItem.get_queue()
 
 
