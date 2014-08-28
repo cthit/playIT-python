@@ -3,6 +3,8 @@ __author__ = 'horv'
 from tornado import websocket
 import logging
 import json
+import peewee
+from src.models.base import *
 
 clients = set()
 
@@ -58,6 +60,17 @@ class BaseHandler(websocket.WebSocketHandler):
     def broadcast(msg):
         for client in clients:
             client.write_message(msg)
+
+    def write_message(self, obj, serializer=Serializer.datetime, formater=lambda x: x, format_dict=True):
+        if isinstance(obj, BaseModel):
+            dump = obj.to_json()
+        else:
+            if isinstance(obj, peewee.SelectQuery):
+                obj = [formater(d) for d in obj.dicts(dicts=format_dict)]
+
+            dump = json.dumps(obj, default=serializer)
+
+        super(BaseHandler, self).write_message(dump)
 
 
 handlers = [
