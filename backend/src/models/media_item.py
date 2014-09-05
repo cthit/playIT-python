@@ -1,5 +1,6 @@
 import peewee
 import requests
+import logging
 from peewee import *
 from src.utils.auth import Auth
 from src.models.base import BaseModel
@@ -37,16 +38,22 @@ class MediaItem(BaseModel):
     nick = CharField()
     type = CharField()
     external_id = CharField()
-    length = IntegerField()
+    duration = IntegerField()
     album = CharField(null=True)
 
+    def exists(self):
+        return MediaItem.fetch().where(
+            MediaItem.external_id == self.external_id &
+            MediaItem.type == self.type
+        ).first() is not None
+
     def save(self, *args, **kwargs):
-        if MediaItem.fetch().where(MediaItem.external_id == self.external_id).first():
+        if self.exists():
             raise MediaItemError("Item already exists")
 
         allowed_duration = DURATION_LIMIT_MAP.get(self.type)
         if self.duration > allowed_duration:
-            raise MediaItemError("Duration %d is longer then allowed %d" % (self.duration, allowed_duration))
+            raise MediaItemError("duration %d is longer then allowed %d" % (self.duration, allowed_duration))
 
         super(MediaItem, self).save(*args, **kwargs)
 
@@ -63,19 +70,22 @@ class MediaItem(BaseModel):
     @staticmethod
     def create_media_item(cid, media_type, external_id):
         creator = getattr(MediaItem, "create_" + media_type + "_item")
+        item = MediaItem()
+        item.external_id = external_id
+        item.type = media_type
+
+        if item.exists():
+            raise MediaItemError("Item already exists")
 
         url = URL_MAP.get(media_type) % external_id
         response = requests.get(url)
         data = response.json()
 
-        item = MediaItem()
-        item.external_id = external_id
-        item.type = media_type
-
         item = creator(item, data)
         user = Auth.get_user(cid)
         item.cid = cid
-        item.nick = user.get("nick", "")
+        if user:
+            item.nick = user.get("nick", "")
 
         return item
 
@@ -87,7 +97,7 @@ class MediaItem(BaseModel):
         item.title = data.get("title").get("$t")
         item.author = data.get("author")[0].get("name").get("$t")
         item.description = data.get("content").get("$t")
-        item.thumbnail = data.get("media$group").get("media$thumbnail")[0].get("url")
+        item.thumbnail = "http://i.ytimg.com/vi/%s/mqdefault.jpg" % item.external_id
 
         try:
             item.duration = int(data.get("media$group").get("yt$duration").get("seconds"))
@@ -104,7 +114,11 @@ class MediaItem(BaseModel):
         item.title = data.get("name")
         item.artists = ", ".join((a.get("name") for a in data.get("artists")))
         item.album = data.get("album").get("name")
-        item.duration = int(data.get("length") + 0.5)
+        try:
+            item.duration = int(data.get("duration") + 0.5)
+        except (TypeError, ValueError) as e:
+            logging.error("Failed to get duration for spotify item")
+            item.duration = 1337
 
         thumbnail_url = "https://embed.spotify.com/oembed/?url=spotify:track:%s" % item.external_id
         thumbnail_resp = requests.get(thumbnail_url)

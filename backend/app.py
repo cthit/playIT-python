@@ -11,9 +11,12 @@ import tornado.autoreload
 import tornado.websocket
 from tornado.options import options, define
 
+define("app_identifier", default=os.environ.get("APP_IDENTIFIER", ""), help="Unique identifier for app")
+
 define('server', default=os.environ.get('SERVER', False), help='Launching tornado webserver.')
 define('port', default=os.environ.get('PORT', 80), help='Webserver listening port.')
 define('cors_host', default=os.environ.get('CORS_HOST', 'http://localhost/'), help='Setting cors for host')
+define('redis_host', default=os.environ.get('REDIS_HOST', 'localhost'), help='Redis server url')
 define('static_path', default=os.environ.get('STATIC_PATH', 'static/'), help='Setup static url path.')
 define('debug', default=os.environ.get('DEBUG', False), help='Enables debug output.')
 
@@ -37,6 +40,7 @@ logging.basicConfig(level=level,
                     datefmt='%a, %d %b %Y %H:%M:%S')
 
 from src.handlers import handlers
+from src.utils.memcache import RedisMemcache
 
 application = tornado.web.Application(handlers, '', **settings)
 

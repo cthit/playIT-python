@@ -12,5 +12,6 @@ class Auth(object):
             return dict()
 
         response = requests.get(QUERY_URL % cid)
+        dump = response.json()
 
         return response.json()
