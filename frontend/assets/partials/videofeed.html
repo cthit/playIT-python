@@ -1,0 +1,28 @@
+<ol>
+	<li class="media {{item.type}}" ng-repeat="item in mediaitems" ng-click="select($index)" ng-class="{'selected': $index == selected}">
+		<div class="vote">
+			<span class="upvote" ng-click="upvoteItem($index)">⬆</span>
+			<span class="rating">{{item.value}}</span>
+			<span class="downvote" ng-click="downvoteItem($index)">⬇</span>
+		</div>
+		<div class="image">
+			<a href="{{get_link(item)}}" target="_blank"><img ng-src="{{item.thumbnail}}" alt="{{item.external_id}}"></a>
+		</div>
+		<div class="info">
+			<h3>{{item.title}} [{{time_format(item.duration)}}]</h3>
+			<small>Added by: <span title="{{item.cid}}">{{item.nick}}</span></small>
+			<p>
+				<em>{{item.author}}</em><br>
+				<strong>{{item.description}}</strong>
+			</p>
+		</div>
+		<a class="x-button">ⓧ</a>
+	</li>
+	<li class="media" ng-hide="mediaitems.length">
+	<div class="vote"></div>
+	<div class="image"></div>
+		<div class="info">
+			<h3>No items in queue</h3>
+		</div>
+	</li>
+</ol>

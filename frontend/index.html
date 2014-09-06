@@ -1,46 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<link rel="stylesheet" type="text/css" href="assets/css/style.css">
-<link href='//fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>
-<title>playIT</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="assets/css/libs/bootstrap-dropdown.css">
+	<link rel="stylesheet" type="text/css" href="assets/css/style.css">
+	<link href='//fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>
+	<title>playIT</title>
 </head>
-<body>
-<section id="nowPlaying">Nothing playing right now...</section>
-<header>
-	<div id="searchfield">
-		<input type="text" id="insert_video" placeholder="Search for videos or music">
-		<button>Add media</button>
+<body ng-app="playit">
+	<now-playing></now-playing>
+	<header>
+		<search id="searchfield"></search>
+	</header>
+	<div ng-controller="AlertCtrl">
+		<alert class="animate-if" ng-repeat="alert in alerts" type="alert.type">{{alert.message}}</alert>
 	</div>
-</header>
-<ol id="videofeed" data-bind="foreach: items">
-	<li data-bind="attr: { 'class': 'media ' + type }, click: $root.setCurrent, css: { selected: $index() == $root.focusIndex() }">
-		<div class="vote">
-			<span class="upvote" data-bind="click: vote.bind(+1)">⬆</span>
-			<span class="rating" data-bind="text: weight"></span>
-			<span class="downvote" data-bind="click: vote.bind(-1)">⬇</span>
-		</div>
-		<div class="image">
-			<a data-bind="attr: { 'href': link }" target="_blank"><img data-bind="attr: { 'src': thumbnail, 'alt': id}" height="104"></a>
-		</div>
-		<div class="info">
-			<h3 data-bind="text: titleAndTime"></h3>
-			<small>Added by: <span data-bind="text: nick, attr: { title: cid }"></span></small>
-			<p>
-				<em data-bind="text: author"></em><br>
-				<strong data-bind="text: details"></strong>
-			</p>
-		</div>
-		<a class="x-button">ⓧ</a>
-	</li>
-</ol>
-<script id="playing" type="text/x-handlebars-template">
-Now playing:&nbsp;<a href="{{url type externalID}}">{{title}} [{{format_time length}}]</a>&nbsp;queued by {{nick}}
-</script>
+	<videofeed></videofeed>
 	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-	<script type="text/javascript" src="assets/js/libs/knockout-3.1.0.debug.js"></script>
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.0-rc.0/angular.js"></script>
+	<script type="text/javascript" src="assets/js/libs/websocket.js"></script>
+	<script type="text/javascript" src="assets/js/libs/ui-bootstrap-custom-tpls-0.10.0.min.js"></script>
 	<script type="text/javascript" src="assets/js/libs/mousetrap.min.js"></script>
-	<script type="text/javascript" src="assets/js/application.js"></script>
+	<script type="text/javascript" src="assets/js/functions.js"></script>
+	<script type="text/javascript" src="assets/js/app.js"></script>
+	<script type="text/javascript" src="assets/js/searchbox-directive.js"></script>
 </body>
 </html>
