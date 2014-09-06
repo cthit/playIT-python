@@ -42,10 +42,10 @@ class MediaItem(BaseModel):
     album = CharField(null=True)
 
     def exists(self):
-        return MediaItem.fetch().where(
-            MediaItem.external_id == self.external_id &
+        return MediaItem.select().where(
+            MediaItem.external_id == self.external_id,
             MediaItem.type == self.type
-        ).first() is not None
+        ).exists()
 
     def save(self, *args, **kwargs):
         if self.exists():
