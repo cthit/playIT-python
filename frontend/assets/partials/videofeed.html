@@ -1,8 +1,8 @@
 <ol>
 	<li class="media {{item.type}}" ng-repeat="item in mediaitems" ng-click="select($index)" ng-class="{'selected': $index == selected}">
-		<div class="vote">
+		<div class="vote" ng-class="{upvoted: get_weight($index) > item.value, downvoted: get_weight($index) < item.value}">
 			<span class="upvote" ng-click="upvoteItem($index)">⬆</span>
-			<span class="rating">{{item.value}}</span>
+			<span class="rating">{{get_weight($index)}}</span>
 			<span class="downvote" ng-click="downvoteItem($index)">⬇</span>
 		</div>
 		<div class="image">
