@@ -67,7 +67,7 @@ class BaseHandler(websocket.WebSocketHandler):
 
     def destroy(self):
         clients.remove(self)
-        RedisMemcache.delete(self._token)
+        RedisMemcache.delete("token:"+self._token)
 
     def close(self, code=None, reason=None):
         self.destroy()

@@ -24,10 +24,6 @@ class Actions(BaseHandler):
         item["value"] = int(float(item.get("value")))
         return item
 
-    def action_werp(self, data):
-        RedisMemcache.set("KEY", "VALUEVALUE")
-        return SUCCESS, "None"
-
     def action_get_queue(self, data):
         return QUEUE+UPDATE, MediaItem.get_queue(), self.format_media_item
 
