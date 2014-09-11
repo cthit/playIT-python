@@ -43,6 +43,10 @@ app.controller('VideofeedCtrl', function($scope, $websocket, $rootScope) {
 		}
 	});
 
+	websocket.register('playback/new', function(topic, body) {
+		$rootScope.$broadcast('playback', body);
+	});
+
 	websocket.register('media_item/update', function(topic, body) {
 		$scope.$apply(function() {
 			for (var i = 0; i < $scope.mediaitems.length; i++) {
@@ -75,20 +79,8 @@ app.controller('VideofeedCtrl', function($scope, $websocket, $rootScope) {
 		}).join(':');
 	};
 
-	$scope.get_link = function(item) {
-		switch(item.type) {
-			case 'youtube':
-				return 'http://youtu.be/' + item.external_id;
-			case 'spotify':
-				return 'http://open.spotify.com/track/' + item.external_id;
-			case 'soundcloud':
-				var artist = self.author.toLowerCase().replace(/ /g, '-'),
-				track = self.title.toLowerCase().replace(/ /g, '-');
-				return 'http://soundcloud.com/' + artist + '/' + track;
-			default:
-				throw 'Got MediaItem of unrecognized type: ' + item.type;
-		}
-	};
+	$scope.get_link = type_to_url;
+
 	$scope.select = function(index) {
 		$scope.selected = index; 
 	};
@@ -177,6 +169,21 @@ app.controller('VideofeedCtrl', function($scope, $websocket, $rootScope) {
 	send('get_queue');
 });
 
+function type_to_url(item) {
+	switch(item.type) {
+		case 'youtube':
+			return 'http://youtu.be/' + item.external_id;
+		case 'spotify':
+			return 'http://open.spotify.com/track/' + item.external_id;
+		case 'soundcloud':
+			var artist = self.author.toLowerCase().replace(/ /g, '-'),
+			track = self.title.toLowerCase().replace(/ /g, '-');
+			return 'http://soundcloud.com/' + artist + '/' + track;
+		default:
+			throw 'Got MediaItem of unrecognized type: ' + item.type;
+	}
+}
+
 app.directive('nowPlaying', function() {
 	return {
 		restrict: 'E',
@@ -184,8 +191,14 @@ app.directive('nowPlaying', function() {
 		controller: 'NowPlayingCtrl'
 	}
 });
-app.controller('NowPlayingCtrl', function($scope) {
-	$scope.playing = false;
+app.controller('NowPlayingCtrl', function($scope, $rootScope) {
+	$scope.item = null;
+
+	$scope.get_link = type_to_url;
+
+	$rootScope.$on('playback', function(event, args) {
+		$scope.item = args;
+	});
 });
 
 app.directive('videofeed', function() {
