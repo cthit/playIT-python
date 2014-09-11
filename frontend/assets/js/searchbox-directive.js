@@ -1,4 +1,11 @@
 'use strict';
+
+var regexes = {
+	youtube: /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]+).*/,
+	spotify: /^(.*open\.)?spotify(\.com)?[\/:]track[\/:]([a-zA-Z0-9]+)$/,
+	soundcloud: /^https?:\/\/soundcloud.com\/([\w-]+\/\w+)$/
+};
+
 app.controller('SearchController', function($scope, $http, $rootScope) {
 	$scope.selected = undefined;
 
@@ -20,6 +27,13 @@ app.controller('SearchController', function($scope, $http, $rootScope) {
 		});
 	};
 	$scope.addVideo = function($item, $model, $label) {
+		var query = $('#insert_video').val();
+		for (var type in regexes) {
+			if (regexes[type].test(query)) {
+				$rootScope.$broadcast('add_item', {type: type, id: $item.id.videoId});
+				return;
+			}
+		}
 		$rootScope.$broadcast('add_item', {type: 'youtube', id: $item.id.videoId});
 	};
 });
