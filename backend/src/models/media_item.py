@@ -11,9 +11,9 @@ SOUNDCLOUD = "soundcloud"
 
 VOTE_LIMIT = -2
 DURATION_LIMIT_MAP = {
-    YOUTUBE: 60*60*3, # 3 hour
-    SPOTIFY: 60*60, # 1 hour
-    SOUNDCLOUD: 60*60, # 1 hour
+    YOUTUBE: 60*60*3,  # 3 hour
+    SPOTIFY: 60*60,  # 1 hour
+    SOUNDCLOUD: 60*60,  # 1 hour
 }
 
 SOUNDCLOUD_ID = "a2cfca0784004b38b85829ba183327cb"
@@ -23,6 +23,7 @@ URL_MAP = {
     SPOTIFY: "http://ws.spotify.com/lookup/1/.json?uri=spotify:track:%s",
     SOUNDCLOUD: "http://api.soundcloud.com/tracks/%s.json?client_id=" + SOUNDCLOUD_ID
 }
+
 
 class MediaItemError(Exception):
     pass
@@ -48,24 +49,61 @@ class MediaItem(BaseModel):
         ).exists()
 
     def save(self, *args, **kwargs):
-        if self.exists():
-            raise MediaItemError("Item already exists")
-
         allowed_duration = DURATION_LIMIT_MAP.get(self.type)
         if self.duration > allowed_duration:
             raise MediaItemError("duration %d is longer then allowed %d" % (self.duration, allowed_duration))
 
         super(MediaItem, self).save(*args, **kwargs)
 
-    def check_value(self):
+    def _get_votes(self):
         from src.models.vote import Vote
-        votes = Vote.fetch(
+        vote = Vote.fetch(
             fn.Sum(Vote.value).alias("value")
         ).where(Vote.item == self).first()
+
+        return vote
+
+    def check_value(self):
+        from src.models.vote import Vote
+        votes = self._get_votes()
 
         if votes and float(votes.value) <= VOTE_LIMIT:
             Vote.delete(permanently=True).where(Vote.item == self).execute()
             self.delete_instance()
+
+    def value(self):
+        vote = self._get_votes()
+        if vote:
+            return float(vote.value)
+        else:
+            return 0.0
+
+    def with_value(self):
+        from src.models.vote import Vote
+        query = MediaItem.fetch(
+            MediaItem, fn.Sum(Vote.value).alias("value")
+        ).where(
+            MediaItem.id == self.id
+        ).join(Vote).group_by(MediaItem.external_id).order_by(fn.Sum(Vote.value).desc())
+
+        item = query.first()
+        item_dict = item.get_dictionary()
+        item_dict["value"] = item.value
+
+        return item_dict
+
+    def delete_instance(self, permanently=False, recursive=False, delete_nullable=False):
+        from src.models.vote import Vote
+        Vote.delete(permanently=True).where(Vote.item == self.id).execute()
+
+        return super(MediaItem, self).delete_instance(permanently, recursive, delete_nullable)
+
+    @staticmethod
+    def get_item(media_type, external_id):
+        return MediaItem.fetch().where(
+            (MediaItem.external_id == external_id) &
+            (MediaItem.type == media_type)
+        ).first()
 
     @staticmethod
     def create_media_item(cid, media_type, external_id):

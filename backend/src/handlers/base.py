@@ -14,6 +14,15 @@ from src.utils.memcache import *
 clients = set()
 
 TOKEN_CHECK_URL = "https://chalmers.it/auth/userInfo.php?token=%s"
+PLAYER_TOKEN = "42BabaYetuHerpaderp"
+ADMIN_GROUP = "playITAdmin"
+
+SUCCESS = "/SUCCESS"
+NEW = "/NEW"
+UPDATE = "/UPDATE"
+FAIL = "/FAIL"
+DELETE = "/DELETE"
+STATUS = "/STATUS"
 
 
 class AuthenticationError(Exception):
@@ -23,6 +32,10 @@ class AuthenticationError(Exception):
 class Authorized(object):
     """Decorate methods with this to require that the user be logged in.
     """
+
+    def __init__(self, group=None):
+        self._group = group
+
     def __call__(self, method):
 
         @functools.wraps(method)
@@ -33,6 +46,9 @@ class Authorized(object):
             if not token:
                 raise AuthenticationError("NO TOKEN")
 
+            if token == PLAYER_TOKEN:
+                return method(cls, *args, **kwargs)
+
             cls._token = token
             user = RedisMemcache.get(token)
 
@@ -41,9 +57,14 @@ class Authorized(object):
                 response = requests.get(url)
                 data = response.json()
                 if data.get("cid"):
-                    RedisMemcache.set("token:"+token, data)
+                    user = data
+                    RedisMemcache.set("token:"+token, user)
                 else:
                     raise AuthenticationError("INVALID TOKEN")
+
+
+            if self._group and not self._group in user.get("groups"):
+                raise AuthenticationError("You need to be admin to do that")
 
             return method(cls, *args, **kwargs)
 
@@ -136,13 +157,17 @@ class BaseHandler(websocket.WebSocketHandler):
         else:
             if isinstance(obj, peewee.SelectQuery):
                 obj = [formater(d) for d in obj.dicts(dicts=format_dict)]
+            else:
+                obj = formater(obj)
 
             dump = json.dumps(obj, default=serializer)
 
         if isinstance(dump, dict):
+            dump = formater(dump)
             dump = escape.json_encode(dump)
 
         msg = "%s %s" % (topic, dump)
+        logging.info("Sending: "+msg)
         super(BaseHandler, self).write_message(msg)
 
 handlers = [

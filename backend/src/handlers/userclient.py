@@ -1,4 +1,4 @@
-from src.handlers.base import BaseHandler, Authorized
+from src.handlers.base import *
 from src.models.media_item import MediaItem, MediaItemError
 from src.models.vote import Vote
 from src.utils.memcache import RedisMemcache
@@ -6,18 +6,15 @@ from src.models.base import *
 import logging
 import json
 
-SUCCESS = "/SUCCESS"
-FAIL = "/FAIL"
-UPDATE = "/UPDATE"
-DELETE = "/DELETE"
-NEW = "/NEW"
-
 ITEM = "MEDIA_ITEM"
 QUEUE = "QUEUE"
 VOTE = "VOTE"
+PLAYING = "PLAYING"
 
 
-class Actions(BaseHandler):
+class UserClient(BaseHandler):
+
+    _current_item = None
 
     @staticmethod
     def format_media_item(item):
@@ -25,6 +22,7 @@ class Actions(BaseHandler):
         if value == '':
             value = '0'
         item["value"] = int(float(value))
+
         return item
 
     def action_get_queue(self, data):
@@ -55,7 +53,7 @@ class Actions(BaseHandler):
         self.send(ITEM+NEW, item)
         self.broadcast(QUEUE+UPDATE, MediaItem.get_queue(), formater=self.format_media_item)
 
-        return ITEM+NEW+SUCCESS
+        return ITEM+NEW+SUCCESS, ""
 
     @Authorized()
     def action_add_vote(self, data):
@@ -64,10 +62,14 @@ class Actions(BaseHandler):
         cid = self.get_cid()
 
         if item:
-            vote = self.add_vote(cid, item, data)
-            self.send(VOTE+NEW, vote)
+            self.add_vote(cid, item, data)
             item.check_value()
-            return VOTE+NEW+SUCCESS
+            if item.deleted:
+                self.broadcast(ITEM+DELETE, item)
+            else:
+                self.broadcast(ITEM+UPDATE, item.with_value(), formater=self.format_media_item)
+
+            return VOTE+NEW+SUCCESS, ""
         else:
             return VOTE+NEW+FAIL, "No such item %s" % data.get("id", "NO_ID_SUPPLIED")
 
@@ -80,16 +82,15 @@ class Actions(BaseHandler):
         else:
             return VOTE+DELETE+FAIL, "No such item: %s" % data.get("id", "NO_ID_SUPPLIED")
 
+    def action_get_current(self, data):
+        return PLAYING+STATUS, self._current_item
 
     @staticmethod
     def get_item(data):
         external_id = data.get("id", "NO_ID_SUPPLIED")
         media_type = data.get("type", "NO_TYPE_SUPPLIED")
 
-        item = MediaItem.fetch().where(
-            (MediaItem.external_id == external_id) &
-            (MediaItem.type == media_type)
-        ).first()
+        item = MediaItem.get_item(media_type, external_id)
 
         return item
 
@@ -114,7 +115,11 @@ class Actions(BaseHandler):
         else:
             return False
 
+    @staticmethod
+    def set_current(item):
+        UserClient._current_item = item
+        UserClient.broadcast(PLAYING+STATUS, item)
 
 handlers = [
-    (r'/ws/action', Actions)
+    (r'/ws/action', UserClient)
 ]
