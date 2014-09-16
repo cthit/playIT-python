@@ -169,7 +169,7 @@ class PlayIt(object):
         self.map_lock = threading.RLock()
 
         # Random edition
-        self._ws = websocket.WebSocketApp("ws://localhost:8888/ws/playback",
+        self._ws = websocket.WebSocketApp("ws://129.16.232.64:8888/ws/playback",
                                     on_message = self._on_message,
                                     on_error = self._on_error,
                                     on_close = self._on_close)
@@ -223,7 +223,6 @@ class PlayIt(object):
             if topic == "PLAYBACK/NEW":
                 vprint("Playing new item")
                 item = json.loads(data)
-                print(item)
                 self.play_item(item)
             elif topic == "GREETING":
                 topic = "pop"
@@ -300,17 +299,18 @@ class PlayIt(object):
 
     def _play_spotify(self, item):
         """ Play the supplied spotify track using mopidy and mpc. """
-        self.print_queue.put("Playing " + ", ".join(item['artist']) + " - "
+        self.print_queue.put("Playing " + ", ".join(item['author']) + " - "
                              + item['title'] + " requested by " + item['nick'])
-        self._add_to_mopidy('spotify:track:' + item['externalID'])
+        self._add_to_mopidy('spotify:track:' + item['external_id'])
 
     def _play_soundcloud(self, item):
         """ Play SoundCloud items """
         self.print_queue.put("Playing " + item['artist'] + " - "
                              + item['title'] + " requested by " + item['nick'])
-        self._add_to_mopidy('soundcloud:song.' + item['externalID'])
+        self._add_to_mopidy('soundcloud:song.' + item['external_id'])
 
     def _add_to_mopidy(self, track_id):
+        vprint("Play mopidy with " + track_id)
         """ Play a mopidy compatible track """
         client = MPDClient()
         client.connect(MOPIDY_HOST, MOPIDY_PORT)
