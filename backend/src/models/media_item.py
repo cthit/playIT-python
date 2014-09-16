@@ -132,13 +132,19 @@ class MediaItem(BaseModel):
 
         data = data.get("entry")
 
-        item.title = data.get("title").get("$t")
-        item.author = data.get("author")[0].get("name").get("$t")
-        item.description = data.get("content").get("$t")
+        item = MediaItem.parse_youtube_entry(item, data)
+
+        return item
+
+    @staticmethod
+    def parse_youtube_entry(item, entry):
+        item.title = entry.get("title").get("$t")
+        item.author = entry.get("author")[0].get("name").get("$t")
+        item.description = entry.get("content").get("$t")
         item.thumbnail = "http://i.ytimg.com/vi/%s/mqdefault.jpg" % item.external_id
 
         try:
-            item.duration = int(data.get("media$group").get("yt$duration").get("seconds"))
+            item.duration = int(entry.get("media$group").get("yt$duration").get("seconds"))
         except(ValueError, TypeError):
             item.duration = 1337
 
@@ -150,7 +156,7 @@ class MediaItem(BaseModel):
         data = data.get("track")
 
         item.title = data.get("name")
-        item.artists = ", ".join((a.get("name") for a in data.get("artists")))
+        item.author = ", ".join((a.get("name") for a in data.get("artists")))
         item.album = data.get("album").get("name")
         try:
             item.duration = int(data.get("duration") + 0.5)
@@ -188,3 +194,10 @@ class MediaItem(BaseModel):
             MediaItem, fn.Sum(Vote.value).alias("value")
         ).join(Vote).group_by(MediaItem.external_id).order_by(fn.Sum(Vote.value).desc(), MediaItem.created_at)
 
+    @staticmethod
+    def change_limit(media_type, limit):
+        if DURATION_LIMIT_MAP.get(media_type):
+            DURATION_LIMIT_MAP[media_type] = limit
+            return True, limit
+        else:
+            return False, -1

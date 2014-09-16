@@ -1,12 +1,15 @@
 from src.handlers.base import *
 from src.models.media_item import MediaItem, MediaItemError
-from src.models.vote import Vote
+from src.models.playlist_item import PlaylistItem, PlaylistItemError
+from src.models.vote import Vote, PlaylistVote
 from src.utils.memcache import RedisMemcache
 from src.models.base import *
 import logging
 import json
 
+SETTINGS = "SETTINGS"
 ITEM = "MEDIA_ITEM"
+LIST = "MEDIA_LIST"
 QUEUE = "QUEUE"
 VOTE = "VOTE"
 PLAYING = "PLAYING"
@@ -28,6 +31,9 @@ class UserClient(BaseHandler):
     def action_get_queue(self, data):
         return QUEUE+UPDATE, MediaItem.get_queue(), self.format_media_item
 
+    def action_get_playlist_queue(self, data):
+        return LIST+"/"+QUEUE+UPDATE, PlaylistItem.get_queue(), self.format_media_item
+
     def get_cid(self):
         user = RedisMemcache.get("token:"+self._token)
         if user:
@@ -41,17 +47,27 @@ class UserClient(BaseHandler):
         media_type = data.get("type", "NO_TYPE_SUPPLIED")
         cid = self.get_cid()
 
-        try:
-            item = MediaItem.create_media_item(cid, media_type, external_id)
-            item.save()
-            self.add_vote(cid, item, data)
-        except MediaItemError as e:
-            msg = "Failed to save %s due to: %s" % (data, e)
-            logging.error(msg)
-            return ITEM+NEW+FAIL, msg
+        if "list" in media_type:
+            try:
+                item = PlaylistItem.create_media_item(cid, media_type, external_id)
+                item.save()
+                self.add_vote(cid, item, data)
+            except MediaItemError as e:
+                msg = "Failed to save %s due to: %s" % (data, e)
+                logging.error(msg)
+                return LIST+NEW+FAIL, msg
+        else:
+            try:
+                item = MediaItem.create_media_item(cid, media_type, external_id)
+                item.save()
+                self.add_vote(cid, item, data)
+            except MediaItemError as e:
+                msg = "Failed to save %s due to: %s" % (data, e)
+                logging.error(msg)
+                return ITEM+NEW+FAIL, msg
 
         self.send(ITEM+NEW, item)
-        self.broadcast(QUEUE+UPDATE, MediaItem.get_queue(), formater=self.format_media_item)
+        self.broadcast(QUEUE+UPDATE, MediaItem.get_queue(), formater=self.format_media_item, client_type=type(self))
 
         return ITEM+NEW+SUCCESS, ""
 
@@ -64,10 +80,13 @@ class UserClient(BaseHandler):
         if item:
             self.add_vote(cid, item, data)
             item.check_value()
+            item_uri = ITEM
+
             if item.deleted:
-                self.broadcast(ITEM+DELETE, item)
+                self.broadcast(self.get_item_uri(item)+DELETE, item, client_type=type(self))
             else:
-                self.broadcast(ITEM+UPDATE, item.with_value(), formater=self.format_media_item)
+                self.broadcast(self.get_item_uri(item)+UPDATE, item.with_value(),
+                               formater=self.format_media_item, client_type=type(self))
 
             return VOTE+NEW+SUCCESS, ""
         else:
@@ -85,29 +104,72 @@ class UserClient(BaseHandler):
     def action_get_current(self, data):
         return PLAYING+STATUS, self._current_item
 
+    @Authorized()
+    def action_remove_item(self, data):
+        item = self.get_item(data)
+        if not item:
+            return ITEM+DELETE+FAIL, ""
+
+        if self._user.get("cid") == item.cid or ADMIN_GROUP in self._user.get("groups"):
+            item.delete_instance()
+            return self.get_item_uri(item)+DELETE+SUCCESS, item
+        else:
+            raise AuthenticationError("Not your item to delete and you're not admin")
+
+    @Authorized(group=ADMIN_GROUP)
+    def action_set_limit(self, data):
+        media_type = data.get("type")
+        if not media_type:
+            return SETTINGS+UPDATE+FAIL, "Missing media_type"
+
+        limit = data.get("limit")
+        if not limit:
+            return SETTINGS+UPDATE+FAIL, "Missing limit"
+
+        (success, limit) = MediaItem.change_limit(media_type, limit)
+        if success:
+            return SETTINGS+UPDATE+SUCCESS, "Limit for %s update to %s" % (media_type, limit)
+        else:
+            return SETTINGS+UPDATE+FAIL, "Limit not update for %s" % media_type
+
+
+
     @staticmethod
     def get_item(data):
         external_id = data.get("id", "NO_ID_SUPPLIED")
         media_type = data.get("type", "NO_TYPE_SUPPLIED")
 
-        item = MediaItem.get_item(media_type, external_id)
+        if "list" in media_type:
+            item = PlaylistItem.get_item(media_type, external_id)
+        else:
+            item = MediaItem.get_item(media_type, external_id)
 
         return item
 
     @staticmethod
     def add_vote(cid, item, data):
         vote_value = data.get("vote", 1)
-        vote = Vote.create_vote(cid=cid, value=vote_value, item=item)
+        if "list" in item.type:
+            vote = PlaylistVote.create_vote(cid=cid, value=vote_value, item=item)
+        else:
+            vote = Vote.create_vote(cid=cid, value=vote_value, item=item)
+
         vote.save()
 
         return vote
 
     @staticmethod
     def remove_vote(cid, item):
-        vote = Vote.fetch().where(
-            (Vote.cid == cid) &
-            (Vote.item == item)
-        ).first()
+        if "list" in item.type:
+            vote = PlaylistVote.fetch().where(
+                (Vote.cid == cid) &
+                (Vote.item == item)
+            ).first()
+        else:
+            vote = Vote.fetch().where(
+                (Vote.cid == cid) &
+                (Vote.item == item)
+            ).first()
 
         if vote:
             vote.delete_instance()
@@ -119,6 +181,15 @@ class UserClient(BaseHandler):
     def set_current(item):
         UserClient._current_item = item
         UserClient.broadcast(PLAYING+STATUS, item)
+
+    @staticmethod
+    def get_item_uri(item):
+        item_uri = ITEM
+        if "list" in item.type:
+            item_uri = LIST
+
+        return item_uri
+
 
 handlers = [
     (r'/ws/action', UserClient)

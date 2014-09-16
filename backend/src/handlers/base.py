@@ -62,9 +62,10 @@ class Authorized(object):
                 else:
                     raise AuthenticationError("INVALID TOKEN")
 
-
             if self._group and not self._group in user.get("groups"):
-                raise AuthenticationError("You need to be admin to do that")
+                raise AuthenticationError("You need to be member of %s to do that" % self._group)
+
+            cls._user = user
 
             return method(cls, *args, **kwargs)
 
@@ -74,6 +75,7 @@ class Authorized(object):
 class BaseHandler(websocket.WebSocketHandler):
 
     _token = ""
+    _user = None
 
     def check_origin(self, origin):
         return True
@@ -120,8 +122,8 @@ class BaseHandler(websocket.WebSocketHandler):
             return
         try:
             response = func(data)
-        except AuthenticationError as _:
-            self.close(403, "Invalid token")
+        except AuthenticationError as e:
+            self.close(403, e)
             return
 
         no_responses = len(response)
@@ -147,9 +149,10 @@ class BaseHandler(websocket.WebSocketHandler):
         logging.info("Connection closed")
 
     @staticmethod
-    def broadcast(topic, msg, formater=lambda x: x):
+    def broadcast(topic, msg, formater=lambda x: x, client_type=None):
         for client in clients:
-            client.send(topic, msg, formater=formater)
+            if not client_type or type(client) == client_type:
+                client.send(topic, msg, formater=formater)
 
     def send(self, topic, obj=dict(), serializer=Serializer.datetime, formater=lambda x: x, format_dict=True):
         if isinstance(obj, BaseModel):
