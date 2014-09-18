@@ -35,13 +35,11 @@ search {
   display: -webkit-flex;
   display: flex; }
 
-search input, search button {
+search input, search button, search select {
   border: none;
   height: 40px;
   padding: 0 10px;
   font: 1.1em Ubuntu, Helvetica; }
-search button {
-  color: white; }
 search input {
   min-width: 300px; }
 
@@ -189,17 +187,24 @@ section {
   opacity: 0.2;
 }
 
-.match-spotify, .match-youtube, .match-soundcloud {
-  background-repeat: no-repeat;
-  background-position: 5px center;
-  background-size: 25px;
-  padding-left: 40px;
-}
-.match-spotify { background-image: url(../img/spotify.png); }
-.match-youtube { background-image: url(../img/youtube.png); }
-.match-soundcloud { background-image: url(../img/soundcloud.png); }
-
-
 .dropdown-menu div {
   display: inline-block;
 }
+
+.search-type-select {
+  width: 50px;
+  background: none;
+  color: transparent;
+  outline: none;
+}
+
+.match-spotify, .match-youtube, .match-soundcloud {
+  background-repeat: no-repeat;
+  background-position: right 20px center;
+  background-size: 25px;
+  padding-left: 40px;
+}
+
+.match-spotify { background-image: url(../img/spotify.png); }
+.match-youtube { background-image: url(../img/youtube.png); }
+.match-soundcloud { background-image: url(../img/soundcloud.png); }

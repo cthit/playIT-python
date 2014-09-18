@@ -8,7 +8,7 @@ var regexes = {
 
 app.controller('SearchController', function($scope, $http, $rootScope) {
 	$scope.selected = undefined;
-	$scope.searchType = undefined;
+	$scope.searchType = 'youtube';
 
 	function searchYoutube(query) {
 		return $http.get('https://www.googleapis.com/youtube/v3/search', {
@@ -106,6 +106,18 @@ app.controller('SearchController', function($scope, $http, $rootScope) {
 			return '';
 		}
 	}
+	$scope.searchTypePlaceholder = function() {
+		switch ($scope.searchType) {
+			case 'spotify':
+				return "Search for tracks on Spotify";
+			case 'soundcloud':
+				return "Search for tracks on SoundCloud";
+			case 'youtube':
+				return "Search for YouTube videos";
+			default:
+				return 'Search for videos or music';
+		}
+	}
 });
 
 app.directive('search', function($rootScope) {
@@ -132,12 +144,6 @@ app.directive('search', function($rootScope) {
 					this.value = '';
 
 					e.preventDefault();
-				} else if (e.which == 8) { // Backspace
-					if (this.value === '') {
-						$scope.$apply(function() {
-							$scope.searchType = undefined;
-						});
-					}
 				}
 			});
 		}

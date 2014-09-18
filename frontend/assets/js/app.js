@@ -1,7 +1,7 @@
 'use strict';
 var app = angular.module("playit", ['websocket', 'ui.bootstrap']);
 
-$.getJSON("https://chalmers.it/auth/userInfo.php?token=" + PlayIT.get_cookie() + "&callback=?", function(user) {
+$.getJSON("https://chalmers.it/auth/userInfo.php?token=" + PlayIT.get_cookie('chalmersItAuth') + "&callback=?", function(user) {
 	app.user = user.cid;
 	app.admin = user.groups.indexOf("playITAdmin") !== -1;
 });
