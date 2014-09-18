@@ -67,13 +67,13 @@ class MediaItem(BaseModel):
         from src.models.vote import Vote
         votes = self._get_votes()
 
-        if votes and float(votes.value) <= VOTE_LIMIT:
+        if votes and votes.value and float(votes.value) <= VOTE_LIMIT:
             Vote.delete(permanently=True).where(Vote.item == self).execute()
             self.delete_instance()
 
     def value(self):
         vote = self._get_votes()
-        if vote:
+        if vote and vote.value:
             return float(vote.value)
         else:
             return 0.0
