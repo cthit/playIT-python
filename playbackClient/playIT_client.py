@@ -186,10 +186,11 @@ class PlayIt(object):
             data = split[1]
             vprint("Topic: "+topic)
             vprint("Data: "+data)
-            if topic == "PLAYBACK/NEW":
+            if topic == "MEDIA_ITEM/NEW":
                 vprint("Playing new item")
                 item = json.loads(data)
-                self.play_item(item)
+                play_loop = threading.Thread(target=self.play_item, args=(item,))
+                play_loop.start()
             elif topic == "GREETING":
                 self._pop_next()
 
