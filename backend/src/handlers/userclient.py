@@ -67,7 +67,7 @@ class UserClient(BaseHandler):
                 return ITEM+NEW+FAIL, msg
 
         self.send(ITEM+NEW, item)
-        if self._current_item:
+        if UserClient._current_item:
             from src.handlers.playbackclient import PlaybackClient
             self.broadcast(ITEM+NEW, item, client_type=PlaybackClient)
         self.broadcast(QUEUE+UPDATE, MediaItem.get_queue(), formater=self.format_media_item, client_type=UserClient)
@@ -105,7 +105,7 @@ class UserClient(BaseHandler):
             return VOTE+DELETE+FAIL, "No such item: %s" % data.get("id", "NO_ID_SUPPLIED")
 
     def action_get_current(self, data):
-        return PLAYING+STATUS, self._current_item
+        return PLAYING+STATUS, UserClient._current_item
 
     @Authorized()
     def action_remove_item(self, data):
