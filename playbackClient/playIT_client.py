@@ -273,7 +273,7 @@ class PlayIt(object):
 
     def _play_soundcloud(self, item):
         """ Play SoundCloud items """
-        self.print_queue.put("Playing " + item['artist'] + " - "
+        self.print_queue.put("Playing " + item['author'] + " - "
                              + item['title'] + " requested by " + item['nick'])
         self._add_to_mopidy('soundcloud:song.' + item['external_id'])
 
