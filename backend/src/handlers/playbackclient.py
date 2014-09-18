@@ -3,7 +3,7 @@ from src.models.media_item import MediaItem
 from src.models.playlist_item import PlaylistItem
 from src.handlers.userclient import UserClient
 
-PLAYBACK = "PLAYBACK"
+ITEM = "MEDIA_ITEM"
 
 
 class PlaybackClient(BaseHandler):
@@ -21,34 +21,37 @@ class PlaybackClient(BaseHandler):
         self._current_item = item
         UserClient.set_current(item)
         item.delete_instance()
-        self.broadcast(PLAYBACK+NEW, item)
+        self.broadcast(ITEM+NEW, item)
 
-        return PLAYBACK+SUCCESS, ""
+        return ITEM+SUCCESS, ""
 
     def _play_playlist_item(self):
         playlist = PlaylistItem.get_queue().first()
         if not playlist:
-            return PLAYBACK+FAIL, ""
+            self._current_item = None
+            UserClient.set_current(None)
+            return ITEM+FAIL, "No item in queue"
 
-        if playlist == self._current_playlist:
-            return self._send_item(playlist, self._index)
-        else:
-            return self._send_item(playlist, 0)
+        if playlist != self._current_playlist:
+            self._index = 0
+
+        return self._send_item(playlist, self._index)
 
     def _send_item(self, playlist, index):
         item = PlaylistItem.get_index(playlist, index)
 
         self._current_playlist = playlist
         self._index = index + 1
+        self._current_item = item
         UserClient.set_current(item)
         item.delete_instance()
-        self.broadcast(PLAYBACK+NEW, item)
+        self.broadcast(ITEM+NEW, item)
 
-        return PLAYBACK+SUCCESS, ""
+        return ITEM+SUCCESS, ""
 
     @Authorized(group="player")
     def action_get_current(self):
-        return PLAYBACK+UPDATE, self._current_item
+        return ITEM+UPDATE, self._current_item
 
 
 
