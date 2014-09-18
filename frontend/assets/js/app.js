@@ -3,11 +3,13 @@ var app = angular.module("playit", ['websocket', 'ui.bootstrap']);
 
 $.getJSON("https://chalmers.it/auth/userInfo.php?token=" + PlayIT.get_cookie() + "&callback=?", function(user) {
 	app.user = user.cid;
+	app.admin = user.groups.indexOf("playITAdmin") !== -1;
 });
 
 app.controller('VideofeedCtrl', function($scope, $websocket, $rootScope) {
 	var websocket = $websocket.connect('ws://localhost:8888/ws/action');
 	$scope.mediaitems = [];
+	$scope.playlistitems = [];
 	$scope.votes = {};
 	$scope.selected = -1;
 
@@ -28,6 +30,10 @@ app.controller('VideofeedCtrl', function($scope, $websocket, $rootScope) {
 			$scope.selected = 0;
 		}
 	});
+	websocket.register('media_list/queue/update', function(topic, body) {
+		console.log('list/queue:', body);
+		$scope.playlistitems = body;
+	});
 
 	websocket.register('media_item/new/fail', function(topic, body) {
 		$rootScope.$broadcast('alert', {
@@ -41,6 +47,17 @@ app.controller('VideofeedCtrl', function($scope, $websocket, $rootScope) {
 			$scope.votes[body.id] = true;
 			saveVotes($scope);
 		}
+	});
+
+	websocket.register('media_item/delete/success', function(topic, body) {
+		$scope.$apply(function() {
+			for (var i = 0; i < $scope.mediaitems.length; i++) {
+				if ($scope.mediaitems[i].id === body.id) {
+					$scope.mediaitems.splice(i, 1);
+					return;
+				}
+			}
+		});
 	});
 
 	websocket.register('playback/new', function(topic, body) {
@@ -118,17 +135,24 @@ app.controller('VideofeedCtrl', function($scope, $websocket, $rootScope) {
 		}
 	}
 
-	$scope.upvoteItem = function($scope, item) {
+	$scope.user_owns = function(item) {
+		return app.user === item.cid || app.admin;
+	};
+	$scope.upvote_item = function($scope, item) {
 		item = item || $scope.mediaitems[$scope.selected];
 		if ($scope.votes[item.id] !== true) {
 			addVote($scope, item, true);
 		}
 	};
-	$scope.downvoteItem = function($scope, item) {
+	$scope.downvote_item = function($scope, item) {
 		item = item || $scope.mediaitems[$scope.selected];
 		if ($scope.votes[item.id] !== false) {
 			addVote($scope, item, false);
 		}
+	};
+	$scope.delete_item = function($scope, item) {
+		item = item || $scope.mediaitems[$scope.selected];
+		send('remove_item', { type: item.type, id: item.external_id });
 	};
 
 	$rootScope.$on('add_item', function(event, args) {
@@ -139,7 +163,7 @@ app.controller('VideofeedCtrl', function($scope, $websocket, $rootScope) {
 
 	var defaultCallback = Mousetrap.stopCallback;
 	Mousetrap.stopCallback = function(e, element, combo) {
-		if (combo === 'esc') {
+		if (combo === 'esc' || combo === 'tab' || combo === 'enter') {
 			return false;
 		} else {
 			return defaultCallback(e, element, combo);
@@ -159,20 +183,36 @@ app.controller('VideofeedCtrl', function($scope, $websocket, $rootScope) {
 		$scope.$apply(prevItem);
 	});
 	Mousetrap.bind('a', function(){
-		$scope.$apply($scope.upvoteItem);
+		$scope.$apply($scope.upvote_item);
 	});
 	Mousetrap.bind('z', function(){
-		$scope.$apply($scope.downvoteItem);
+		$scope.$apply($scope.downvote_item);
+	});
+	Mousetrap.bind(['d d', 'x'], function(){
+		$scope.$apply($scope.delete_item);
 	});
 
 	// startup the webapp with a request to fetch the current queue
 	send('get_queue');
+	send('get_playlist_queue');
+
 });
+
+function autocomplete_api(query) {
+	var apis = ['spotify', 'youtube', 'soundcloud'];
+	for (var i = 0; i < apis.length; i++) {
+		if (apis[i].indexOf(query) === 0) {
+			return apis[i];
+		}
+	}
+}
 
 function type_to_url(item) {
 	switch(item.type) {
 		case 'youtube':
 			return 'http://youtu.be/' + item.external_id;
+		case 'youtube_list':
+			return 'https://www.youtube.com/playlist?list=' + item.external_id;
 		case 'spotify':
 			return 'http://open.spotify.com/track/' + item.external_id;
 		case 'soundcloud':

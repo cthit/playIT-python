@@ -1,5 +1,7 @@
 <a>
-	<div><img ng-src="{{match.model.snippet.thumbnails.default.url}}" height="30"/></div>
-	<span bind-html-unsafe="match.model.snippet.title | typeaheadHighlight:query"></span><br>
-	<strong><small bind-html-unsafe="match.model.snippet.channelTitle"></small></strong>
+	<div><img ng-src="{{match.model.thumbnail}}" height="30"/></div>
+	<div>
+		<span bind-html-unsafe="match.model.name | typeaheadHighlight:query"></span><br>
+		<small bind-html-unsafe="match.model.author | typeaheadHighlight:query"></small>
+	</div>
 </a>
