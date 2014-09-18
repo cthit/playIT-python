@@ -68,7 +68,7 @@ app.controller('VideofeedCtrl', function($scope, $websocket, $rootScope) {
 		});
 	});
 
-	websocket.register('playback/new', function(topic, body) {
+	websocket.register('playback/status', function(topic, body) {
 		$rootScope.$broadcast('playback', body);
 	});
 
@@ -224,8 +224,8 @@ function type_to_url(item) {
 		case 'spotify':
 			return 'http://open.spotify.com/track/' + item.external_id;
 		case 'soundcloud':
-			var artist = self.author.toLowerCase().replace(/ /g, '-'),
-			track = self.title.toLowerCase().replace(/ /g, '-');
+			var artist = item.author.toLowerCase().replace(/ /g, '-'),
+			track = item.title.toLowerCase().replace(/ /g, '-');
 			return 'http://soundcloud.com/' + artist + '/' + track;
 		default:
 			throw 'Got MediaItem of unrecognized type: ' + item.type;

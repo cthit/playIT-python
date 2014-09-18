@@ -3,7 +3,7 @@
 var regexes = {
 	youtube: {i: 2, regex: /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]+).*/},
 	spotify: {i: 3, regex: /^(.*open\.)?spotify(\.com)?[\/:]track[\/:]([a-zA-Z0-9]+)$/},
-	soundcloud: {i: 1, regex: /^https?:\/\/soundcloud.com\/([\w-]+\/\w+)$/}
+	soundcloud: {i: 1, regex: /^.*soundcloud.com\/([a-zA-Z0-9-\/]+)/}
 };
 
 app.controller('SearchController', function($scope, $http, $rootScope) {
@@ -79,6 +79,13 @@ app.controller('SearchController', function($scope, $http, $rootScope) {
 	}
 
 	$scope.searchMedia = function(query) {
+		var result = null;
+		for (var type in regexes) {
+			if (result = regexes[type].regex.exec(query)) {
+				// Found URL match, do not search for it!
+				return [];
+			}
+		}
 		switch($scope.searchType) {
 			case 'spotify':
 				return searchSpotify(query);
