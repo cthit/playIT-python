@@ -202,7 +202,7 @@ class PlayIt(object):
 
     def play_item(self, item):
         if self.CURRENT_PROC:
-            if SLAVE:
+            if self.SLAVE:
                 self._stop_everything()
             else:
                 return
@@ -278,10 +278,12 @@ class PlayIt(object):
         self._add_to_mopidy('soundcloud:song.' + item['external_id'])
 
     def _stop_everything(self):
+        mpd_exec("stop")
         try:
-            self.CURRENT_PROC.kill()
+            self.CURRENT_PROC.terminate()
         except Exception as e:
             vprint(e)
+        self.CURRENT_PROC = None
 
     def _add_to_mopidy(self, track_id):
         vprint("Play mopidy with " + track_id)
