@@ -1,0 +1,2 @@
+<input type="text" id="insert_video" ng-model="customSelected" placeholder="Search for videos or music" typeahead="result as results.name for results in searchMedia($viewValue)" typeahead-template-url="assets/partials/search-result.html" typeahead-on-select="addVideo($item)" class="{{searchTypeClass()}}">
+<button>Add media</button>

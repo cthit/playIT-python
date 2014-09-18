@@ -1,0 +1,7 @@
+<a>
+	<div><img ng-src="{{match.model.thumbnail}}" height="30"/></div>
+	<div>
+		<span bind-html-unsafe="match.model.name | typeaheadHighlight:query"></span><br>
+		<small bind-html-unsafe="match.model.author | typeaheadHighlight:query"></small>
+	</div>
+</a>
