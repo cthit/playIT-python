@@ -35,12 +35,11 @@ import select
 from mpd import MPDClient, CommandError
 
 # Some settings and constants
-POP_PATH = "/playIT/media/popQueue"
 # Use verbose output
-VERBOSE = True
+VERBOSE = False
 MOPIDY_HOST = "localhost"
 MOPIDY_PORT = 6600
-
+API_KEY = "42BabaYetuHerpaderp"
 
 def main():
     """ Init and startup goes here... """
@@ -49,16 +48,15 @@ def main():
     playit = PlayIt()
     vprint("Running main playback loop...")
     ploop = threading.Thread(target=playit.start_printloop)
-    eloop = threading.Thread(target=playit.start_eventloop)
-
     ploop.daemon = True
-    eloop.daemon = True
-
     ploop.start()
-    eloop.start()
+    
+    # eloop = threading.Thread(target=playit.start_eventloop)
+    # eloop.daemon = True
+    # eloop.start()
 
+    playit.start()
     playit.start_prompt()
-
 
 def check_reqs():
     """ Verify that all dependencies exists. """
@@ -118,24 +116,11 @@ def process_exists(proc_name):
                 return True
     return False
 
-
 def _fix_server_adress(raw_server):
-    """ Prepend http://  there. """
-    if not raw_server.startswith("http://"):
-        raw_server = "http://" + raw_server
+    """ Prepend ws://  there. """
+    if not raw_server.startswith("ws://"):
+        raw_server = "ws://" + raw_server
     return raw_server
-
-
-def check_connection(url):
-    return
-    """ Checks the connection to the backend """
-    resp = requests.head(url + POP_PATH)
-
-    if resp.status_code != 200:
-        print("Unable to find backend at:", url,
-              file=sys.stderr)
-        exit(4)
-
 
 def vprint(msg):
     """ Verbose print """
@@ -144,63 +129,83 @@ def vprint(msg):
 
 
 class PlayIt(object):
+    SLAVE = False
+    CURRENT_PROC = None
     """ Defines the interface between the backend and actual playback. """
     def __init__(self):
         parser = argparse.ArgumentParser()
         parser.add_argument('-m', '--monitor-number', dest="monitor_number",
                             type=int, default=1)
         parser.add_argument('-s', '--server',
-                            default="http://hubben.chalmers.it:8080")
-        #parser.add_argument('-v', '--verbose', action='store_true')
+                            default="ws://playit.chalmers.it:8888")
+        parser.add_argument('-v', '--verbose', action='store_true')
+        parser.add_argument('-S', '--slave', action='store_true')
         args = parser.parse_args()
 
+        global VERBOSE
+        VERBOSE = args.verbose
+        self.SLAVE = args.slave
+
         if args.server is None:
-            print("Please supply a server by: -s http://www.example.org:port",
+            print("Please supply a server by: -s ws://www.example.org:port",
                   file=sys.stderr)
             exit(3)
         else:
             self.server = _fix_server_adress(args.server)
             vprint("Server: " + self.server)
-            check_connection(self.server)
+            # check_connection(self.server)
 
         self.monitor_number = args.monitor_number
 
         self.print_queue = queue.Queue()
         self.map_lock = threading.RLock()
 
-        # Random edition
-        self._ws = websocket.WebSocketApp("ws://129.16.232.64:8888/ws/playback",
-                                    on_message = self._on_message,
-                                    on_error = self._on_error,
-                                    on_close = self._on_close)
+        ws_path = "/ws/playback"
+        self._ws = websocket.WebSocketApp(self.server + ws_path,
+                                            on_message = self._on_message,
+                                            on_error = self._on_error,
+                                            on_close = self._on_close)
 
+    def start(self):
         self._ws.run_forever(sslopt={"cert_reqs": ssl.CERT_NONE})
 
+    def _pop_next(self):
+        if not self.SLAVE:
+            topic = "pop"
+            data = dict(token=API_KEY)
+            data = json.dumps(data)
+            self._ws.send(topic + " " + data)
 
-    def start_eventloop(self):
-        """ Start the event-loop. """
-        cmd_map = {"quit": interrupt_main}
-        while True:
-            self.set_cmd_map(cmd_map)
+    def _on_message(self, ws, msg):
+        vprint(msg)
 
-            # item = {"nick": "Eda", "artist": ["Daft Punk"], "title": "Face to Face",
-            #         #"externalID": "0fFHjnqpSpV8XuWyCKf6XU"}
-            #         "externalID": "a5uQMwRMHcs"}
+        split = re.split("\s", msg, 1)
+        vprint(len(split))
+        if len(split) == 2:
+            topic = split[0]
+            data = split[1]
+            vprint("Topic: "+topic)
+            vprint("Data: "+data)
+            if topic == "PLAYBACK/NEW":
+                vprint("Playing new item")
+                item = json.loads(data)
+                self.play_item(item)
+            elif topic == "GREETING":
+                self._pop_next()
 
-            # self._play_youtube(item)
-            # time.sleep(7)
+    def _on_error(self, ws, error):
+        vprint(error)
 
-            item = self._get_next()
-            if len(item) > 0:
-                # Dynamically call the play function based on the media type
-                func_name = "_play_" + item['type'].lower()
-                func = getattr(self, func_name)
-                func(item)
-            else:
-                vprint("No item in queue, sleeping...")
-                time.sleep(7)
+    def _on_close(self, ws):
+        vprint("Socket closed")
 
     def play_item(self, item):
+        if self.CURRENT_PROC:
+            if SLAVE:
+                self._stop_everything()
+            else:
+                return
+
         if len(item) > 0:
             # Dynamically call the play function based on the media type
             func_name = "_play_" + item['type'].lower()
@@ -209,45 +214,7 @@ class PlayIt(object):
             func(item)
         else:
             vprint("No item in queue, sleeping...")
-
-    def _on_message(self, ws, msg):
-        vprint(msg)
-
-        splitted = re.split("\s", msg, 1)
-        vprint(len(splitted))
-        if len(splitted) == 2:
-            topic = splitted[0]
-            data = splitted[1]
-            vprint("Topic: "+topic)
-            vprint("Data: "+data)
-            if topic == "PLAYBACK/NEW":
-                vprint("Playing new item")
-                item = json.loads(data)
-                self.play_item(item)
-            elif topic == "GREETING":
-                topic = "pop"
-                data = dict(token="42BabaYetuHerpaderp")
-                data = json.dumps(data)
-                self._ws.send(topic + " " + data)
-
-    def _on_error(self, ws, error):
-        vprint(error)
-
-    def _on_close(self, ws):
-        vprint("Socket closed")
-
-    def _on_open(self, ws):
-        vprint("Opened")
-        topic = "pop"
-        self._ws.send(topic)
-
-    def _get_next(self):
-        """ Get the next item in queue from the backend. """
-        vprint("Popping next item in the queue")
-        websocket.enableTrace(True)
-
-        #resp = requests.get(self.server + POP_PATH)
-        return dict()#resp.json()
+        self._pop_next()
 
     def _play_youtube(self, item):
         """ Play the supplied youtube video with mpv. """
@@ -259,16 +226,14 @@ class PlayIt(object):
         youtube_dl = ["youtube-dl", youtube_url, "-g"]
 
         stream_url = subprocess.check_output(youtube_dl).decode('UTF8').strip()
-        cmd = ['mpv', '--fs', '--screen',
+        cmd = ['mpv', '--really-quiet', '--fs', '--screen',
                str(self.monitor_number), stream_url]
 
-        # print(cmd)
-        print("CMD CMD CMD")
-        print(cmd)
-        print("EEEEEEEEEEEEENNNNNNNNNND")
         process = subprocess.Popen(cmd, stdin=subprocess.PIPE,
-                                   stdout=subprocess.PIPE,
-                                   stderr=subprocess.PIPE)
+                                        stdout=subprocess.PIPE,
+                                        stderr=subprocess.PIPE)
+
+        self.CURRENT_PROC = process
 
         def quit():
             process.stdin.write(b'q')
@@ -294,8 +259,10 @@ class PlayIt(object):
                           # "bseek": bseek,
                           "quit":   quit})
 
-        while process.poll() is None:
-            time.sleep(1)
+        # while process.poll() is None:
+        #     time.sleep(1)
+        process.wait()
+        self.CURRENT_PROC = None
 
     def _play_spotify(self, item):
         """ Play the supplied spotify track using mopidy and mpc. """
@@ -309,6 +276,12 @@ class PlayIt(object):
                              + item['title'] + " requested by " + item['nick'])
         self._add_to_mopidy('soundcloud:song.' + item['external_id'])
 
+    def _stop_everything(self):
+        try:
+            self.CURRENT_PROC.kill()
+        except Exception as e:
+            vprint(e)
+
     def _add_to_mopidy(self, track_id):
         vprint("Play mopidy with " + track_id)
         """ Play a mopidy compatible track """
@@ -319,6 +292,7 @@ class PlayIt(object):
         try:
             client.add(track_id)
             client.play(0)
+            self.CURRENT_PROC = True
         except CommandError as e:
             self.print_queue.put("Failed to add song to Mopidy: " + str(e))
         client.close()
@@ -354,6 +328,7 @@ class PlayIt(object):
                           "status": status})
 
         self._mopidy_idle()
+        self.CURRENT_PROC = None
 
     def _mopidy_idle(self):
         client_idle = MPDClient()
