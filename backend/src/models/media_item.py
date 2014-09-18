@@ -159,7 +159,7 @@ class MediaItem(BaseModel):
         item.author = ", ".join((a.get("name") for a in data.get("artists")))
         item.album = data.get("album").get("name")
         try:
-            item.duration = int(data.get("duration") + 0.5)
+            item.duration = int(data.get("length") + 0.5)
         except (TypeError, ValueError) as e:
             logging.error("Failed to get duration for spotify item")
             item.duration = 1337
