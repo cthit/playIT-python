@@ -21,7 +21,10 @@ class Actions(BaseHandler):
 
     @staticmethod
     def format_media_item(item):
-        item["value"] = int(float(item.get("value")))
+        value = item.get("value")
+        if value == '':
+            value = '0'
+        item["value"] = int(float(value))
         return item
 
     def action_get_queue(self, data):
