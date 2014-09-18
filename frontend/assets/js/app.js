@@ -1,11 +1,6 @@
 'use strict';
 var app = angular.module("playit", ['websocket', 'ui.bootstrap']);
 
-$.getJSON("https://chalmers.it/auth/userInfo.php?token=" + PlayIT.get_cookie('chalmersItAuth') + "&callback=?", function(user) {
-	app.user = user.cid;
-	app.admin = user.groups.indexOf("playITAdmin") !== -1;
-});
-
 app.controller('VideofeedCtrl', function($scope, $websocket, $rootScope) {
 	var websocket = $websocket.connect('ws://localhost:8888/ws/action');
 	$scope.mediaitems = [];
@@ -16,6 +11,19 @@ app.controller('VideofeedCtrl', function($scope, $websocket, $rootScope) {
 	if (window.localStorage) {
 		$scope.votes = JSON.parse(window.localStorage.getItem('votes')) || {};
 	}
+
+	$.getJSON("https://chalmers.it/auth/userInfo.php?token=" + PlayIT.get_cookie('chalmersItAuth') + "&callback=?", function(user) {
+		$scope.user = user.cid;
+		$scope.is_admin = user.groups.indexOf("playITAdmin") !== -1;
+	}).fail(function(e) {
+		// if (confirm('You are not signed in! Please visit chalmers.it/auth and sign in!'))
+		// 	window.location = 'https://chalmers.it/auth/';
+
+		// $rootScope.$broadcast('alert', {
+		// 	type: 'danger',
+		// 	message: 'You are not signed in! Please visit chalmers.it/auth and sign in!'
+		// });
+	});
 
 	function send(topic, body) {
 		body = body || {};
@@ -43,7 +51,7 @@ app.controller('VideofeedCtrl', function($scope, $websocket, $rootScope) {
 	});
 
 	websocket.register('media_item/new', function(topic, body) {
-		if (app.user === body.cid) {
+		if ($scope.user === body.cid) {
 			$scope.votes[body.id] = true;
 			saveVotes($scope);
 		}
@@ -136,7 +144,7 @@ app.controller('VideofeedCtrl', function($scope, $websocket, $rootScope) {
 	}
 
 	$scope.user_owns = function(item) {
-		return app.user === item.cid || app.admin;
+		return $scope.user === item.cid || $scope.is_admin;
 	};
 	$scope.upvote_item = function($scope, item) {
 		item = item || $scope.mediaitems[$scope.selected];

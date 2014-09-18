@@ -197,7 +197,9 @@ section {
   color: transparent;
   outline: none;
 }
-
+.search-type-select option {
+  color: black;
+}
 .match-spotify, .match-youtube, .match-soundcloud {
   background-repeat: no-repeat;
   background-position: right 20px center;
