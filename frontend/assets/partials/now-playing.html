@@ -1,2 +1,3 @@
 <span ng-if="!item">Nothing playing right now...</span>
-<span ng-if="item" title="{{item.nick}}">Now playing: <a href="{{get_link(item)}}">{{item.title}}</a> - {{item.author}}</span>
+<span ng-if="item" title="{{item.nick}}">Now playing: <a href="{{get_link(item)}}">{{item.title}}</a> [{{time_format(item.duration)}}] - {{item.author}}</span><br>
+<small>Added by {{item.nick}}</small>

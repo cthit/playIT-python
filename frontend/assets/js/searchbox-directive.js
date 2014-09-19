@@ -129,20 +129,27 @@ app.controller('SearchController', function($scope, $http, $rootScope) {
 
 app.directive('search', function($rootScope) {
 
+	function add_item(value) {
+		var result = null;
+		for (var type in regexes) {
+			if (result = regexes[type].regex.exec(value)) {
+				$rootScope.$broadcast('add_item', { type: type, id: result[regexes[type].i] });
+				return;
+			}
+		}
+	}
+
 	return {
 		restrict: 'E',
 		controller: 'SearchController',
 		templateUrl: 'assets/partials/search.html',
 		link: function($scope, element) {
+			$('button', element).on('click', function(e) {
+				add_item($('#input_video').val());
+			});
 			$('input', element).on('keydown', function(e) {
 				if (e.which == 13) { // Enter
-					var result = null;
-					for (var type in regexes) {
-						if (result = regexes[type].regex.exec(this.value)) {
-							$rootScope.$broadcast('add_item', { type: type, id: result[regexes[type].i] });
-							return;
-						}
-					}
+					add_item(this.value);
 				} else if (e.which == 9) { // Tab
 					var query = autocomplete_api(this.value);
 					$scope.$apply(function() {

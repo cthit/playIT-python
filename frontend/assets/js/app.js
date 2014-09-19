@@ -16,8 +16,9 @@ app.controller('VideofeedCtrl', function($scope, $websocket, $rootScope) {
 		$scope.user = user.cid;
 		$scope.is_admin = user.groups.indexOf("playITAdmin") !== -1;
 	}).fail(function(e) {
-		// if (confirm('You are not signed in! Please visit chalmers.it/auth and sign in!'))
-		// 	window.location = 'https://chalmers.it/auth/';
+		if (confirm('You are not signed in! Please visit chalmers.it and sign in!')) {
+			window.location = 'https://chalmers.it/';
+		}
 
 		// $rootScope.$broadcast('alert', {
 		// 	type: 'danger',
@@ -57,19 +58,23 @@ app.controller('VideofeedCtrl', function($scope, $websocket, $rootScope) {
 		}
 	});
 
-	websocket.register('media_item/delete/success', function(topic, body) {
-		$scope.$apply(function() {
-			for (var i = 0; i < $scope.mediaitems.length; i++) {
-				if ($scope.mediaitems[i].id === body.id) {
-					$scope.mediaitems.splice(i, 1);
-					return;
-				}
+	$scope.delete_by_id = function(id) {
+		for (var i = 0; i < $scope.mediaitems.length; i++) {
+			if ($scope.mediaitems[i].id === id) {
+				$scope.mediaitems.splice(i, 1);
+				delete $scope.votes[id];
+				return;
 			}
-		});
+		}
+	}
+
+	websocket.register('media_item/delete/success', function(topic, body) {
+		$scope.delete_by_id(body.id);
 	});
 
-	websocket.register('playback/status', function(topic, body) {
+	websocket.register('playing/status', function(topic, body) {
 		$rootScope.$broadcast('playback', body);
+		$scope.delete_by_id(body.id);
 	});
 
 	websocket.register('media_item/update', function(topic, body) {
@@ -84,26 +89,7 @@ app.controller('VideofeedCtrl', function($scope, $websocket, $rootScope) {
 		});
 	});
 
-	$scope.time_format = function(seconds) {
-		var time = [
-			parseInt(seconds / 3600) % 24,
-			parseInt(seconds / 60) % 60,
-			parseInt(seconds % 60)
-		],
-		hour = true;
-
-		return time.filter(function(part) {
-			if (hour) {
-				hour = false;
-				return part != 0;
-			} else {
-				return part;
-			}
-		}).map(function(part) {
-			return part < 10 ? "0" + part : part;
-		}).join(':');
-	};
-
+	$scope.time_format = time_format;
 	$scope.get_link = type_to_url;
 
 	$scope.select = function(index) {
@@ -203,6 +189,7 @@ app.controller('VideofeedCtrl', function($scope, $websocket, $rootScope) {
 	// startup the webapp with a request to fetch the current queue
 	send('get_queue');
 	send('get_playlist_queue');
+	send('get_current');
 
 });
 
@@ -214,6 +201,26 @@ function autocomplete_api(query) {
 		}
 	}
 }
+
+function time_format(seconds) {
+	var time = [
+		parseInt(seconds / 3600) % 24,
+		parseInt(seconds / 60) % 60,
+		parseInt(seconds % 60)
+	],
+	hour = true;
+
+	return time.filter(function(part) {
+		if (hour) {
+			hour = false;
+			return part != 0;
+		} else {
+			return part;
+		}
+	}).map(function(part) {
+		return part < 10 ? "0" + part : part;
+	}).join(':');
+};
 
 function type_to_url(item) {
 	switch(item.type) {
@@ -243,6 +250,7 @@ app.controller('NowPlayingCtrl', function($scope, $rootScope) {
 	$scope.item = null;
 
 	$scope.get_link = type_to_url;
+	$scope.time_format = time_format;
 
 	$rootScope.$on('playback', function(event, args) {
 		$scope.item = args;

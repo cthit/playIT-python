@@ -1,5 +1,5 @@
 <ol>
-	<li class="media {{item.type}}" ng-repeat="item in mediaitems" ng-click="select($index)" ng-class="{'selected': $index == selected}">
+	<li class="media {{item.type}}" ng-repeat="item in mediaitems | orderBy:['-value', 'id']" ng-click="select($index)" ng-class="{'selected': $index == selected}">
 		<div class="vote" ng-class="{upvoted: check_voted(item.id), downvoted: false === check_voted(item.id)}">
 			<span class="upvote" ng-click="upvote_item(this, item)">⬆</span>
 			<span class="rating">{{item.value}}</span>
