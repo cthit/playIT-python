@@ -30,7 +30,6 @@ import ssl
 import re
 import json
 from mpd import MPDClient, CommandError
-from time import sleep
 
 # Some settings and constants
 # Use verbose output
