@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 """ The client controller for the playIT backend
-by Horv and Eda - 2013, 2014
+by Horv, Eda and rekoil - 2013, 2014
 
 To add a new type of playback. Add a function called _play_TYPE(media_item)
 and define how it's handled. It will be called automatically based on the
-type parameter specified in the downloaded json
+type parameter that is received from the websockets.
 
 Requires Python >= 3.3
 Depends on:
@@ -12,15 +12,15 @@ Depends on:
             Note that you'll need both the spotify and soundcloud plugins
             Eg. aurget -S mopidy mopidy-spotify mopidy-soundcloud
     2. python-mpd2 (https://github.com/Mic92/python-mpd2)
-    3. python-requests (python library) for popping and checking server status.
+    3. python-websockets (python library) for managing WebSockets used in
+            communication between backend and frontend.
     4. mpv for video/YouTube playback. http://mpv.io/
-    5. youtube-dl
+    5. youtube-dl for retreiving (a more reliable) stream url from youtube.
+            (http://rg3.github.io/youtube-dl/)
 
 
 """
 import threading
-import requests
-import time
 import argparse
 import queue
 import sys
@@ -30,8 +30,6 @@ import websocket
 import ssl
 import re
 import json
-import select
-# from subprocess import call
 from mpd import MPDClient, CommandError
 
 # Some settings and constants
@@ -40,6 +38,7 @@ VERBOSE = False
 MOPIDY_HOST = "localhost"
 MOPIDY_PORT = 6600
 API_KEY = "42BabaYetuHerpaderp"
+
 
 def main():
     """ Init and startup goes here... """
@@ -57,6 +56,7 @@ def main():
 
     playit.start()
     playit.start_prompt()
+
 
 def check_reqs():
     """ Verify that all dependencies exists. """
