@@ -63,6 +63,7 @@ app.controller('VideofeedCtrl', function($scope, $websocket, $rootScope) {
 			if ($scope.mediaitems[i].id === id) {
 				$scope.mediaitems.splice(i, 1);
 				delete $scope.votes[id];
+				saveVotes($scope);
 				return;
 			}
 		}
