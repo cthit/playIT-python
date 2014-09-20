@@ -45,17 +45,7 @@ def main():
     check_reqs()
 
     playit = PlayIt()
-    vprint("Running main playback loop...")
-    ploop = threading.Thread(target=playit.start_printloop)
-    ploop.daemon = True
-    ploop.start()
-    
-    # eloop = threading.Thread(target=playit.start_eventloop)
-    # eloop.daemon = True
-    # eloop.start()
-
     playit.start()
-    playit.start_prompt()
 
 
 def check_reqs():
@@ -116,11 +106,13 @@ def process_exists(proc_name):
                 return True
     return False
 
+
 def _fix_server_adress(raw_server):
     """ Prepend ws://  there. """
     if not raw_server.startswith("ws://"):
         raw_server = "ws://" + raw_server
     return raw_server
+
 
 def vprint(msg):
     """ Verbose print """
@@ -132,6 +124,7 @@ class PlayIt(object):
     SLAVE = False
     CURRENT_PROC = None
     """ Defines the interface between the backend and actual playback. """
+
     def __init__(self):
         parser = argparse.ArgumentParser()
         parser.add_argument('-m', '--monitor-number', dest="monitor_number",
@@ -153,7 +146,6 @@ class PlayIt(object):
         else:
             self.server = _fix_server_adress(args.server)
             vprint("Server: " + self.server)
-            # check_connection(self.server)
 
         self.monitor_number = args.monitor_number
 
@@ -162,9 +154,9 @@ class PlayIt(object):
 
         ws_path = "/ws/playback"
         self._ws = websocket.WebSocketApp(self.server + ws_path,
-                                            on_message = self._on_message,
-                                            on_error = self._on_error,
-                                            on_close = self._on_close)
+                                          on_message=self._on_message,
+                                          on_error=self._on_error,
+                                          on_close=self._on_close)
 
     def start(self):
         self._ws.run_forever(sslopt={"cert_reqs": ssl.CERT_NONE})
@@ -189,7 +181,8 @@ class PlayIt(object):
             if topic == "MEDIA_ITEM/NEW":
                 vprint("Playing new item")
                 item = json.loads(data)
-                play_loop = threading.Thread(target=self.play_item, args=(item,))
+                play_loop = threading.Thread(target=self.play_item,
+                                             args=(item,))
                 play_loop.start()
             elif topic == "GREETING":
                 self._pop_next()
@@ -221,8 +214,8 @@ class PlayIt(object):
         """ Play the supplied youtube video with mpv. """
         vprint("_PLAY_YOUTUBE")
         vprint(item)
-        self.print_queue.put("Playing youtube video: " + item['title']
-                             + " requested by " + item['nick'])
+        vprint("Playing youtube video: " + item['title']
+               + " requested by " + item['nick'])
         youtube_url = "https://youtu.be/" + item['external_id']
         youtube_dl = ["youtube-dl", youtube_url, "-g"]
 
@@ -231,37 +224,11 @@ class PlayIt(object):
                str(self.monitor_number), stream_url]
 
         process = subprocess.Popen(cmd, stdin=subprocess.PIPE,
-                                        stdout=subprocess.PIPE,
-                                        stderr=subprocess.PIPE)
+                                   stdout=subprocess.PIPE,
+                                   stderr=subprocess.PIPE)
 
         self.CURRENT_PROC = process
 
-        def quit():
-            process.stdin.write(b'q')
-            process.stdin.flush()
-
-        def toggle():
-            process.stdin.write(b' ')
-            process.stdin.flush()
-
-        # def fseek():
-        #     process.stdin.write(b"\x1b[A")
-        #     process.stdin.flush()
-
-        # def bseek():
-        #     process.stdin.write(b"\x1b[B")
-        #     process.stdin.flush()
-
-        self.set_cmd_map({"pause":  toggle,
-                          "play":   toggle,
-                          "stop":   quit,
-                          "toggle": toggle,
-                          # "fseek": fseek,
-                          # "bseek": bseek,
-                          "quit":   quit})
-
-        # while process.poll() is None:
-        #     time.sleep(1)
         process.wait()
         self.CURRENT_PROC = None
 
@@ -297,38 +264,9 @@ class PlayIt(object):
             client.play(0)
             self.CURRENT_PROC = True
         except CommandError as e:
-            self.print_queue.put("Failed to add song to Mopidy: " + str(e))
+            vprint("Failed to add song to Mopidy: " + str(e))
         client.close()
         client.disconnect()
-
-        def quit():
-            mpd_exec("stop")
-            interrupt_main()
-
-        def status():
-            song = mpd_exec("currentsong")
-            status = mpd_exec("status")
-            # TODO: make prettier...
-            status_line = song['artist'] + ' - ' + song['title'] + '\n' + \
-                          '[' + status['state'] + '] ' + status['elapsed']
-            self.print_queue.put(status_line)
-
-        def toggle():
-            mpd_exec("pause")
-            status()
-
-        def play():
-            mpd_exec("play")
-
-        def stop():
-            mpd_exec("stop")
-
-        self.set_cmd_map({"pause":  toggle,
-                          "play":   play,
-                          "stop":   stop,
-                          "toggle": toggle,
-                          "quit":   quit,
-                          "status": status})
 
         self._mopidy_idle()
         self.CURRENT_PROC = None
@@ -341,45 +279,6 @@ class PlayIt(object):
 
         client_idle.close()
         client_idle.disconnect()
-
-    def set_cmd_map(self, map):
-        """ Set the map of all available commands (With thread lock) """
-        with self.map_lock:
-            self.cmd_map = map
-
-    def start_prompt(self):
-        """ Listen for user input (Like a shell) """
-        try:
-            cmd = ""
-            while cmd != 'quit':
-                self.print_queue.put('')
-                cmd = input()
-
-                if len(cmd) > 0:
-                    if cmd in self.cmd_map:
-                        self.cmd_map[cmd]()
-                    elif cmd == "help":
-                        keys = list(self.cmd_map.keys())
-                        self.print_queue.put(", ".join(keys))
-                    else:
-                        self.print_queue.put('Unknown command "' + cmd + '"')
-
-            # Wait for queues to finish
-            self.print_queue.join()
-        except KeyboardInterrupt:
-            exit(1)
-            return
-
-    def start_printloop(self):
-        """ Prints everything from the print queue """
-        while True:
-            msg = self.print_queue.get()
-            if msg != '':
-                msg = msg + '\n'
-
-            print("\r" + msg + "> ", end='')
-            self.print_queue.task_done()
-
 
 if __name__ == "__main__":
     main()
