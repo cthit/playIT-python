@@ -22,7 +22,6 @@ Depends on:
 """
 import threading
 import argparse
-import queue
 import sys
 from shutil import which
 import subprocess
@@ -31,6 +30,7 @@ import ssl
 import re
 import json
 from mpd import MPDClient, CommandError
+from time import sleep
 
 # Some settings and constants
 # Use verbose output
@@ -145,18 +145,16 @@ class PlayIt(object):
             exit(3)
         else:
             self.server = _fix_server_adress(args.server)
-            vprint("Server: " + self.server)
+            vprint("Using server: " + self.server)
 
         self.monitor_number = args.monitor_number
-
-        self.print_queue = queue.Queue()
-        self.map_lock = threading.RLock()
 
         ws_path = "/ws/playback"
         self._ws = websocket.WebSocketApp(self.server + ws_path,
                                           on_message=self._on_message,
                                           on_error=self._on_error,
-                                          on_close=self._on_close)
+                                          on_close=self._on_close,
+                                          on_open=self._on_open)
 
     def start(self):
         self._ws.run_forever(sslopt={"cert_reqs": ssl.CERT_NONE})
@@ -169,15 +167,12 @@ class PlayIt(object):
             self._ws.send(topic + " " + data)
 
     def _on_message(self, ws, msg):
-        vprint(msg)
+        vprint("Received msg: " + msg)
 
         split = re.split("\s", msg, 1)
-        vprint(len(split))
         if len(split) == 2:
             topic = split[0]
             data = split[1]
-            vprint("Topic: "+topic)
-            vprint("Data: "+data)
             if topic == "MEDIA_ITEM/NEW":
                 vprint("Playing new item")
                 item = json.loads(data)
@@ -186,12 +181,16 @@ class PlayIt(object):
                 play_loop.start()
             elif topic == "GREETING":
                 self._pop_next()
+            vprint("\n\n")
 
     def _on_error(self, ws, error):
-        vprint(error)
+        print("Websocket error: " + str(error), file=sys.stderr)
 
     def _on_close(self, ws):
-        vprint("Socket closed")
+        print("Websocket closed", file=sys.stderr)
+
+    def _on_open(self, ws):
+        vprint("Websocket opened to " + self.server)
 
     def play_item(self, item):
         if self.CURRENT_PROC:
@@ -223,9 +222,9 @@ class PlayIt(object):
         cmd = ['mpv', '--really-quiet', '--fs', '--screen',
                str(self.monitor_number), stream_url]
 
-        process = subprocess.Popen(cmd, stdin=subprocess.PIPE,
-                                   stdout=subprocess.PIPE,
-                                   stderr=subprocess.PIPE)
+        process = subprocess.Popen(cmd, stdin=subprocess.DEVNULL,
+                                   stdout=subprocess.DEVNULL,
+                                   stderr=subprocess.DEVNULL)
 
         self.CURRENT_PROC = process
 
@@ -234,14 +233,14 @@ class PlayIt(object):
 
     def _play_spotify(self, item):
         """ Play the supplied spotify track using mopidy and mpc. """
-        self.print_queue.put("Playing " + ", ".join(item['author']) + " - "
-                             + item['title'] + " requested by " + item['nick'])
+        vprint("Playing " + item['author'] + " - "
+               + item['title'] + " requested by " + item['nick'])
         self._add_to_mopidy('spotify:track:' + item['external_id'])
 
     def _play_soundcloud(self, item):
         """ Play SoundCloud items """
-        self.print_queue.put("Playing " + item['author'] + " - "
-                             + item['title'] + " requested by " + item['nick'])
+        vprint("Playing " + item['author'] + " - "
+               + item['title'] + " requested by " + item['nick'])
         self._add_to_mopidy('soundcloud:song.' + item['external_id'])
 
     def _stop_everything(self):
