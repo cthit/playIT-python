@@ -196,6 +196,7 @@ section {
   background: none;
   color: transparent;
   outline: none;
+  -webkit-appearance: none;
 }
 .search-type-select option {
   color: black;

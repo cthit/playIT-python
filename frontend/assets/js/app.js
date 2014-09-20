@@ -215,7 +215,7 @@ function time_format(seconds) {
 			hour = false;
 			return part != 0;
 		} else {
-			return part;
+			return true;
 		}
 	}).map(function(part) {
 		return part < 10 ? "0" + part : part;
