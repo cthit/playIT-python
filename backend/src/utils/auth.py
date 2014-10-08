@@ -1,6 +1,6 @@
 import requests
 
-QUERY_URL = "https://chalmers.it/auth/userInfo.php?cid=%s"
+QUERY_URL = "https://account.chalmers.it/userInfo.php?cid=%s"
 
 
 class Auth(object):

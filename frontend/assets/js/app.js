@@ -12,12 +12,12 @@ app.controller('VideofeedCtrl', function($scope, $websocket, $rootScope) {
 		$scope.votes = JSON.parse(window.localStorage.getItem('votes')) || {};
 	}
 
-	$.getJSON("https://chalmers.it/auth/userInfo.php?token=" + PlayIT.get_cookie('chalmersItAuth') + "&callback=?", function(user) {
+	$.getJSON("https://account.chalmers.it/userInfo.php?token=" + PlayIT.get_cookie('chalmersItAuth') + "&callback=?", function(user) {
 		$scope.user = user.cid;
 		$scope.is_admin = user.groups.indexOf("playITAdmin") !== -1;
 	}).fail(function(e) {
 		if (confirm('You are not signed in! Please visit chalmers.it and sign in!')) {
-			window.location = 'https://chalmers.it/';
+			window.location = 'https://account.chalmers.it/?redirect_to=' + window.location.href;
 		}
 
 		// $rootScope.$broadcast('alert', {
