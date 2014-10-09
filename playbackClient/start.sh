@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 if pgrep playIT_client.py; then
     echo "Client already running!"
@@ -14,6 +14,10 @@ if wget $url -q -O ~/playIT_client.py
     # Is mopidy running?
     if ! pgrep mopidy >/dev/null
         then
+        if ! which mopidy; then
+            echo "Cannot find mopidy. Is it installed?"
+            exit
+        fi
         echo "Starting mopidy"
         mopidy >/dev/null 2>&1 &
     fi
