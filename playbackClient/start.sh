@@ -16,6 +16,7 @@ if wget $url -q -O ~/playIT_client.py
         then
         if ! which mopidy; then
             echo "Cannot find mopidy. Is it installed?"
+            read -n 1 -s
             exit
         fi
         echo "Starting mopidy"
@@ -24,4 +25,5 @@ if wget $url -q -O ~/playIT_client.py
     ~/playIT_client.py
     # Kill my own children
     [[ -z "$(jobs -p)" ]] || kill $(jobs -p)
+    read -n 1 -s
 fi

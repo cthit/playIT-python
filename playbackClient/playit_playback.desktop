@@ -2,7 +2,7 @@
 Version=1.0
 Type=Application
 Name=playIT Playback Client
-Exec=bash -c "/home/eda/start_playit.sh"
+Exec=bash -c "~/start_playit.sh"
 Icon=utilities-terminal
 Categories=Application;
 Terminal=true
