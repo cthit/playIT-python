@@ -2,9 +2,9 @@
 Version=1.0
 Type=Application
 Name=playIT Playback Client
-Exec="/home/baren/start_playit.sh" %f
-#Icon=/icon/goes/here.png
-Categories=Media;
+Exec=bash -c "/home/eda/start_playit.sh"
+Icon=utilities-terminal
+Categories=Application;
 Terminal=true
 StartupNotify=true
 Name[en_GB]=playit_playback.desktop
