@@ -19,11 +19,13 @@ if wget $url -q -O ~/playIT_client.py
             read -n 1 -s
             exit
         fi
-        echo "Starting mopidy"
-        mopidy >/dev/null 2>&1 &
+        echo "You need to start mopidy beforehand. Speak to digIT"
+        read -n 1 -s
+        exit
     fi
+
     ~/playIT_client.py
-    # Kill my own children
-    [[ -z "$(jobs -p)" ]] || kill $(jobs -p)
+    
+    echo "Press any key to exit"
     read -n 1 -s
 fi
