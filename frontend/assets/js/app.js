@@ -1,8 +1,8 @@
 'use strict';
 var app = angular.module("playit", ['websocket', 'ui.bootstrap']);
 
-app.controller('VideofeedCtrl', function($scope, $websocket, $rootScope) {
-	var websocket = $websocket.connect('ws://localhost:8888/ws/action');
+app.controller('VideofeedCtrl', function($scope, $websocket, $rootScope, SERVER) {
+	var websocket = $websocket.connect(SERVER);
 	$scope.mediaitems = [];
 	$scope.playlistitems = [];
 	$scope.votes = {};
