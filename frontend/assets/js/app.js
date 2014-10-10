@@ -74,6 +74,9 @@ app.controller('VideofeedCtrl', function($scope, $websocket, $rootScope, SERVER)
 	});
 
 	websocket.register('playing/status', function(topic, body) {
+		if (body === null) {
+			return;
+		}
 		$rootScope.$broadcast('playback', body);
 		$scope.delete_by_id(body.id);
 	});
