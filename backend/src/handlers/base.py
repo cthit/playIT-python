@@ -13,7 +13,7 @@ from src.models.base import *
 from src.utils.memcache import *
 clients = set()
 
-TOKEN_CHECK_URL = "https://chalmers.it/auth/userInfo.php?token=%s"
+TOKEN_CHECK_URL = "https://account.chalmers.it/userInfo.php?token=%s"
 PLAYER_TOKEN = "42BabaYetuHerpaderp"
 ADMIN_GROUP = "playITAdmin"
 
