@@ -99,6 +99,10 @@ app.controller('SearchController', function($scope, $http, $rootScope) {
 		return [];
 	};
 	$scope.addVideo = function($item, $model, $label) {
+		if ($item.external_id == '87p53rAD7Sk') {
+			alert('no pls!');
+			return;
+		}
 		var query = $('#insert_video').val();
 		var result = null;
 		$rootScope.$broadcast('add_item', { type: $item.type, id: $item.external_id });
