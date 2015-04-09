@@ -3,7 +3,7 @@ import json
 import datetime
 
 from src.database import database
-from peewee import *
+from peewee import Model, DateTimeField, BooleanField, TextField, ForeignKeyField
 
 
 class Serializer(object):
@@ -65,7 +65,7 @@ class BaseModel(Model, Serializer, Deserializer):
 
     @classmethod
     def fetch(cls, *selection):
-        return cls.select(*selection).where(cls.deleted == False)
+        return cls.select(*selection).where(cls.deleted == False) # noqa
 
     def save(self, *args, **kwargs):
         self.modified_at = datetime.datetime.now()

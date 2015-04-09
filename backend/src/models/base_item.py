@@ -1,8 +1,4 @@
-import peewee
-import requests
-import logging
-from peewee import *
-from src.utils.auth import Auth
+from peewee import CharField
 from src.models.base import BaseModel
 
 

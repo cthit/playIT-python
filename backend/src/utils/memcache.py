@@ -32,7 +32,7 @@ class RedisMemcache(object):
                 return default
 
             return json.loads(data)
-        except (ValueError, TypeError) as _:
+        except (ValueError, TypeError):
             # Invalid json or data is None
             logging.warning("Invalid JSON")
             pass

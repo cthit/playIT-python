@@ -1,9 +1,7 @@
 # https://gdata.youtube.com/feeds/api/playlists/PLUcJ_HmO2bE8ohOVEGmN7WkrVhWFui0c4?v=2&alt=json
 
-import peewee
 import requests
-import logging
-from peewee import *
+from peewee import CharField, fn
 from src.utils.auth import Auth
 from src.models.base import BaseModel
 from src.models.media_item import MediaItem
@@ -138,7 +136,8 @@ class PlaylistItem(BaseModel):
         from src.models.vote import PlaylistVote
         return PlaylistItem.fetch(
             PlaylistItem, fn.Sum(PlaylistVote.value).alias("value")
-        ).join(PlaylistVote).group_by(PlaylistItem.external_id).order_by(fn.Sum(PlaylistVote.value).desc(), PlaylistItem.created_at)
+        ).join(PlaylistVote).group_by(PlaylistItem.external_id)\
+            .order_by(fn.Sum(PlaylistVote.value).desc(), PlaylistItem.created_at)
 
     @staticmethod
     def get_index(playlist, index):
@@ -165,10 +164,3 @@ class PlaylistItem(BaseModel):
         item = MediaItem.parse_youtube_entry(MediaItem(), item)
 
         return item
-
-
-
-
-
-
-

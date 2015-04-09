@@ -1,16 +1,14 @@
 __author__ = 'horv'
 
 from tornado import websocket, escape
-import logging
-import json
 import re
-import redis
-import json
 import peewee
 import requests
 import functools
-from src.models.base import *
-from src.utils.memcache import *
+import json
+import logging
+from src.models.base import BaseModel, Serializer
+from src.utils.memcache import RedisMemcache
 clients = set()
 
 TOKEN_CHECK_URL = "https://account.chalmers.it/userInfo.php?token=%s"
@@ -62,7 +60,7 @@ class Authorized(object):
                 else:
                     raise AuthenticationError("INVALID TOKEN")
 
-            if self._group and not self._group in user.get("groups"):
+            if self._group and self._group not in user.get("groups"):
                 raise AuthenticationError("You need to be member of %s to do that" % self._group)
 
             cls._user = user
@@ -137,7 +135,7 @@ class BaseHandler(websocket.WebSocketHandler):
             if no_responses > 2:
                 formatter = response[2]
             else:
-                formatter = lambda x: x
+                formatter = lambda x: x # noqa
 
             self.send(topic, package, formater=formatter)
         else:

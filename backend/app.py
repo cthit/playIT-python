@@ -40,12 +40,11 @@ logging.basicConfig(level=level,
                     datefmt='%a, %d %b %Y %H:%M:%S')
 
 from src.handlers import handlers
-from src.utils.memcache import RedisMemcache
 
 application = tornado.web.Application(handlers, '', **settings)
 
 if options.server:
     http_server = tornado.httpserver.HTTPServer(application)
     http_server.listen(options.port)
-    #tornado.autoreload.start()
+    # tornado.autoreload.start()
     tornado.ioloop.IOLoop.instance().start()

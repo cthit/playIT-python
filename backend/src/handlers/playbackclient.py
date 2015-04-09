@@ -1,4 +1,4 @@
-from src.handlers.base import *
+from src.handlers.base import BaseHandler, Authorized, NEW, SUCCESS, FAIL, UPDATE
 from src.models.media_item import MediaItem
 from src.models.playlist_item import PlaylistItem
 from src.handlers.userclient import UserClient
@@ -52,9 +52,6 @@ class PlaybackClient(BaseHandler):
     @Authorized(group="player")
     def action_get_current(self):
         return ITEM+UPDATE, self._current_item
-
-
-
 
 
 handlers = [

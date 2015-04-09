@@ -1,5 +1,5 @@
 from tornado import websocket
-from src.models.media_item import MediaItem
+
 
 class DerpHandler(websocket.WebSocketHandler):
 

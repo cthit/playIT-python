@@ -1,11 +1,10 @@
-from src.handlers.base import *
+from src.handlers.base import Authorized, UPDATE, NEW, FAIL, SUCCESS, DELETE, STATUS, \
+    BaseHandler, ADMIN_GROUP, AuthenticationError
 from src.models.media_item import MediaItem, MediaItemError
-from src.models.playlist_item import PlaylistItem, PlaylistItemError
+from src.models.playlist_item import PlaylistItem
 from src.models.vote import Vote, PlaylistVote
 from src.utils.memcache import RedisMemcache
-from src.models.base import *
 import logging
-import json
 
 SETTINGS = "SETTINGS"
 ITEM = "MEDIA_ITEM"
@@ -83,7 +82,6 @@ class UserClient(BaseHandler):
         if item:
             self.add_vote(cid, item, data)
             item.check_value()
-            item_uri = ITEM
 
             if item.deleted:
                 self.broadcast(self.get_item_uri(item)+DELETE, item, client_type=type(self))
@@ -134,8 +132,6 @@ class UserClient(BaseHandler):
             return SETTINGS+UPDATE+SUCCESS, "Limit for %s update to %s" % (media_type, limit)
         else:
             return SETTINGS+UPDATE+FAIL, "Limit not update for %s" % media_type
-
-
 
     @staticmethod
     def get_item(data):

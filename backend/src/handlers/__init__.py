@@ -1,7 +1,4 @@
-from src.handlers.derp import DerpHandler
-from src.handlers.base import BaseHandler
-from src.handlers.userclient import UserClient
-from src.handlers.playbackclient import PlaybackClient
+from src.handlers import base, derp, userclient, playbackclient
 
 
 class DefaultHandler(object):
@@ -17,4 +14,3 @@ handlers = \
     userclient.handlers + \
     playbackclient.handlers + \
     default
-

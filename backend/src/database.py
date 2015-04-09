@@ -1,5 +1,5 @@
-from tornado.options import options, define
-from peewee import *
+from tornado.options import options
+from peewee import MySQLDatabase
 
 database = MySQLDatabase(options.database,
                          host=options.database_host,

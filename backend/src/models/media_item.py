@@ -1,7 +1,6 @@
-import peewee
 import requests
 import logging
-from peewee import *
+from peewee import CharField, IntegerField, fn
 from src.utils.auth import Auth
 from src.models.base import BaseModel
 
@@ -160,7 +159,7 @@ class MediaItem(BaseModel):
         item.album = data.get("album").get("name")
         try:
             item.duration = int(data.get("length") + 0.5)
-        except (TypeError, ValueError) as e:
+        except (TypeError, ValueError):
             logging.error("Failed to get duration for spotify item")
             item.duration = 1337
 
