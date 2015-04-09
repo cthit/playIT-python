@@ -1,5 +1,6 @@
 import requests
 import logging
+import isodate
 from peewee import CharField, IntegerField, fn
 from src.utils.auth import Auth
 from src.models.base import BaseModel
@@ -16,10 +17,13 @@ DURATION_LIMIT_MAP = {
     SOUNDCLOUD: 60*60,  # 1 hour
 }
 
+YOUTUBE_URL = "https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=%s&fields=items&key="
+SOUNDCLOUD_URL = "http://api.soundcloud.com/tracks/%s.json?client_id="
+
 URL_MAP = {
-    YOUTUBE: "https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=%s&fields=items&key=" + options.youtube_key,
+    YOUTUBE: "%s%s" % (YOUTUBE_URL, options.youtube_key),
     SPOTIFY: "http://ws.spotify.com/lookup/1/.json?uri=spotify:track:%s",
-    SOUNDCLOUD: "http://api.soundcloud.com/tracks/%s.json?client_id=" + options.soundcloud_key
+    SOUNDCLOUD: "%s%s" % (SOUNDCLOUD_URL, options.soundcloud_key)
 }
 
 
@@ -127,30 +131,38 @@ class MediaItem(BaseModel):
 
     @staticmethod
     def create_youtube_item(item, data):
-
-        data = data.get("entry")
-
-        item = MediaItem.parse_youtube_entry(item, data)
+        entry = data.get("items")[0]
+        item = MediaItem.parse_youtube_entry(item, entry)
 
         return item
 
     @staticmethod
     def parse_youtube_entry(item, entry):
-        item.title = entry.get("title").get("$t")
-        item.author = entry.get("author")[0].get("name").get("$t")
-        item.description = entry.get("content").get("$t")
-        item.thumbnail = "http://i.ytimg.com/vi/%s/mqdefault.jpg" % item.external_id
+        snippet = entry.get("snippet")
+        item.title = snippet.get("title")
+        item.author = snippet.get("channelTitle")
+        item.description = snippet.get("description")
+        item.thumbnail = MediaItem.best_thumbnail(snippet.get("thumbnails"))
 
         try:
-            item.duration = int(entry.get("media$group").get("yt$duration").get("seconds"))
+            duration_raw = entry.get("contentDetails").get("duration")
+            duration_parsed = isodate.parse_duration(duration_raw)
+            item.duration = int(duration_parsed.total_seconds())
         except(ValueError, TypeError):
             item.duration = 1337
 
         return item
 
     @staticmethod
-    def create_spotify_item(item, data):
+    def best_thumbnail(thumbnail):
+        keys = ["maxres", "standard", "high", "medium", "default"]
+        for key in keys:
+            item = thumbnail.get(key)
+            if(item):
+                return item.get("url")
 
+    @staticmethod
+    def create_spotify_item(item, data):
         data = data.get("track")
 
         item.title = data.get("name")
@@ -172,7 +184,6 @@ class MediaItem(BaseModel):
 
     @staticmethod
     def create_soundcloud_item(item, data):
-
         item.title = data.get("title")
         item.author = data.get("user").get("username")
         item.thumbnail = data.get("artwork_url")
