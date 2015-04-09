@@ -20,6 +20,9 @@ define('redis_host', default=os.environ.get('REDIS_HOST', 'localhost'), help='Re
 define('static_path', default=os.environ.get('STATIC_PATH', 'static/'), help='Setup static url path.')
 define('debug', default=os.environ.get('DEBUG', False), help='Enables debug output.')
 
+define('soundcloud_key', default=os.environ.get('SOUNDCLOUD_ID', None), help='Enables debug output.')
+define('youtube_key', default=os.environ.get('YOUTUBE_KEY', None), help='Enables debug output.')
+
 define('database', default=os.environ.get('DATABASE'), help="Database")
 define('database_host', default=os.environ.get('DATABASE_HOST', 'localhost'), help="Database host")
 define('database_user', default=os.environ.get('DATABASE_USER', 'root'), help="Database username")

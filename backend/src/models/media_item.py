@@ -3,6 +3,7 @@ import logging
 from peewee import CharField, IntegerField, fn
 from src.utils.auth import Auth
 from src.models.base import BaseModel
+from tornado.options import options
 
 YOUTUBE = "youtube"
 SPOTIFY = "spotify"
@@ -15,12 +16,10 @@ DURATION_LIMIT_MAP = {
     SOUNDCLOUD: 60*60,  # 1 hour
 }
 
-SOUNDCLOUD_ID = "a2cfca0784004b38b85829ba183327cb"
-
 URL_MAP = {
-    YOUTUBE: "http://gdata.youtube.com/feeds/api/videos/%s?alt=json",
+    YOUTUBE: "https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=%s&fields=items&key=" + options.youtube_key,
     SPOTIFY: "http://ws.spotify.com/lookup/1/.json?uri=spotify:track:%s",
-    SOUNDCLOUD: "http://api.soundcloud.com/tracks/%s.json?client_id=" + SOUNDCLOUD_ID
+    SOUNDCLOUD: "http://api.soundcloud.com/tracks/%s.json?client_id=" + options.soundcloud_key
 }
 
 
