@@ -68,7 +68,7 @@ class UserClient(BaseHandler):
         self.send(ITEM+NEW, item)
         if not UserClient._current_item:
             from src.handlers.playbackclient import PlaybackClient
-            self.broadcast(ITEM+NEW, item, client_type=PlaybackClient)
+            self.broadcast(QUEUE+UPDATE, item, client_type=PlaybackClient)
         self.broadcast(QUEUE+UPDATE, MediaItem.get_queue(), formater=self.format_media_item, client_type=UserClient)
 
         return ITEM+NEW+SUCCESS, ""

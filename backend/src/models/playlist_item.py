@@ -1,18 +1,22 @@
-# https://gdata.youtube.com/feeds/api/playlists/PLUcJ_HmO2bE8ohOVEGmN7WkrVhWFui0c4?v=2&alt=json
-
 import requests
-from peewee import CharField, fn
+from tornado.options import options
+from peewee import CharField, IntegerField, fn
 from src.utils.auth import Auth
 from src.models.base import BaseModel
 from src.models.media_item import MediaItem
 
-YOUTUBE_LIST = "youtube_list"
+YOUTUBE_LIST_ITEM = "youtube_list_item"
 SPOTIFY_LIST = "spotify_list"
+YOUTUBE_LIST = "youtube_list"
 
 VOTE_LIMIT = -2
 
+YOUTUBE_LIST_ITEM_URL = "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=PLFF3F248AC60CF19E&key="
+YOUTUBE_LIST_URL = "https://www.googleapis.com/youtube/v3/playlists?part=snippet%2C+contentDetails&id=PLFF3F248AC60CF19E&key="
+
 URL_MAP = {
-    YOUTUBE_LIST: "https://gdata.youtube.com/feeds/api/playlists/%s?v=2&alt=json",
+    YOUTUBE_LIST_ITEM: "%s%s" % (YOUTUBE_LIST_ITEM_URL, options.youtube_key),
+    YOUTUBE_LIST: "%s%s" % (YOUTUBE_LIST_URL, options.youtube_key),
     SPOTIFY_LIST: "",  # Spotify requires api key and authorization
 }
 
@@ -31,6 +35,7 @@ class PlaylistItem(BaseModel):
     nick = CharField()
     type = CharField()
     external_id = CharField()
+    item_count = IntegerField()
 
     def exists(self):
         return PlaylistItem.fetch().where(
@@ -112,13 +117,13 @@ class PlaylistItem(BaseModel):
 
     @staticmethod
     def create_youtube_list_item(item, data):
-
-        data = data.get("feed")
-
-        item.title = data.get("title").get("$t")
-        item.author = data.get("author")[0].get("name").get("$t")
-
-        item.thumbnail = data.get("media$group").get("media$thumbnail")[1].get("url")
+        entry = data.get("items")[0]
+        snippet = entry.get("snippet")
+        item.title = snippet.get("title")
+        item.author = ""  # TODO at some point mayhaps
+        thumbnail = snippet.get("thumbnails")
+        item.thumbnail = MediaItem.best_thumbnail(thumbnail)
+        item.item_count = entry.get("contentDetails").get("itemCount")
 
         return item
 

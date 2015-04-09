@@ -178,7 +178,8 @@ class PlayIt(object):
                 play_loop = threading.Thread(target=self.play_item,
                                              args=(item,))
                 play_loop.start()
-            elif topic == "GREETING":
+            elif topic == "GREETING" or 
+             (topic == "QUEUE/UPDATE" and not self.CURRENT_PROC):
                 self._pop_next()
             vprint("\n\n")
 
@@ -203,7 +204,10 @@ class PlayIt(object):
             func_name = "_play_" + item['type'].lower()
             vprint("func_name:" + func_name)
             func = getattr(self, func_name)
-            func(item)
+            if func:
+                func(item)
+            else:
+                vprint("Couldn't find playback function " + func_name)
         else:
             vprint("No item in queue, sleeping...")
         self._pop_next()
