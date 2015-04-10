@@ -7,23 +7,8 @@
 	<link href='//fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>
 	<title>playIT</title>
 </head>
-<body ng-app="playit">
-	<now-playing></now-playing>
-	<header>
-		<search id="searchfield"></search>
-	</header>
-	<div ng-controller="AlertCtrl">
-		<alert class="animate-if" ng-repeat="alert in alerts" type="alert.type">{{alert.message}}</alert>
-	</div>
-	<videofeed></videofeed>
+<body>
 	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.0-rc.0/angular.js"></script>
-	<script type="text/javascript" src="assets/js/libs/websocket.js"></script>
-	<script type="text/javascript" src="assets/js/libs/ui-bootstrap-custom-tpls-0.10.0.min.js"></script>
-	<script type="text/javascript" src="assets/js/libs/mousetrap.min.js"></script>
-	<script type="text/javascript" src="assets/js/functions.js"></script>
-	<script type="text/javascript" src="assets/js/app.js"></script>
-	<script type="text/javascript" src="assets/js/config.js"></script>
-	<script type="text/javascript" src="assets/js/searchbox-directive.js"></script>
+	<script type="text/javascript" src="build/app.js"></script>
 </body>
 </html>

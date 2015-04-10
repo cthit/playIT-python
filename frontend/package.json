@@ -1,0 +1,31 @@
+{
+	"name": "playit-react",
+	"version": "0.0.1",
+	"description": "PlayIT frontend in react",
+	"author": "Johan 'Ndushi' Lindskogen <johan@lindskogen.se>",
+	"main": "src/main.jsx",
+	"scripts": {
+		"watch": "watchify --debug src/main.jsx -o build/app.js -v",
+		"start": "babel-node server.js",
+    	"clean": "rm build/app.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/cthit/playIT-python"
+	},
+	"dependencies": {
+		"mousetrap": "1.5.2",
+		"react": "0.13.1"
+	},
+	"devDependencies": {
+		"babel": "^4.7.13",
+		"babelify": "^5.0.4",
+		"browserify": "^9.0.3",
+		"watchify": "^3.1.0"
+	},
+	"browserify": {
+		"transform": [
+			"babelify"
+		]
+	}
+}
