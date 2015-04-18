@@ -42,12 +42,15 @@ logging.basicConfig(level=level,
                     format='%(asctime)s %(levelname)-8s %(message)s',
                     datefmt='%a, %d %b %Y %H:%M:%S')
 
+logging.info("Importing handlers...")
 from src.handlers import handlers
 
+logging.info("Creating web application...")
 application = tornado.web.Application(handlers, '', **settings)
 
 if options.server:
     http_server = tornado.httpserver.HTTPServer(application)
     http_server.listen(options.port)
     # tornado.autoreload.start()
+    logging.info("Starting server and listening for messages on port: %s" % options.port)
     tornado.ioloop.IOLoop.instance().start()
