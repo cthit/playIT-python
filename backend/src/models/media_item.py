@@ -1,7 +1,7 @@
 import requests
 import logging
 import isodate
-from peewee import CharField, IntegerField, fn
+from peewee import CharField, IntegerField, TextField, fn
 from src.utils.auth import Auth
 from src.models.base import BaseModel
 from tornado.options import options
@@ -35,7 +35,7 @@ class MediaItem(BaseModel):
 
     title = CharField(default="")
     author = CharField(default="")
-    description = CharField(default="")
+    description = TextField(default="")
     thumbnail = CharField(default="")
     cid = CharField()
     nick = CharField()
