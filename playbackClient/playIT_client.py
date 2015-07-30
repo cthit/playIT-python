@@ -178,8 +178,7 @@ class PlayIt(object):
                 play_loop = threading.Thread(target=self.play_item,
                                              args=(item,))
                 play_loop.start()
-            elif topic == "GREETING" or 
-             (topic == "QUEUE/UPDATE" and not self.CURRENT_PROC):
+            elif (topic == "GREETING") or (topic == "QUEUE/UPDATE" and not self.CURRENT_PROC) :
                 self._pop_next()
             vprint("\n\n")
 
