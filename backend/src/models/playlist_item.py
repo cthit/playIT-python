@@ -127,7 +127,7 @@ class PlaylistItem(BaseModel):
         thumbnail = snippet.get("thumbnails")
         item.thumbnail = MediaItem.best_thumbnail(thumbnail)
         item.item_count = entry.get("contentDetails").get("itemCount")
-        PlaylistItem.cache_youtube_list(item.['external_id'])
+        PlaylistItem.cache_youtube_list(item['external_id'])
 
         return item
 
