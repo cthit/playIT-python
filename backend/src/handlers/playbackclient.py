@@ -44,7 +44,6 @@ class PlaybackClient(BaseHandler):
         self._index = index + 1
         self._current_item = item
         UserClient.set_current(item)
-        item.delete_instance()
         self.broadcast(ITEM+NEW, item)
 
         return ITEM+SUCCESS, ""
