@@ -14,7 +14,7 @@ YOUTUBE_LIST = "youtube_list"
 VOTE_LIMIT = -2
 
 YOUTUBE_LIST_ITEM_URL = "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=PLFF3F248AC60CF19E&key="
-YOUTUBE_LIST_URL = "https://www.googleapis.com/youtube/v3/playlists?part=snippet%2C+contentDetails&id=PLFF3F248AC60CF19E&key="
+YOUTUBE_LIST_URL = "https://www.googleapis.com/youtube/v3/playlists?part=snippet,contentDetails&id=%s&key="
 YOUTUBE_KEY = options.youtube_key
 
 URL_MAP = {
@@ -127,7 +127,7 @@ class PlaylistItem(BaseModel):
         thumbnail = snippet.get("thumbnails")
         item.thumbnail = MediaItem.best_thumbnail(thumbnail)
         item.item_count = entry.get("contentDetails").get("itemCount")
-        PlaylistItem.cache_youtube_list(item['external_id'])
+        PlaylistItem.cache_youtube_list(item.external_id)
 
         return item
 
@@ -173,11 +173,16 @@ class PlaylistItem(BaseModel):
 
     @staticmethod
     def get_index_youtube_list(external_id, index):
+        playlist = PlaylistItem.fetch().where(PlaylistItem.external_id == external_id).first()
         videos = PlaylistItem._retrieved_youtube_cache(external_id)
-        if not videos:
+        if not videos or not playlist:
             return
 
         index = index % len(videos)
         item = videos[index]
+        if item:
+            item["type"] = "youtube"
+            item["nick"] = playlist.nick
+            print(item)
 
         return item
