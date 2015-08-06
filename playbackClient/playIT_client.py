@@ -218,11 +218,9 @@ class PlayIt(object):
         vprint("Playing youtube video: " + item['title']
                + " requested by " + item['nick'])
         youtube_url = "https://youtu.be/" + item['external_id']
-        youtube_dl = ["youtube-dl", youtube_url, "-g"]
 
-        stream_url = subprocess.check_output(youtube_dl).decode('UTF8').strip()
         cmd = ['mpv', '--really-quiet', '--fs', '--screen',
-               str(self.monitor_number), stream_url]
+               str(self.monitor_number), youtube_url] 
 
         process = subprocess.Popen(cmd, stdin=subprocess.DEVNULL,
                                    stdout=subprocess.DEVNULL,
