@@ -9,6 +9,11 @@ var VideoItem = React.createClass({
   setAsCurrent() {
     this.props.setItem(this.props.item.id);
   },
+  componentDidUpdate() {
+    if (this.props.selected) {
+      this.getDOMNode().scrollIntoView();
+    }
+  },
   render() {
     let item = this.props.item;
     let classes = ['media', item.type];
@@ -26,11 +31,8 @@ var VideoItem = React.createClass({
         </div>
         <div className="info">
           <h3>{item.title} [{Helpers.format_time(item.duration)}]</h3>
-          <small>Added by: <span title={item.cid}>{item.nick}</span></small>
-          <p>
-            <em>{item.author}</em><br/>
-            <strong>{item.description}</strong>
-          </p>
+          <small><strong>{item.author}</strong> — Added by: <span title={item.cid}>{item.nick}</span></small>
+          <p>{item.description}</p>
         </div>
       </li>
     );

@@ -27,14 +27,14 @@ export default class Backend {
   _notifyListeners(topic, args) {
     topic = topic.toLowerCase();
     if (this.listeners[topic] && this.listeners[topic].length > 0) {
-      this.listeners[topic].map((func) => {
-        func(args);
-      });
+      this.listeners[topic].forEach((func) => func(args));
     }
   }
   call(method, args = {}) {
+
     args.token = get_cookie();
     let data = method + ' ' + JSON.stringify(args);
+    console.log(data);
     this.socket.send(data);
   }
   _messageReceived(event) {

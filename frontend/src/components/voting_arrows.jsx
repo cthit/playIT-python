@@ -24,9 +24,9 @@ var VotingArrows = React.createClass({
   render() {
     return (
       <div className="vote">
-          <span className="upvote" onClick={this.upvote}>⬆</span>
+          <span className="upvote vote-arrow" onClick={this.upvote}>⬆</span>
           <span className="rating">{this.props.value + this.state.value}</span>
-          <span className="downvote" onClick={this.downvote}>⬇</span>
+          <span className="downvote vote-arrow" onClick={this.downvote}>⬇</span>
       </div>
     );
   }

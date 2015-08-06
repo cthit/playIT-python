@@ -2,12 +2,14 @@ require("./polyfill.js")();
 import React from "react";
 import NowPlaying from "./components/now_playing.jsx";
 import VideoFeed from "./components/video_feed.jsx";
+import Searchbox from "./components/searchbox.jsx";
 import Backend from "./backend.js";
 import Mousetrap from "./mousetrap.js";
+import firstBy from "./thenby.js";
 
 window.React = React;
 
-var backend = null;
+var backend;
 
 var PlayIT = React.createClass({
   getInitialState() {
@@ -17,8 +19,12 @@ var PlayIT = React.createClass({
       selected: null
     };
   },
-  _update_now_playing(item) {
-    this.setState({now_playing: item});
+  _update_now_playing(currentItem) {
+    this.setState({now_playing: currentItem});
+    if (currentItem && currentItem.id) {
+      let items = this.state.items.filter((item) => item.id !== currentItem.id);
+      this._update_queue(items);
+    }
   },
   _update_item(newItem) {
     let items = this.state.items.map((item) => {
@@ -31,10 +37,12 @@ var PlayIT = React.createClass({
     this.setState({items: items});
   },
   _update_queue(items) {
-    this.setState({items: items});
-    if (!this.state.selected) {
-      this.setState({selected: items[0].id});
-    }
+    items = items.sort(firstBy('value').thenBy('created_at'));
+    this.setState({items: items}, function() {
+      if (!this.state.selected && items[0]) {
+        this.setState({selected: items[0].id});
+      }
+    });
   },
   voteItem(value, item = this.currentItem()) {
     backend.call('add_vote', {
@@ -51,6 +59,10 @@ var PlayIT = React.createClass({
     if (id !== this.state.selected) {
       this.setState({selected: id});
     }
+  },
+  addItem(mediaItem) {
+    let {id, type} = mediaItem;
+    backend.call('add_item', {id, type});
   },
   prevItem() {
     let index = this.state.items.indexOf(this.currentItem());
@@ -71,22 +83,19 @@ var PlayIT = React.createClass({
       backend.registerListener('queue/update', this._update_queue);
       backend.call('get_queue');
       backend.call('get_current');
+      // backend.call('add_item', {type: 'youtube_list', id: 'PLFF3F248AC60CF19E'});
     });
+    window.backend = backend;
   },
   render() {
     return (
       <div>
-        <NowPlaying item={this.state.now_playing} />
-        <header>
-          <search/>
-        </header>
-        <div>
-          <alert></alert>
-        </div>
+        <Searchbox addItem={this.addItem} />
         <VideoFeed items={this.state.items} setItem={this.setItem} selected={this.state.selected} playIT={this} />
+        <NowPlaying item={this.state.now_playing} />
       </div>
     );
   }
 });
 
-React.render(<PlayIT url="ws://10.1.0.6:8888/ws/action"/>, document.body);
+React.render(<PlayIT url="ws://10.0.0.213:8888/ws/action"/>, document.body);
