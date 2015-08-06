@@ -35,19 +35,19 @@ class YoutubeService:
 
     @staticmethod
     def get_playlist_item(playlist_id):
-        playlist_request = youtube.playlists.list(
+        playlist_request = youtube.playlists().list(
             id=playlist_id,
             part="id,snippet,contentDetails"
         )
 
         if playlist_request:
             response = playlist_request.execute()
-            playlist = items[0]
+            playlist = response.get("items")[0]
             snippet = playlist.get('snippet')
             return dict(
-                title=playlist.get('title'),
+                title=snippet.get('title'),
                 author=snippet.get('channelTitle'),
-                thumbnail=best_thumbnail(snippet.get("thumbnails")),
+                thumbnail=YoutubeService.best_thumbnail(snippet.get("thumbnails")),
                 item_count=playlist.get('contentDetails').get('itemCount')
                 )
 
@@ -65,7 +65,7 @@ class YoutubeService:
 
         for c in chunks:
             search_request = youtube.videos().list(
-                id=c,
+                id=",".join(c),
                 part="id, snippet, contentDetails",
             )
 
@@ -83,6 +83,7 @@ class YoutubeService:
         snippet = entry['snippet']
         item = dict(
             title=snippet.get("title"),
+            external_id=entry.get("id"),
             author=snippet.get("channelTitle"),
             description=snippet.get("description"),
             thumbnail=YoutubeService.best_thumbnail(snippet.get("thumbnails"))
