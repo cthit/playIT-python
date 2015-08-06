@@ -34,6 +34,25 @@ class YoutubeService:
         return videos
 
     @staticmethod
+    def get_playlist_item(playlist_id):
+        playlist_request = youtube.playlists.list(
+            id=playlist_id,
+            part="id,snippet,contentDetails"
+        )
+
+        if playlist_request:
+            response = playlist_request.execute()
+            playlist = items[0]
+            snippet = playlist.get('snippet')
+            return dict(
+                title=playlist.get('title'),
+                author=snippet.get('channelTitle'),
+                thumbnail=best_thumbnail(snippet.get("thumbnails")),
+                item_count=playlist.get('contentDetails').get('itemCount')
+                )
+
+
+    @staticmethod
     def _chunks(l, n):
         """Yield successive n-sized chunks from l."""
         for i in range(0, len(l), n):

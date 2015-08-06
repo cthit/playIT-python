@@ -6,20 +6,13 @@ from src.models.base import BaseModel
 from src.models.media_item import MediaItem
 from src.utils.memcache import RedisMemcache
 from src.services.youtube_service import YoutubeService
+from src.services.soundcloud_service import SoundcloudService
 
-YOUTUBE_LIST_ITEM = "youtube_list_item"
 SPOTIFY_LIST = "spotify_list"
-YOUTUBE_LIST = "youtube_list"
 
 VOTE_LIMIT = -2
 
-YOUTUBE_LIST_ITEM_URL = "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=PLFF3F248AC60CF19E&key="
-YOUTUBE_LIST_URL = "https://www.googleapis.com/youtube/v3/playlists?part=snippet,contentDetails&id=%s&key="
-YOUTUBE_KEY = options.youtube_key
-
 URL_MAP = {
-    YOUTUBE_LIST_ITEM: "%s%s" % (YOUTUBE_LIST_ITEM_URL, options.youtube_key),
-    YOUTUBE_LIST: "%s%s" % (YOUTUBE_LIST_URL, options.youtube_key),
     SPOTIFY_LIST: "",  # Spotify requires api key and authorization
 }
 
@@ -106,11 +99,12 @@ class PlaylistItem(BaseModel):
         if item.exists():
             raise PlaylistItemError("Item already exists")
 
-        url = URL_MAP.get(media_type) % external_id
-        response = requests.get(url)
-        data = response.json()
+        item_dict = creator(item, data)
+        item.title = item_dict.get("title")
+        item.author = item_dict.get('author')
+        item.thumbnail = item_dict.get("thumbnail")
+        item.item_count = item_dict.get("item_count")
 
-        item = creator(item, data)
         user = Auth.get_user(cid)
         item.cid = cid
         if user:
@@ -119,23 +113,24 @@ class PlaylistItem(BaseModel):
         return item
 
     @staticmethod
-    def create_youtube_list_item(item, data):
-        entry = data.get("items")[0]
-        snippet = entry.get("snippet")
-        item.title = snippet.get("title")
-        item.author = ""  # TODO at some point mayhaps
-        thumbnail = snippet.get("thumbnails")
-        item.thumbnail = MediaItem.best_thumbnail(thumbnail)
-        item.item_count = entry.get("contentDetails").get("itemCount")
+    def create_youtube_list_item(item):
+        playlist_item = YoutubeService.get_playlist_item(playlist_id=item.external_id)
         PlaylistItem.cache_youtube_list(item.external_id)
 
-        return item
+        return playlist_item
 
     @staticmethod
     def cache_youtube_list(playlist_id):
         video_ids = YoutubeService.playlist_items_ids(playlist_id)
         videos = YoutubeService.videos(video_ids)
         RedisMemcache.set(playlist_id, videos)
+
+    @staticmethod
+    def create_soundcloud_item(item):
+        soundcloud_item = SoundcloudService.get_playlist(item.external_id)
+        RedisMemcache.set(item.external_id, soundcloud_item.get('tracks'))
+
+        return soundcloud_item
 
     @staticmethod
     def create_spotify_list_item(item, data):
@@ -155,33 +150,25 @@ class PlaylistItem(BaseModel):
             .order_by(fn.Sum(PlaylistVote.value).desc(), PlaylistItem.created_at)
 
     @staticmethod
+    def _retrieve_cache(external_id, media_type):
+        items = RedisMemcache.get(external_id)
+        if items:
+            return items
+        else:
+            cacher = getattr(PlaylistItem, "cache_" + media_type)
+            cacher(external_id)
+            return RedisMemcache.get(external_id)
+
+    @staticmethod
     def get_index(playlist, index):
-        media_type = playlist.type
-        external_id = playlist.external_id
-
-        retriever = getattr(PlaylistItem, "get_index_" + media_type)
-
-        return retriever(external_id, index)
-
-    @staticmethod
-    def _retrieved_youtube_cache(external_id):
-        videos = RedisMemcache.get(external_id)
-        if not videos:
-            PlaylistItem.cache_youtube_list(external_id)
-
-        return RedisMemcache.get(external_id)
-
-    @staticmethod
-    def get_index_youtube_list(external_id, index):
-        playlist = PlaylistItem.fetch().where(PlaylistItem.external_id == external_id).first()
-        videos = PlaylistItem._retrieved_youtube_cache(external_id)
-        if not videos or not playlist:
+        items = PlaylistItem._retrieve_cache(external_id, playlist.type)
+        if not items:
             return
 
-        index = index % len(videos)
-        item = videos[index]
+        index = index % len(items)
+        item = items[index]
         if item:
-            item["type"] = "youtube"
+            item["type"] = playlist.type[:-5]
             item["nick"] = playlist.nick
             print(item)
 
