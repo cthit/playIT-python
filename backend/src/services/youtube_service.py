@@ -17,7 +17,7 @@ class YoutubeService:
 
         search_request = youtube.playlistItems().list(
             playlistId=playlist_id,
-            part="id",
+            part="id,snippet",
             maxResults=50
         )
 
