@@ -2,6 +2,7 @@
 import soundcloud as sc
 import argparse
 from tornado.options import options
+from src.utils import DictNoNone
 
 SOUNDCLOUD_KEY = options.soundcloud_key
 
@@ -16,7 +17,7 @@ class SoundcloudService:
         for track in playlist.tracks:
             tracks.append(SoundcloudService.create_soundcloud_item(track))
 
-        return dict(
+        return DictNoNone(
             title=playlist.title,
             author=playlist.user.get("username"),
             thumbnail=playlist.artwork_url,
@@ -37,6 +38,7 @@ class SoundcloudService:
     def create_soundcloud_item(track):
         return dict(
             title=track.get('title'),
+            external_id=str(track.get('id')),
             author=track.get('user', dict()).get('username'),
             thumbnail=track.get('artwork_url'),
             duration=int(track.get('duration')/1000 + 0.5)

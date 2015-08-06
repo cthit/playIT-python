@@ -99,10 +99,10 @@ class PlaylistItem(BaseModel):
         if item.exists():
             raise PlaylistItemError("Item already exists")
 
-        item_dict = creator(item, data)
+        item_dict = creator(item)
         item.title = item_dict.get("title")
         item.author = item_dict.get('author')
-        item.thumbnail = item_dict.get("thumbnail")
+        item.thumbnail = item_dict.get("thumbnail", "")
         item.item_count = item_dict.get("item_count")
 
         user = Auth.get_user(cid)
@@ -126,7 +126,7 @@ class PlaylistItem(BaseModel):
         RedisMemcache.set(playlist_id, videos)
 
     @staticmethod
-    def create_soundcloud_item(item):
+    def create_soundcloud_list_item(item):
         soundcloud_item = SoundcloudService.get_playlist(item.external_id)
         RedisMemcache.set(item.external_id, soundcloud_item.get('tracks'))
 
@@ -161,11 +161,13 @@ class PlaylistItem(BaseModel):
 
     @staticmethod
     def get_index(playlist, index):
-        items = PlaylistItem._retrieve_cache(external_id, playlist.type)
+        print(index)
+        items = PlaylistItem._retrieve_cache(playlist.external_id, playlist.type)
         if not items:
             return
 
         index = index % len(items)
+        print(len(items))
         item = items[index]
         if item:
             item["type"] = playlist.type[:-5]
