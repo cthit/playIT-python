@@ -43,6 +43,7 @@ class MediaItem(BaseModel):
     external_id = CharField()
     duration = IntegerField()
     album = CharField(null=True)
+    permalink_url = CharField(null=True)
 
     def exists(self):
         return MediaItem.fetch().where(
@@ -188,6 +189,7 @@ class MediaItem(BaseModel):
         item.author = data.get("user").get("username")
         item.thumbnail = data.get("artwork_url")
         item.duration = int(data.get("duration")/1000 + 0.5)
+        item.permalink_url = data.get("permalink_url")
 
         return item
 

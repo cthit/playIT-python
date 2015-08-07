@@ -41,5 +41,6 @@ class SoundcloudService:
             external_id=str(track.get('id')),
             author=track.get('user', dict()).get('username'),
             thumbnail=track.get('artwork_url'),
-            duration=int(track.get('duration')/1000 + 0.5)
+            duration=int(track.get('duration')/1000 + 0.5),
+            permalink_url=track.get("permalink_url")
         )
