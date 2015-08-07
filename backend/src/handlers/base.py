@@ -123,6 +123,9 @@ class BaseHandler(websocket.WebSocketHandler):
         except AuthenticationError as e:
             self.close(403, e)
             return
+        except Exception as e:
+            self.close(500, e)
+            return
 
         no_responses = len(response)
         if no_responses > 0:

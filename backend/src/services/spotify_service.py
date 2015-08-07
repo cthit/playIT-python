@@ -1,0 +1,46 @@
+#!/usr/bin/python
+
+import spotipy
+from tornado.options import options
+from src.utils import DictNoNone
+
+# used to generate a token which is then placed in env.server_example as SPOTIFY_KEY
+# https://developer.spotify.com/my-applications
+#import spotipy.util as util
+#token = util.prompt_for_user_token("tejpbit")
+#print("%r" %token)
+
+sp = spotipy.Spotify(auth=options.spotify_key)
+
+class SpotifyService:
+    @staticmethod
+    def get_playlist(username, playlist_id):
+        
+        playlist = sp.user_playlist(username, playlist_id=playlist_id)
+
+        playlist_tracks = sp.user_playlist_tracks(username, playlist_id=playlist_id)
+        tracks = list()
+        for item in playlist_tracks.get("items"):
+            tracks.append(SpotifyService.create_spotify_item(item.get("track")))
+
+        return DictNoNone(
+            title=playlist.get("name"),
+            author=playlist.get("owner").get("id"),
+            thumbnail=playlist.get("images")[0].get("url"),
+            item_count=playlist.get("tracks").get("total"),
+            tracks=tracks
+        )
+
+    @staticmethod
+    def get_playlist_tracks(playlist_id):
+        pass
+
+    @staticmethod
+    def create_spotify_item(track):
+        return dict(
+            title=track.get('name'),
+            external_id=str(track.get('id')),
+            author=", ".join((a.get("name") for a in track.get("artists"))),
+            thumbnail=track.get('album').get("images")[0].get("url"),
+            duration=int(track.get('duration_ms')/1000 + 0.5)
+        )

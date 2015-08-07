@@ -22,6 +22,7 @@ define('debug', default=os.environ.get('DEBUG', False), help='Enables debug outp
 
 define('soundcloud_key', default=os.environ.get('SOUNDCLOUD_ID', None), help='Enables debug output.')
 define('youtube_key', default=os.environ.get('YOUTUBE_KEY', None), help='Enables debug output.')
+define('spotify_key', default=os.environ.get('SPOTIFY_KEY', None), help='Enables debug output.')
 
 define('database', default=os.environ.get('DATABASE'), help="Database")
 define('database_host', default=os.environ.get('DATABASE_HOST', 'localhost'), help="Database host")

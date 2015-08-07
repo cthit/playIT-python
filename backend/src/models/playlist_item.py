@@ -7,6 +7,7 @@ from src.models.media_item import MediaItem
 from src.utils.memcache import RedisMemcache
 from src.services.youtube_service import YoutubeService
 from src.services.soundcloud_service import SoundcloudService
+from src.services.spotify_service import SpotifyService
 
 SPOTIFY_LIST = "spotify_list"
 
@@ -133,8 +134,14 @@ class PlaylistItem(BaseModel):
         return soundcloud_item
 
     @staticmethod
-    def create_spotify_list_item(item, data):
-        pass
+    def create_spotify_list_item(item):
+        id_parts = item.external_id.split(':')
+        playlist = SpotifyService.get_playlist(id_parts[2], id_parts[4])
+        RedisMemcache.set(item.external_id, playlist.get('tracks'))
+        
+
+        return playlist
+
 
     @staticmethod
     def valid_user(cid):
