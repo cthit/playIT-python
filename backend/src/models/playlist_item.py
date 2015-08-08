@@ -5,7 +5,6 @@ from src.utils.auth import Auth
 from src.models.base import BaseModel
 from src.models.media_item import MediaItem
 from src.utils.memcache import RedisMemcache
-from src.services.youtube_service import YoutubeService
 from src.services.soundcloud_service import SoundcloudService
 from src.services.spotify_service import SpotifyService
 
@@ -92,7 +91,14 @@ class PlaylistItem(BaseModel):
 
     @staticmethod
     def create_media_item(cid, media_type, external_id):
-        creator = getattr(PlaylistItem, "create_" + media_type + "_item")
+        creator
+        if media_type == "youtube_list":
+            mod = __import__('src.models.playlist_items', fromlist=['YoutubePlaylistItemAdapter'])
+            klass = getattr(mod, 'YoutubePlaylistItemAdapter')
+            creator = getattr(PlaylistItem, "create_item")
+        else
+            creator = getattr(PlaylistItem, "create_" + media_type + "_item")
+
         item = PlaylistItem()
         item.external_id = external_id
         item.type = media_type
@@ -112,19 +118,6 @@ class PlaylistItem(BaseModel):
             item.nick = user.get("nick", "")
 
         return item
-
-    @staticmethod
-    def create_youtube_list_item(item):
-        playlist_item = YoutubeService.get_playlist_item(playlist_id=item.external_id)
-        PlaylistItem.cache_youtube_list(item.external_id)
-
-        return playlist_item
-
-    @staticmethod
-    def cache_youtube_list(playlist_id):
-        video_ids = YoutubeService.playlist_items_ids(playlist_id)
-        videos = YoutubeService.videos(video_ids)
-        RedisMemcache.set(playlist_id, videos)
 
     @staticmethod
     def create_soundcloud_list_item(item):
