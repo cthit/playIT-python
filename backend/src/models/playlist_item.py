@@ -1,12 +1,11 @@
 import requests
+import importlib
 from tornado.options import options
 from peewee import CharField, IntegerField, fn
 from src.utils.auth import Auth
 from src.models.base import BaseModel
 from src.models.media_item import MediaItem
 from src.utils.memcache import RedisMemcache
-from src.services.soundcloud_service import SoundcloudService
-from src.services.spotify_service import SpotifyService
 
 SPOTIFY_LIST = "spotify_list"
 
@@ -15,6 +14,7 @@ VOTE_LIMIT = -2
 URL_MAP = {
     SPOTIFY_LIST: "",  # Spotify requires api key and authorization
 }
+
 
 
 class PlaylistItemError(Exception):
@@ -51,7 +51,7 @@ class PlaylistItem(BaseModel):
         from src.models.vote import PlaylistVote
         votes = self._get_votes()
 
-        if votes and float(votes.value) <= VOTE_LIMIT:
+        if votes and votes.value and float(votes.value) <= VOTE_LIMIT:
             PlaylistVote.delete(permanently=True).where(PlaylistVote.item == self).execute()
             self.delete_instance()
 
@@ -91,13 +91,7 @@ class PlaylistItem(BaseModel):
 
     @staticmethod
     def create_media_item(cid, media_type, external_id):
-        creator
-        if media_type == "youtube_list":
-            mod = __import__('src.models.playlist_items', fromlist=['YoutubePlaylistItemAdapter'])
-            klass = getattr(mod, 'YoutubePlaylistItemAdapter')
-            creator = getattr(PlaylistItem, "create_item")
-        else
-            creator = getattr(PlaylistItem, "create_" + media_type + "_item")
+        creator = PlaylistItem.get_creator(media_type)
 
         item = PlaylistItem()
         item.external_id = external_id
@@ -120,21 +114,21 @@ class PlaylistItem(BaseModel):
         return item
 
     @staticmethod
-    def create_soundcloud_list_item(item):
-        soundcloud_item = SoundcloudService.get_playlist(item.external_id)
-        RedisMemcache.set(item.external_id, soundcloud_item.get('tracks'))
-
-        return soundcloud_item
+    def get_creator(media_type):
+        Klass = PlaylistItem.get_class(media_type)
+        return getattr(Klass, "create_item")
 
     @staticmethod
-    def create_spotify_list_item(item):
-        id_parts = item.external_id.split(':')
-        playlist = SpotifyService.get_playlist(id_parts[2], id_parts[4])
-        RedisMemcache.set(item.external_id, playlist.get('tracks'))
-        
+    def get_class(media_type):
+        mod = importlib.import_module('src.models.playlist_items.PlaylistItemAdapters')
+        klass_name = media_type[:-5].capitalize() + 'PlaylistItemAdapter'
+        return getattr(mod, klass_name)
 
-        return playlist
 
+    @staticmethod
+    def get_cacher(media_type):
+        Klass = PlaylistItem.get_class(media_type)
+        return getattr(Klass, "cache_list")
 
     @staticmethod
     def valid_user(cid):
@@ -155,7 +149,7 @@ class PlaylistItem(BaseModel):
         if items:
             return items
         else:
-            cacher = getattr(PlaylistItem, "cache_" + media_type)
+            cacher = PlaylistItem.get_cacher(media_type)
             cacher(external_id)
             return RedisMemcache.get(external_id)
 
