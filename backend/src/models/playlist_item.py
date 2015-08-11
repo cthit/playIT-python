@@ -101,6 +101,7 @@ class PlaylistItem(BaseModel):
             raise PlaylistItemError("Item already exists")
 
         item_dict = creator(item)
+        
         item.title = item_dict.get("title")
         item.author = item_dict.get('author')
         item.thumbnail = item_dict.get("thumbnail", "")

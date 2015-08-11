@@ -1,6 +1,7 @@
 import requests
 import logging
 import isodate
+import importlib
 from peewee import CharField, IntegerField, TextField, fn
 from src.utils.auth import Auth
 from src.models.base import BaseModel
@@ -110,7 +111,7 @@ class MediaItem(BaseModel):
 
     @staticmethod
     def create_media_item(cid, media_type, external_id):
-        creator = getattr(MediaItem, "create_" + media_type + "_item")
+        creator = MediaItem.get_creator(media_type)
         item = MediaItem()
         item.external_id = external_id
         item.type = media_type
@@ -118,11 +119,15 @@ class MediaItem(BaseModel):
         if item.exists():
             raise MediaItemError("Item already exists")
 
-        url = URL_MAP.get(media_type) % external_id
-        response = requests.get(url)
-        data = response.json()
+        item_dict = creator(item)
+        
+        item.title = item_dict.get("title")
+        item.author = item_dict.get('author')
+        item.thumbnail = item_dict.get("thumbnail", "")
+        item.item_count = item_dict.get("item_count")
+        item.duration = item_dict.get("duration")
+        item.permalink_url = item_dict.get("permalink_url")
 
-        item = creator(item, data)
         user = Auth.get_user(cid)
         item.cid = cid
         if user:
@@ -131,67 +136,15 @@ class MediaItem(BaseModel):
         return item
 
     @staticmethod
-    def create_youtube_item(item, data):
-        entry = data.get("items")[0]
-        item = MediaItem.parse_youtube_entry(item, entry)
-
-        return item
+    def get_creator(media_type):
+        Klass = MediaItem.get_class(media_type)
+        return getattr(Klass, "create_item")
 
     @staticmethod
-    def parse_youtube_entry(item, entry):
-        snippet = entry.get("snippet")
-        item.title = snippet.get("title")
-        item.author = snippet.get("channelTitle")
-        item.description = snippet.get("description")
-        item.thumbnail = MediaItem.best_thumbnail(snippet.get("thumbnails"))
-
-        try:
-            duration_raw = entry.get("contentDetails").get("duration")
-            duration_parsed = isodate.parse_duration(duration_raw)
-            item.duration = int(duration_parsed.total_seconds())
-        except(ValueError, TypeError):
-            item.duration = 1337
-
-        return item
-
-    @staticmethod
-    def best_thumbnail(thumbnail):
-        keys = ["maxres", "standard", "high", "medium", "default"]
-        for key in keys:
-            item = thumbnail.get(key)
-            if(item):
-                return item.get("url")
-
-    @staticmethod
-    def create_spotify_item(item, data):
-        data = data.get("track")
-
-        item.title = data.get("name")
-        item.author = ", ".join((a.get("name") for a in data.get("artists")))
-        item.album = data.get("album").get("name")
-        try:
-            item.duration = int(data.get("length") + 0.5)
-        except (TypeError, ValueError):
-            logging.error("Failed to get duration for spotify item")
-            item.duration = 1337
-
-        thumbnail_url = "https://embed.spotify.com/oembed/?url=spotify:track:%s" % item.external_id
-        thumbnail_resp = requests.get(thumbnail_url)
-        thumbnail_data = thumbnail_resp.json()
-
-        item.thumbnail = thumbnail_data.get("thumbnail_url")
-
-        return item
-
-    @staticmethod
-    def create_soundcloud_item(item, data):
-        item.title = data.get("title")
-        item.author = data.get("user").get("username")
-        item.thumbnail = data.get("artwork_url")
-        item.duration = int(data.get("duration")/1000 + 0.5)
-        item.permalink_url = data.get("permalink_url")
-
-        return item
+    def get_class(media_type):
+        mod = importlib.import_module('src.models.media_items.MediaItemAdapters')
+        klass_name = media_type.capitalize() + 'MediaItemAdapter'
+        return getattr(mod, klass_name)
 
     @staticmethod
     def valid_user(cid):
