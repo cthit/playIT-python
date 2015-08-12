@@ -18,13 +18,15 @@ window.React = React;
 var backend;
 
 export default class App extends Component {
-  getInitialState() {
-    return {
+  constructor(props) {
+    super(props);
+    this.state = {
       now_playing: null,
       items: [],
       selected: null
     };
   }
+
   _update_now_playing(currentItem) {
     this.setState({now_playing: currentItem});
     if (currentItem && currentItem.id) {
