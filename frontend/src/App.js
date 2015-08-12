@@ -7,7 +7,7 @@ import NowPlaying from "./components/NowPlaying.js";
 import VideoFeed from "./components/VideoFeed.js";
 import Searchbox from "./components/Searchbox";
 import Backend from "./lib/backend.js";
-//import Mousetrap from "./mousetrap.js";
+import Mousetrap from "./lib/mousetrap.js";
 // import firstBy from "./thenby.js";
 
 
@@ -83,7 +83,7 @@ export default class App extends Component {
     this.setItem(this.state.items[index].id);
   }
   componentWillMount() {
-    // Mousetrap.registerKeys(this);
+    Mousetrap.registerKeys(this);
     backend = new Backend(this.props.url);
     backend.connect().then(() => {
 
