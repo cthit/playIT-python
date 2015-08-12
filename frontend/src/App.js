@@ -6,8 +6,8 @@ import React, { Component } from "react";
 import NowPlaying from "./components/NowPlaying.js";
 import VideoFeed from "./components/VideoFeed.js";
 import Searchbox from "./components/Searchbox";
-// import Backend from "./backend.js";
-// import Mousetrap from "./mousetrap.js";
+import Backend from "./lib/backend.js";
+//import Mousetrap from "./mousetrap.js";
 // import firstBy from "./thenby.js";
 
 
@@ -84,16 +84,16 @@ export default class App extends Component {
   }
   componentWillMount() {
     // Mousetrap.registerKeys(this);
-    // backend = new Backend(this.props.url);
-    // backend.connect().then(() => {
+    backend = new Backend(this.props.url);
+    backend.connect().then(() => {
 
-      // backend.registerListener('playing/status', this._update_now_playing);
-      // backend.registerListener('media_item/update', this._update_item);
-      // backend.registerListener('queue/update', this._update_queue);
-      // backend.call('get_queue');
-      // backend.call('get_current');
-    // });
-    // window.backend = backend;
+      backend.registerListener('playing/status', this._update_now_playing);
+      backend.registerListener('media_item/update', this._update_item);
+      backend.registerListener('queue/update', this._update_queue);
+      backend.call('get_queue');
+      backend.call('get_current');
+    });
+    window.backend = backend;
   }
   render() {
     return (
