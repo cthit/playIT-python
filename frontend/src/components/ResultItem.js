@@ -3,20 +3,19 @@ import React, { Component } from "react";
 export default class ResultItem extends Component {
   componentDidUpdate() {
     if (this.props.selected) {
-      this.getDOMNode().scrollIntoView();
+      React.findDOMNode(this).scrollIntoView();
     }
   }
   clickEvent(event) {
-    console.log(event);
     event.stopPropagation();
     this.props.clickEvent(this.props.result);
   }
   render() {
     let result = this.props.result;
     return (
-      <li onClick={this.clickEvent} className={this.props.selected ? 'selected' : ''}>
-        <img src={result.thumbnail} onClick={this.clickEvent} className="video-thumbnail" />
-        <div className="details" onClick={this.clickEvent}>
+      <li onClick={this.clickEvent.bind(this)} className={this.props.selected ? 'selected' : ''}>
+        <img src={result.thumbnail} className="video-thumbnail" />
+        <div className="details">
           <div className="name">
             {result.name}
           </div>

@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-//import MediaEndpoints from "../media_endpoints.js";
+import MediaEndpoints from "../lib/media_endpoints.js";
 import ResultItem from "./ResultItem";
 
 
-//let endpoints = new MediaEndpoints();
+let endpoints = new MediaEndpoints();
 
 let lastSearch;
 
@@ -26,7 +26,7 @@ export default class Searchbox extends Component {
     ];
   }
   _update_type() {
-    let value = this.refs.type.getDOMNode().value;
+    let value = React.findDOMNode(this.refs.type).value;
     localStorage.setItem('type', value);
     this.setState({type: value, results: []});
   }
@@ -60,7 +60,7 @@ export default class Searchbox extends Component {
         break;
 
       default:
-        let query = this.refs.query.getDOMNode().value;
+        let query = React.findDOMNode(this.refs.query).value;
         this.searchMedia(query);
     }
   }
@@ -69,7 +69,7 @@ export default class Searchbox extends Component {
   }
   _submitForm(e) {
     e.preventDefault();
-    let query = this.refs.query.getDOMNode().value;
+    let query = React.findDOMNode(this.refs.query).value;
     let urlResults = endpoints.urlToMediaItem(query);
 
     if (urlResults.length > 0) {
@@ -98,7 +98,7 @@ export default class Searchbox extends Component {
   resultClicked(result) {
     console.log(result);
     this.props.addItem(result);
-    this.refs.query.getDOMNode().blur();
+    React.findDOMNode(this.refs.query).blur();
   }
   searchPlaceholder() {
     switch (this.state.type) {
@@ -128,11 +128,11 @@ export default class Searchbox extends Component {
       (<option key={value} value={value}>{display}</option>)
     );
     return (
-      <form className="search-form" onSubmit={this._submitForm}>
-        <select ref="type" value={this.state.type} onChange={this._update_type} className={'search-type-select match-' + this.state.type}>
+      <form className="search-form" onSubmit={this._submitForm.bind(this)}>
+        <select ref="type" value={this.state.type} onChange={this._update_type.bind(this)} className={'search-type-select match-' + this.state.type}>
           {options}
         </select>
-        <input ref="query" type="search" onKeyUp={this.captureArrowKeys} onBlur={() => this.showResults(false)} onFocus={() => this.showResults(true)} id="insert_video" placeholder={this.searchPlaceholder()} />
+        <input ref="query" type="search" onKeyUp={this.captureArrowKeys.bind(this)} onBlur={() => this.showResults(false)} onFocus={() => this.showResults(true)} id="insert_video" placeholder={this.searchPlaceholder()} />
         <br/>
         {resultContainer}
       </form>

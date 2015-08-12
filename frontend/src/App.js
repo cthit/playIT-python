@@ -1,14 +1,16 @@
 
-// require("./polyfill.js")();
+import polyfill from './lib/polyfill.js';
+polyfill();
+
 import React, { Component } from "react";
 
 
-import NowPlaying from "./components/NowPlaying.js";
-import VideoFeed from "./components/VideoFeed.js";
-import Searchbox from "./components/Searchbox";
-import Backend from "./lib/backend.js";
-import Mousetrap from "./lib/mousetrap.js";
-// import firstBy from "./thenby.js";
+import NowPlaying from './components/NowPlaying.js';
+import VideoFeed from './components/VideoFeed.js';
+import Searchbox from './components/Searchbox';
+import Backend from './lib/backend.js';
+import Mousetrap from './lib/mousetrap.js';
+import firstBy from "./lib/thenby.js";
 
 
 
@@ -72,6 +74,10 @@ export default class App extends Component {
     let {id, type} = mediaItem;
     backend.call('add_item', {id, type});
   }
+  deleteItem() {
+    let items = this.state.items.filter((item) => item.id !== this.state.selected);
+    this._update_queue(items);
+  }
   prevItem() {
     let index = this.state.items.indexOf(this.currentItem());
     index = Math.max(index - 1, 0);
@@ -86,10 +92,9 @@ export default class App extends Component {
     Mousetrap.registerKeys(this);
     backend = new Backend(this.props.url);
     backend.connect().then(() => {
-
-      backend.registerListener('playing/status', this._update_now_playing);
-      backend.registerListener('media_item/update', this._update_item);
-      backend.registerListener('queue/update', this._update_queue);
+      backend.registerListener('playing/status', this._update_now_playing.bind(this));
+      backend.registerListener('media_item/update', this._update_item.bind(this));
+      backend.registerListener('queue/update', this._update_queue.bind(this));
       backend.call('get_queue');
       backend.call('get_current');
     });
@@ -98,8 +103,8 @@ export default class App extends Component {
   render() {
     return (
       <div>
-        <Searchbox addItem={this.addItem} />
-        <VideoFeed items={this.state.items} setItem={this.setItem} selected={this.state.selected} playIT={this} />
+        <Searchbox addItem={this.addItem.bind(this)} />
+        <VideoFeed items={this.state.items} setItem={this.setItem.bind(this)} selected={this.state.selected} voteItem={this.voteItem.bind(this)} />
         <NowPlaying item={this.state.now_playing} />
       </div>
     );

@@ -20,10 +20,17 @@ export default class Backend {
     return name.toLowerCase();
   }
   _serverLog(topic, args) {
-    console.log('[SERVER] %s:', topic, args);
+    this._log('SERVER', topic, args);
+  }
+  _log(entity, topic, args) {
+    if (args && Object.keys(args).length > 0) {
+      console.log('[%s] %s:', entity, topic, args);
+    } else {
+      console.log('[%s] %s', entity, topic);
+    }
   }
   _clientLog(topic, args) {
-    console.log('[CLIENT] %s:', topic, args);
+    this._log('CLIENT', topic, args);
   }
   registerListener(event, callback) {
     event = this.normalizeEventName(event);

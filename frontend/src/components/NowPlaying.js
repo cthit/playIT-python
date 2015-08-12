@@ -9,7 +9,7 @@ export default class NowPlaying extends Component {
     } else {
       return (
         <div className="now-playing">
-          <span title={item.nick}>Now playing: <a href={Helpers.get_link(item)}>{item.title}</a> [{item.duration}] - {item.author}</span>
+          <span title={item.nick}>Now playing: <a href={Helpers.get_link(item)}>{item.title}</a> [{Helpers.format_time(item.duration)}] - {item.author}</span>
         </div>
       );
     }

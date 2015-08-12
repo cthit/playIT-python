@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 
 export default class VotingArrows extends Component {
-  getInitialState() {
-    return {
+  constructor(props) {
+    super(props);
+    this.state = {
       value: 0,
       voted: false
     };
@@ -11,22 +12,28 @@ export default class VotingArrows extends Component {
     this.props.vote(1);
     this.setState({
       value: 1,
-      voted: true
+      upvoted: true,
+      downvoted: false
     });
   }
   downvote() {
     this.props.vote(-1);
     this.setState({
       value: -1,
-      voted: true
+      downvoted: true,
+      upvoted: false
     });
   }
   render() {
     return (
       <div className="vote">
-          <span className="upvote vote-arrow" onClick={this.upvote}>⬆</span>
+          <span className={"upvote vote-arrow" + (this.state.upvoted ? ' upvoted' : '')} onClick={this.upvote.bind(this)}>
+            <i className="fa fa-arrow-up"></i>
+          </span>
           <span className="rating">{this.props.value + this.state.value}</span>
-          <span className="downvote vote-arrow" onClick={this.downvote}>⬇</span>
+          <span className={"downvote vote-arrow" + (this.state.downvoted ? ' downvoted' : '')} onClick={this.downvote.bind(this)}>
+            <i className="fa fa-arrow-down"></i>
+          </span>
       </div>
     );
   }
