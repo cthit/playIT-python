@@ -1,8 +1,8 @@
-import React from "react";
+import React, { Component } from "react";
 import VotingArrows from "./voting_arrows.jsx";
 import Helpers from "../helpers.js";
 
-var VideoItem = React.createClass({
+export default class VideoItem extends Component {
   vote(value) {
     this.props.playIT.voteItem(value, this.props.item);
   },
@@ -37,6 +37,4 @@ var VideoItem = React.createClass({
       </li>
     );
   }
-});
-
-export default VideoItem;
+}

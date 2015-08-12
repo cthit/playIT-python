@@ -1,6 +1,6 @@
 import React from "react";
 
-var VotingArrows = React.createClass({
+export default class VotingArrows extends Component {
   getInitialState() {
     return {
       value: 0,
@@ -30,6 +30,4 @@ var VotingArrows = React.createClass({
       </div>
     );
   }
-});
-
-export default VotingArrows;
+}

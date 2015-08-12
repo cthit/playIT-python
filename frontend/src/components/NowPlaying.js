@@ -1,7 +1,7 @@
-import React from "react";
+import React, { Component } from "react";
 import Helpers from "../helpers.js";
 
-var NowPlaying = React.createClass({
+export default class NowPlaying extends Component {
   render() {
     let item = this.props.item;
     if (!item) {
@@ -14,6 +14,4 @@ var NowPlaying = React.createClass({
       );
     }
   }
-});
-
-export default NowPlaying;
+}
