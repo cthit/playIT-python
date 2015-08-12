@@ -1,16 +1,16 @@
-import React from "react";
+import React, { Component } from "react";
 
-var ResultItem = React.createClass({
+export default class ResultItem extends Component {
   componentDidUpdate() {
     if (this.props.selected) {
       this.getDOMNode().scrollIntoView();
     }
-  },
+  }
   clickEvent(event) {
     console.log(event);
     event.stopPropagation();
     this.props.clickEvent(this.props.result);
-  },
+  }
   render() {
     let result = this.props.result;
     return (
@@ -27,6 +27,4 @@ var ResultItem = React.createClass({
       </li>
     );
   }
-});
-
-export default ResultItem;
+}

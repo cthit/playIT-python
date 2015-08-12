@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 //import MediaEndpoints from "../media_endpoints.js";
-//import ResultItem from "./result_item.jsx";
+import ResultItem from "./ResultItem";
 
 
 //let endpoints = new MediaEndpoints();
