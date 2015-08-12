@@ -5,7 +5,7 @@ import React, { Component } from "react";
 
 // import NowPlaying from "./components/now_playing.jsx";
 // import VideoFeed from "./components/video_feed.jsx";
-// import Searchbox from "./components/searchbox.jsx";
+import Searchbox from "./components/Searchbox";
 // import Backend from "./backend.js";
 // import Mousetrap from "./mousetrap.js";
 // import firstBy from "./thenby.js";
@@ -97,12 +97,14 @@ export default class App extends Component {
   }
   render() {
     return (
-      <div></div>
+      <div>
+        <Searchbox addItem={this.addItem} />
+      </div>
     );
   }
 }
 
 
-// <Searchbox addItem={this.addItem} />
+// 
 // <VideoFeed items={this.state.items} setItem={this.setItem} selected={this.state.selected} playIT={this} />
 // <NowPlaying item={this.state.now_playing} />

@@ -1,24 +1,35 @@
-import React from "react";
-import MediaEndpoints from "../media_endpoints.js";
-import ResultItem from "./result_item.jsx";
+import React, { Component } from "react";
+//import MediaEndpoints from "../media_endpoints.js";
+//import ResultItem from "./result_item.jsx";
 
-let endpoints = new MediaEndpoints();
+
+//let endpoints = new MediaEndpoints();
 
 let lastSearch;
 
-var Searchbox = React.createClass({
+export default class Searchbox extends Component {
+  constructor(props) {
+    super(props);
+    var type = localStorage.getItem('type');
+    this.state =  {
+      type: type || 'youtube',
+      show: false,
+      selectedIndex: null,
+      results: []
+    };
+  }
   getOptionValues() {
     return [
       ["spotify", "Spotify"],
       ["youtube", "YouTube"],
       ["soundcloud", "SoundCloud"]
     ];
-  },
+  }
   _update_type() {
     let value = this.refs.type.getDOMNode().value;
     localStorage.setItem('type', value);
     this.setState({type: value, results: []});
-  },
+  }
   navigateDropdown(keyName) {
     let currentIndex = this.state.selectedIndex;
     let selectedIndex = currentIndex;
@@ -28,7 +39,7 @@ var Searchbox = React.createClass({
         selectedIndex = Math.min(currentIndex + 1, this.state.results.length - 1);
     }
     this.setState({ selectedIndex });
-  },
+  }
   captureArrowKeys(event) {
     // console.log(event.key);
     switch (event.key) {
@@ -52,19 +63,10 @@ var Searchbox = React.createClass({
         let query = this.refs.query.getDOMNode().value;
         this.searchMedia(query);
     }
-  },
-  getInitialState() {
-    var type = localStorage.getItem('type');
-    return {
-      type: type || 'youtube',
-      show: false,
-      selectedIndex: null,
-      results: []
-    };
-  },
+  }
   showResults(show) {
     this.setState({ show });
-  },
+  }
   _submitForm(e) {
     e.preventDefault();
     let query = this.refs.query.getDOMNode().value;
@@ -77,7 +79,7 @@ var Searchbox = React.createClass({
     } else {
       this.searchMedia(query);
     }
-  },
+  }
   searchMedia(query) {
     if (query === lastSearch) {
       return;
@@ -92,12 +94,12 @@ var Searchbox = React.createClass({
     endpoints['search_' + this.state.type](query).then((results) => {
       this.setState({ results, selectedIndex: 0, showResults: true });
     }).catch(err => { throw err; });
-  },
+  }
   resultClicked(result) {
     console.log(result);
     this.props.addItem(result);
     this.refs.query.getDOMNode().blur();
-  },
+  }
   searchPlaceholder() {
     switch (this.state.type) {
       case "spotify":
@@ -109,7 +111,7 @@ var Searchbox = React.createClass({
       default:
         return "Search for videos or music";
     }
-  },
+  }
   render() {
     let resultContainer;
     if (this.state.show && this.state.results.length > 0) {
@@ -136,6 +138,5 @@ var Searchbox = React.createClass({
       </form>
     );
   }
-});
+}
 
-export default Searchbox;
