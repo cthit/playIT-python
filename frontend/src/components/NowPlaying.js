@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Helpers from "../helpers.js";
+import Helpers from "../lib/helpers.js";
 
 export default class NowPlaying extends Component {
   render() {

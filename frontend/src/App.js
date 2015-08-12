@@ -3,7 +3,7 @@
 import React, { Component } from "react";
 
 
-// import NowPlaying from "./components/now_playing.jsx";
+import NowPlaying from "./components/NowPlaying.js";
 import VideoFeed from "./components/VideoFeed.js";
 import Searchbox from "./components/Searchbox";
 // import Backend from "./backend.js";
@@ -100,12 +100,8 @@ export default class App extends Component {
       <div>
         <Searchbox addItem={this.addItem} />
         <VideoFeed items={this.state.items} setItem={this.setItem} selected={this.state.selected} playIT={this} />
+        <NowPlaying item={this.state.now_playing} />
       </div>
     );
   }
 }
-
-
-// 
-// 
-// <NowPlaying item={this.state.now_playing} />
