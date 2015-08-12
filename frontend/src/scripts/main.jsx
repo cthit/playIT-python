@@ -76,14 +76,14 @@ var PlayIT = React.createClass({
   },
   componentWillMount() {
     Mousetrap.registerKeys(this);
-    backend = new Backend(this.props.url, () => {
+    backend = new Backend(this.props.url);
+    backend.connect().then(() => {
 
       backend.registerListener('playing/status', this._update_now_playing);
       backend.registerListener('media_item/update', this._update_item);
       backend.registerListener('queue/update', this._update_queue);
       backend.call('get_queue');
       backend.call('get_current');
-      // backend.call('add_item', {type: 'youtube_list', id: 'PLFF3F248AC60CF19E'});
     });
     window.backend = backend;
   },

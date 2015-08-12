@@ -25,9 +25,7 @@ export default {
       case 'spotify':
         return 'http://open.spotify.com/track/' + item.external_id;
       case 'soundcloud':
-        var artist = item.author.toLowerCase().replace(/ /g, '-'),
-        track = item.title.toLowerCase().replace(/ /g, '-');
-        return 'http://soundcloud.com/' + artist + '/' + track;
+        return item.permalink_url;
       default:
         throw 'Got MediaItem of unrecognized type: ' + item.type;
     }

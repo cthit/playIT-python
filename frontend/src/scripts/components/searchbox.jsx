@@ -79,17 +79,22 @@ var Searchbox = React.createClass({
     }
   },
   searchMedia(query) {
-    if (!query || query === lastSearch) {
+    if (query === lastSearch) {
       return;
     }
-
     lastSearch = query;
+
+    if (!query) {
+      this.setState({results: []});
+      return;
+    }
 
     endpoints['search_' + this.state.type](query).then((results) => {
       this.setState({ results, selectedIndex: 0, showResults: true });
     }).catch(err => { throw err; });
   },
   resultClicked(result) {
+    console.log(result);
     this.props.addItem(result);
     this.refs.query.getDOMNode().blur();
   },
@@ -109,7 +114,7 @@ var Searchbox = React.createClass({
     let resultContainer;
     if (this.state.show && this.state.results.length > 0) {
       let results = this.state.results.map((result, index) =>
-        (<ResultItem key={result.id} onClick={this.resultClicked} setSelectedNode={this.setSelectedNode} selected={index === this.state.selectedIndex} result={result} />)
+        (<ResultItem key={result.id} clickEvent={this.resultClicked} setSelectedNode={this.setSelectedNode} selected={index === this.state.selectedIndex} result={result} />)
       );
       resultContainer = (
       <div className="results-container">
