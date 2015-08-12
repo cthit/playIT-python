@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 
 export default class VotingArrows extends Component {
   getInitialState() {
@@ -6,21 +6,21 @@ export default class VotingArrows extends Component {
       value: 0,
       voted: false
     };
-  },
+  }
   upvote() {
     this.props.vote(1);
     this.setState({
       value: 1,
       voted: true
     });
-  },
+  }
   downvote() {
     this.props.vote(-1);
     this.setState({
       value: -1,
       voted: true
     });
-  },
+  }
   render() {
     return (
       <div className="vote">

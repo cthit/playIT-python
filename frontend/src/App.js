@@ -4,7 +4,7 @@ import React, { Component } from "react";
 
 
 // import NowPlaying from "./components/now_playing.jsx";
-// import VideoFeed from "./components/video_feed.jsx";
+import VideoFeed from "./components/VideoFeed.js";
 import Searchbox from "./components/Searchbox";
 // import Backend from "./backend.js";
 // import Mousetrap from "./mousetrap.js";
@@ -99,6 +99,7 @@ export default class App extends Component {
     return (
       <div>
         <Searchbox addItem={this.addItem} />
+        <VideoFeed items={this.state.items} setItem={this.setItem} selected={this.state.selected} playIT={this} />
       </div>
     );
   }
@@ -106,5 +107,5 @@ export default class App extends Component {
 
 
 // 
-// <VideoFeed items={this.state.items} setItem={this.setItem} selected={this.state.selected} playIT={this} />
+// 
 // <NowPlaying item={this.state.now_playing} />

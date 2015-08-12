@@ -1,19 +1,19 @@
 import React, { Component } from "react";
-import VotingArrows from "./voting_arrows.jsx";
-import Helpers from "../helpers.js";
+import VotingArrows from "./VotingArrows.js";
+import Helpers from "../lib/helpers.js";
 
 export default class VideoItem extends Component {
   vote(value) {
     this.props.playIT.voteItem(value, this.props.item);
-  },
+  }
   setAsCurrent() {
     this.props.setItem(this.props.item.id);
-  },
+  }
   componentDidUpdate() {
     if (this.props.selected) {
       this.getDOMNode().scrollIntoView();
     }
-  },
+  }
   render() {
     let item = this.props.item;
     let classes = ['media', item.type];

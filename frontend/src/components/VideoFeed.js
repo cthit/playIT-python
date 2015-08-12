@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import VideoItem from "./video_item.jsx";
+import VideoItem from "./VideoItem.js";
 
 export default class VideoFeed extends Component {
   render() {
