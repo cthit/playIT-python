@@ -35,14 +35,14 @@ class MediaItemError(Exception):
 class MediaItem(BaseModel):
 
     title = CharField(default="")
-    author = CharField(default="")
-    description = TextField(default="")
-    thumbnail = CharField(default="")
+    author = CharField(default="", null=True)
+    description = TextField(default="", null=True)
+    thumbnail = CharField(default="", null=True)
     cid = CharField()
-    nick = CharField()
+    nick = CharField(null=True)
     type = CharField()
     external_id = CharField()
-    duration = IntegerField()
+    duration = IntegerField(null=True)
     album = CharField(null=True)
     permalink_url = CharField(null=True)
 
