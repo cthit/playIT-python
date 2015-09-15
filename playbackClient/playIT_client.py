@@ -166,7 +166,6 @@ class PlayIt(object):
             self._ws.send(topic + " " + data)
 
     def _on_message(self, ws, msg):
-        vprint("Received msg: " + msg)
 
         split = re.split("\s", msg, 1)
         if len(split) == 2:
@@ -180,7 +179,6 @@ class PlayIt(object):
                 play_loop.start()
             elif (topic == "GREETING") or (topic == "QUEUE/UPDATE" and not self.CURRENT_PROC) :
                 self._pop_next()
-            vprint("\n\n")
 
     def _on_error(self, ws, error):
         print("Websocket error: " + str(error), file=sys.stderr)
@@ -214,22 +212,57 @@ class PlayIt(object):
     def _play_youtube(self, item):
         """ Play the supplied youtube video with mpv. """
         vprint("_PLAY_YOUTUBE")
-        vprint(item)
         vprint("Playing youtube video: " + item['title']
                + " requested by " + item['nick'])
         youtube_url = "https://youtu.be/" + item['external_id']
+        
+        playback_functions = [self._play_youtube_mpv, self._play_youtube_dl_stream]
 
-        cmd = ['mpv', '--really-quiet', '--fs', '--screen',
-               str(self.monitor_number), youtube_url] 
+        for func in playback_functions:
+            if func(youtube_url):
+                break
+        else:
+            vprint("Failed to play youtube video")
+        
 
+        self.CURRENT_PROC = None
+
+    def _play_youtube_mpv(self, youtube_url):
+
+        cmd = ['mpv', '--fs', '--screen',
+               str(self.monitor_number), youtube_url]
+        
         process = subprocess.Popen(cmd, stdin=subprocess.DEVNULL,
                                    stdout=subprocess.DEVNULL,
                                    stderr=subprocess.DEVNULL)
-
         self.CURRENT_PROC = process
-
         process.wait()
-        self.CURRENT_PROC = None
+        success = process.poll() == 0
+        if not success:
+            vprint("Failed to play with standard mpv.")
+
+        return success
+
+
+    def _play_youtube_dl_stream(self, youtube_url):
+        success = False
+        stream = subprocess.check_output(['youtube-dl', '-g', youtube_url],
+                                   stderr=subprocess.DEVNULL)\
+                                   .decode('UTF-8').strip()
+        if "\n" not in stream:
+            cmd = ['mpv', '--fs', '--screen',
+                   str(self.monitor_number), stream]
+            process = subprocess.Popen(cmd, stdin=subprocess.DEVNULL,
+                                       stdout=subprocess.DEVNULL,
+                                       stderr=subprocess.DEVNULL)
+            self.CURRENT_PROC = process
+            process.wait()
+            success = process.poll() == 0
+        if not success:
+            vprint("Failed to play stream using youtube-dl.")
+
+        return success
+                
 
     def _play_spotify(self, item):
         """ Play the supplied spotify track using mopidy and mpc. """
