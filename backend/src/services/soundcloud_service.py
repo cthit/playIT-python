@@ -35,7 +35,16 @@ class SoundcloudService:
         return tracks
 
     @staticmethod
+    def get_track(track_id):
+        track = soundcloud.get('tracks/%s' % track_id)
+
+        if track:
+            return SoundcloudService.create_soundcloud_item(track.fields())
+        return dict()
+
+    @staticmethod
     def create_soundcloud_item(track):
+        print(track.keys())
         return dict(
             title=track.get('title'),
             external_id=str(track.get('id')),

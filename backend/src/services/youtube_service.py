@@ -59,9 +59,17 @@ class YoutubeService:
             yield l[i:i + n]
 
     @staticmethod
+    def video(video_id):
+        videos = YoutubeService.videos([video_id]) 
+        if videos:
+            return videos[0]
+        return dict()
+
+    @staticmethod
     def videos(video_ids):
         chunks = YoutubeService._chunks(video_ids, YOUTUBE_MAX_RESULTS)
         videos = []
+
 
         for c in chunks:
             search_request = youtube.videos().list(

@@ -35,6 +35,15 @@ class SpotifyService:
     def get_playlist_tracks(playlist_id):
         pass
 
+
+    @staticmethod
+    def get_track(track_id):
+        track = sp.track(track_id)
+
+        if track:
+            return SpotifyService.create_spotify_item(track)
+        return dict()
+
     @staticmethod
     def create_spotify_item(track):
         return dict(
