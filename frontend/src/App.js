@@ -25,6 +25,8 @@ export default class App extends Component {
     this.state = {
       now_playing: null,
       items: [],
+      queueType: 'tracks',
+      playlists: [],
       selected: null
     };
   }
@@ -35,6 +37,11 @@ export default class App extends Component {
       let items = this.state.items.filter((item) => item.id !== currentItem.id);
       this._update_queue(items);
     }
+  }
+  _update_playlist_queue(queue) {
+    this.setState({
+      playlists: queue
+    });
   }
   _update_item(newItem) {
     let items = this.state.items.map((item) => {
@@ -52,6 +59,12 @@ export default class App extends Component {
       if (!this.state.selected && items[0]) {
         this.setState({selected: items[0].id});
       }
+    });
+  }
+  _changeQueueType(type) {
+
+    this.setState({
+      queueType: type
     });
   }
   voteItem(value, item = this.currentItem()) {
@@ -75,7 +88,11 @@ export default class App extends Component {
     backend.call('add_item', {id, type});
   }
   deleteItem() {
-    let items = this.state.items.filter((item) => item.id !== this.state.selected);
+    let selectedItem = this.state.items.find((item) => item.id === this.state.selected);
+    this.nextItem();
+
+    let items = this.state.items.filter((item) => item.id !== selectedItem.id);
+    backend.call('remove_item', {id: selectedItem.external_id, type: selectedItem.type});
     this._update_queue(items);
   }
   prevItem() {
@@ -94,17 +111,20 @@ export default class App extends Component {
     backend.connect().then(() => {
       backend.registerListener('playing/status', this._update_now_playing.bind(this));
       backend.registerListener('media_item/update', this._update_item.bind(this));
+      backend.registerListener('media_list/queue/update', this._update_playlist_queue.bind(this));
       backend.registerListener('queue/update', this._update_queue.bind(this));
       backend.call('get_queue');
       backend.call('get_current');
+      backend.call('get_playlist_queue');
     });
     window.backend = backend;
   }
   render() {
+    let items = this.state.queueType === 'tracks' ? this.state.items : this.state.playlists;
     return (
       <div>
-        <Searchbox addItem={this.addItem.bind(this)} />
-        <VideoFeed items={this.state.items} setItem={this.setItem.bind(this)} selected={this.state.selected} voteItem={this.voteItem.bind(this)} />
+        <Searchbox addItem={this.addItem.bind(this)} changeQueueType={this._changeQueueType.bind(this)} />
+        <VideoFeed items={items} setItem={this.setItem.bind(this)} selected={this.state.selected} voteItem={this.voteItem.bind(this)} />
         <NowPlaying item={this.state.now_playing} />
       </div>
     );

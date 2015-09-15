@@ -21,11 +21,15 @@ export default {
       case 'youtube':
         return 'http://youtu.be/' + item.external_id;
       case 'youtube_list':
-        return 'https://www.youtube.com/playlist?list=' + item.external_id;
+        return 'https://www.youtube.com/playlist?list=' + item.external_id
       case 'spotify':
         return 'http://open.spotify.com/track/' + item.external_id;
+      case 'spotify_list':
+        return '#';
       case 'soundcloud':
         return item.permalink_url;
+      case 'soundcloud_list':
+        return '#';
       default:
         throw 'Got MediaItem of unrecognized type: ' + item.type;
     }

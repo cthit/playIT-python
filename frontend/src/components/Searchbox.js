@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import MediaEndpoints from "../lib/media_endpoints.js";
 import ResultItem from "./ResultItem";
+import ToggleButton from "./ToggleButton";
 
 
 let endpoints = new MediaEndpoints();
@@ -13,6 +14,7 @@ export default class Searchbox extends Component {
     var type = localStorage.getItem('type');
     this.state =  {
       type: type || 'youtube',
+      tracks: 'tracks',
       show: false,
       selectedIndex: null,
       results: []
@@ -100,14 +102,26 @@ export default class Searchbox extends Component {
     this.props.addItem(result);
     React.findDOMNode(this.refs.query).blur();
   }
+  setQueueType(type) {
+    this.props.changeQueueType(type);
+    this.setState({
+      tracks: type
+    });
+  }
   searchPlaceholder() {
-    switch (this.state.type) {
+    let switchType = this.state.type;
+    if (this.state.tracks === 'playlists') {
+      switchType = 'playlists';
+    }
+    switch (switchType) {
       case "spotify":
         return "Search for tracks on Spotify";
       case "soundcloud":
         return "Search for tracks on SoundCloud";
       case "youtube":
         return "Search for YouTube videos";
+      case "playlists":
+        return "Enter playlist URL";
       default:
         return "Search for videos or music";
     }
@@ -127,12 +141,14 @@ export default class Searchbox extends Component {
     let options = this.getOptionValues().map(([value, display]) =>
       (<option key={value} value={value}>{display}</option>)
     );
+    let hidden = this.state.tracks !== 'tracks';
     return (
       <form className="search-form" onSubmit={this._submitForm.bind(this)}>
-        <select ref="type" value={this.state.type} onChange={this._update_type.bind(this)} className={'search-type-select match-' + this.state.type}>
+        <select ref="type" style={{'visibility': hidden ? 'hidden' : ''}} value={this.state.type} onChange={this._update_type.bind(this)} className={'search-type-select match-' + this.state.type}>
           {options}
         </select>
         <input ref="query" type="search" onKeyUp={this.captureArrowKeys.bind(this)} onBlur={() => this.showResults(false)} onFocus={() => this.showResults(true)} id="insert_video" placeholder={this.searchPlaceholder()} />
+        <ToggleButton options={['tracks', 'playlists']} onChange={this.setQueueType.bind(this)} default={this.state.tracks} />
         <br/>
         {resultContainer}
       </form>

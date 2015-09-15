@@ -21,6 +21,11 @@ export default class VideoItem extends Component {
       classes.push('selected');
     }
 
+    let duration;
+    if (!item.type.includes('_list')) {
+      duration = '[' + Helpers.format_time(item.duration) + ']';
+    }
+
     return (
       <li className={classes.join(' ')} onClick={this.setAsCurrent.bind(this)}>
         <VotingArrows item={item} value={item.value} vote={this.vote.bind(this)} />
@@ -30,7 +35,7 @@ export default class VideoItem extends Component {
           </a>
         </div>
         <div className="info">
-          <h3>{item.title} [{Helpers.format_time(item.duration)}]</h3>
+          <h3>{item.title} {duration}</h3>
           <small><strong>{item.author}</strong> — Added by: <span title={item.cid}>{item.nick}</span></small>
           <p>{item.description}</p>
         </div>
