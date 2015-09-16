@@ -11,7 +11,7 @@ from src.models.base import BaseModel, Serializer
 from src.utils.memcache import RedisMemcache
 clients = set()
 
-TOKEN_CHECK_URL = "https://account.chalmers.it/userInfo.php?token=%s"
+TOKEN_CHECK_URL = "http://lan.chalmers.it/?p=userInfo"
 PLAYER_TOKEN = "42BabaYetuHerpaderp"
 ADMIN_GROUP = "playITAdmin"
 
@@ -51,8 +51,7 @@ class Authorized(object):
             user = RedisMemcache.get(token)
 
             if not user:
-                url = TOKEN_CHECK_URL % token
-                response = requests.get(url)
+                response = requests.get(TOKEN_CHECK_URL,headers={'chalmers_lan_auth':token})
                 data = response.json()
                 if data.get("cid"):
                     user = data
