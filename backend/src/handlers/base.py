@@ -64,7 +64,7 @@ class Authorized(object):
 
             cls._user = user
 
-            return method(cls, *args, user=user, **kwargs)
+            return method(cls, *args, **kwargs)
 
         return wrapper
 
