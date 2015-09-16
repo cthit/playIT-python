@@ -88,7 +88,7 @@ export default class Searchbox extends Component {
     }
     lastSearch = query;
 
-    if (!query) {
+    if (!query || this.state.tracks === 'playlists') {
       this.setState({results: []});
       return;
     }

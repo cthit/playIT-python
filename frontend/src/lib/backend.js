@@ -1,5 +1,7 @@
+import { cookieName } from '../config';
+
 function get_cookie() {
-  var re = /(?:(?:^|.*;\s*)chalmersItAuth\s*\=\s*([^;]*).*$)|^.*$/;
+  var re = new RegExp("(?:(?:^|.*;\\s*)" + cookieName + "\\s*\\=\\s*([^;]*).*$)|^.*$")
   return document.cookie.replace(re, "$1");
 }
 
@@ -13,7 +15,7 @@ export default class Backend {
       this.socket = new WebSocket(this.url);
       this.socket.onmessage = this._messageReceived.bind(this);
       this.socket.onclose = this._socketClosed.bind(this);
-      this.socket.onopen = resolve;
+      this.socket.onopen = () => resolve(this);
     });
   }
   normalizeEventName(name) {
