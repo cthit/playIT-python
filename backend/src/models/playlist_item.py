@@ -90,7 +90,7 @@ class PlaylistItem(BaseModel):
         ).first()
 
     @staticmethod
-    def create_media_item(cid, media_type, external_id,user):
+    def create_media_item(user, media_type, external_id):
         creator = PlaylistItem.get_creator(media_type)
 
         item = PlaylistItem()
@@ -107,7 +107,7 @@ class PlaylistItem(BaseModel):
         item.thumbnail = item_dict.get("thumbnail", "")
         item.item_count = item_dict.get("item_count")
 
-        item.cid = cid
+        item.cid = user.get("cid", "")
         item.nick = user.get("nick", "")
 
         return item

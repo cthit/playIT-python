@@ -48,7 +48,7 @@ class UserClient(BaseHandler):
 
         if "list" in media_type:
             try:
-                item = PlaylistItem.create_media_item(cid, media_type, external_id)
+                item = PlaylistItem.create_media_item(self._user, media_type, external_id)
                 item.save()
                 self.add_vote(cid, item, data)
             except MediaItemError as e:
@@ -57,7 +57,7 @@ class UserClient(BaseHandler):
                 return LIST+NEW+FAIL, msg
         else:
             try:
-                item = MediaItem.create_media_item(cid, media_type, external_id)
+                item = MediaItem.create_media_item(self._user, media_type, external_id)
                 item.save()
                 self.add_vote(cid, item, data)
             except MediaItemError as e:

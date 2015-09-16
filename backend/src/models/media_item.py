@@ -110,7 +110,7 @@ class MediaItem(BaseModel):
         ).first()
 
     @staticmethod
-    def create_media_item(cid, media_type, external_id,user):
+    def create_media_item(user, media_type, external_id):
         creator = MediaItem.get_creator(media_type)
         item = MediaItem()
         item.external_id = external_id
@@ -128,7 +128,7 @@ class MediaItem(BaseModel):
         item.duration = item_dict.get("duration")
         item.permalink_url = item_dict.get("permalink_url")
 
-        item.cid = cid
+        item.cid = user.get("cid", "")
         item.nick = user.get("nick", "")
 
         return item
