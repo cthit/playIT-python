@@ -51,7 +51,7 @@ class Authorized(object):
             user = RedisMemcache.get(token)
 
             if not user:
-                response = requests.get(TOKEN_CHECK_URL,headers={'chalmers_lan_auth':token})
+                response = requests.get(TOKEN_CHECK_URL,headers={'Cookie': 'chalmers_lan_auth=%s' % token})
                 data = response.json()
                 if data.get("cid"):
                     user = data
