@@ -97,12 +97,13 @@ ol.view-feed {
             list-style-type: none;
 
             li {
+                display: flex;
                 padding: 0.5em;
 
                 .video-thumbnail {
+                    flex: 1;
                     height: 50px;
                     vertical-align: top;
-                    margin-right: 1em;
                 }
 
                 .details {
@@ -114,6 +115,7 @@ ol.view-feed {
                     }
 
                     .name, .author {
+                        margin-left: 1em;
                         overflow: hidden;
                         text-overflow: ellipsis;
                         white-space: nowrap;
