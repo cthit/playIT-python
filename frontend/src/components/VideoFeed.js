@@ -63,7 +63,7 @@ export default class VideoFeed extends Component {
         return item;
       }
     });
-    this.setState({items: items});
+    this._update_queue(items);
   }
   componentDidMount() {
     let methods = this.props.methods;
