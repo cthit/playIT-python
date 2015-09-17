@@ -8,9 +8,7 @@ export default class VideoItem extends Component {
 
     let savedState = JSON.parse(localStorage.getItem('vote-' + this.props.item.id));
     console.log(savedState);
-    this.state = savedState || {
-      value: 0
-    };
+    this.state = savedState || {value: 0};
   }
   saveState(state) {
     this.setState(state, function() {
@@ -21,17 +19,13 @@ export default class VideoItem extends Component {
     if (this.state.value > 0) {
       return;
     }
-    this.saveState({
-      value: 1
-    });
+    this.saveState({value: 1});
   }
   downvote() {
     if (this.state.value < 0) {
       return;
     }
-    this.saveState({
-      value: -1
-    });
+    this.saveState({value: -1});
   }
   vote(value) {
     if (value > 0) {
@@ -45,7 +39,10 @@ export default class VideoItem extends Component {
   }
   componentDidUpdate() {
     if (this.props.selected) {
-      React.findDOMNode(this).scrollIntoView();
+      let node = React.findDOMNode(this);
+      if (!Helpers.elementInViewport(node)) {
+        node.scrollIntoView();
+      }
     }
   }
   render() {
