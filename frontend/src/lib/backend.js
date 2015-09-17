@@ -46,7 +46,7 @@ export default class Backend {
     this.listeners[event] = this.listeners[event].filter((a) => a !== callback);
   }
   _notifyListeners(topic, args) {
-    topic = event = this.normalizeEventName(topic);;
+    topic = this.normalizeEventName(topic);;
     if (this.listeners[topic] && this.listeners[topic].length > 0) {
       this.listeners[topic].forEach((func) => func(args));
     }
