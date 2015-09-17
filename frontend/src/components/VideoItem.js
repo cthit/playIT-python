@@ -36,8 +36,8 @@ export default class VideoItem extends Component {
   setAsCurrent() {
     this.props.setItem(this.props.item.id);
   }
-  componentDidUpdate() {
-    if (this.props.selected) {
+  componentDidUpdate(prevProps) {
+    if (this.props.selected && prevProps.selected !== this.props.selected) {
       let node = React.findDOMNode(this);
       if (!Helpers.elementInViewport(node)) {
         node.scrollIntoView();
