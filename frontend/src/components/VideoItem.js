@@ -7,7 +7,6 @@ export default class VideoItem extends Component {
     super(props);
 
     let savedState = JSON.parse(localStorage.getItem('vote-' + this.props.item.id));
-    console.log(savedState);
     this.state = savedState || {value: 0};
   }
   saveState(state) {
