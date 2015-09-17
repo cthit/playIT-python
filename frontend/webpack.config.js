@@ -3,22 +3,18 @@ var webpack = require('webpack');
 
 var production = "production" === process.env.NODE_ENV;
 
-var plugins = ['./src/index'];
+var entry = ['./src/index'];
 
 if (!production) {
-  plugins = [
+  entry = [
     'webpack-dev-server/client?http://0.0.0.0:3000',
     'webpack/hot/only-dev-server'
-  ].concat(plugins);
+  ].concat(entry);
 }
 
 module.exports = {
   devtool: 'eval',
-  entry: [
-    'webpack-dev-server/client?http://0.0.0.0:3000',
-    'webpack/hot/only-dev-server',
-    './src/index'
-  ],
+  entry: entry,
   output: {
     path: path.join(__dirname, 'static'),
     filename: 'bundle.js',
