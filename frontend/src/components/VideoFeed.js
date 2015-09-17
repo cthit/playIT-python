@@ -21,11 +21,9 @@ export default class VideoFeed extends Component {
         localStorage.setItem('vote-' + item.id, JSON.stringify({value: 1, upvoted: true, downvoted: false}));
       }
       return item;
-    })
-    let mine = items.find((el) => {
-      return this.props.myItems.some((item) => item.id === el.id && item.type === el.type);
-    });
-    items = items.sort(firstBy('value', -1).thenBy('created_at'));
+
+    }).sort(firstBy('value', -1).thenBy('created_at'));
+
     this.setState({items: items}, function() {
       if (!this.state.selected && items[0]) {
         this.setState({selected: items[0].id});
