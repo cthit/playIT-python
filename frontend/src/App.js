@@ -69,7 +69,7 @@ export default class App extends Component {
       id: item.external_id,
       type: item.type
     });
-    this.state.activeFeed.voteItem(item);
+    this.state.activeFeed.voteItem(value, item);
   }
   currentItem() {
     return this.state.activeFeed.currentItem();

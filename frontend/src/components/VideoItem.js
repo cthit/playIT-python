@@ -3,12 +3,41 @@ import VotingArrows from "./VotingArrows.js";
 import Helpers from "../lib/helpers.js";
 
 export default class VideoItem extends Component {
+  constructor(props) {
+    super(props);
+
+    let savedState = JSON.parse(localStorage.getItem('vote-' + this.props.item.id));
+    console.log(savedState);
+    this.state = savedState || {
+      value: 0
+    };
+  }
+  saveState(state) {
+    this.setState(state, function() {
+      localStorage.setItem('vote-' + this.props.item.id, JSON.stringify(state))
+    });
+  }
+  upvote() {
+    if (this.state.value > 0) {
+      return;
+    }
+    this.saveState({
+      value: 1
+    });
+  }
+  downvote() {
+    if (this.state.value < 0) {
+      return;
+    }
+    this.saveState({
+      value: -1
+    });
+  }
   vote(value) {
-    let arrows = this.refs.arrows;
     if (value > 0) {
-      arrows.upvote();
+      upvote();
     } else {
-      arrows.downvote();
+      downvote();
     }
   }
   setAsCurrent() {
@@ -33,7 +62,7 @@ export default class VideoItem extends Component {
 
     return (
       <li className={classes.join(' ')} onClick={this.setAsCurrent.bind(this)}>
-        <VotingArrows ref="arrows" item={item} value={item.value} vote={this.vote.bind(this)} />
+        <VotingArrows item={item} value={this.state.value} vote={this.vote.bind(this)} />
         <div className="image">
           <a href={Helpers.get_link(item)} target="_blank">
             <img src={item.thumbnail} alt={item.external_id} />

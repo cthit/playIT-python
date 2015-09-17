@@ -31,7 +31,7 @@ export default class VideoFeed extends Component {
     });
   }
   deleteItem() {
-    let selectedItem = this.state.items.find((item) => item.id === this.state.selected);
+    let selectedItem = this.state.items.filter((item) => item.id === this.state.selected)[0];
     this.nextItem();
 
     let items = this.state.items.filter((item) => item.id !== selectedItem.id);
@@ -43,8 +43,8 @@ export default class VideoFeed extends Component {
       this.setState({selected: id});
     }
   }
-  voteItem(item) {
-    this._update_item(item);
+  voteItem(value, item) {
+    this.refs['item' + item.id].vote(value);
   }
   prevItem() {
     let index = this.state.items.indexOf(this.currentItem());
@@ -83,7 +83,7 @@ export default class VideoFeed extends Component {
   }
   render() {
     let items = this.state.items.map((item) => {
-      return (<VideoItem key={item.id} item={item} setItem={this.setItem.bind(this)} voteItem={this.props.voteItem} setSelectedNode={this.setSelectedNode} selected={item.id === this.state.selected} />);
+      return (<VideoItem ref={'item' + item.id} key={item.id} item={item} setItem={this.setItem.bind(this)} voteItem={this.props.voteItem} setSelectedNode={this.setSelectedNode} selected={item.id === this.state.selected} />);
     });
     return (<ol style={{display: this.props.active ? 'block' : 'none'}} className="view-feed">{items}</ol>);
   }
