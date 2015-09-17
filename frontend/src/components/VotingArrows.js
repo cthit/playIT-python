@@ -5,7 +5,8 @@ export default class VotingArrows extends Component {
     super(props);
     this.state = {
       value: 0,
-      voted: false
+      upvoted: false,
+      downvoted: false
     };
   }
   upvote() {

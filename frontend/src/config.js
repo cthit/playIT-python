@@ -1,3 +1,4 @@
 export default {
-    url: 'ws://10.0.0.213:8888/ws/action'
+    url: 'ws://kamino.chalmers.it:8888/ws/action',
+    cookieName: 'chalmers_lan_auth'
 }
