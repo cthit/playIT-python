@@ -35,9 +35,9 @@ export default class VideoItem extends Component {
   }
   vote(value) {
     if (value > 0) {
-      upvote();
+      this.upvote();
     } else {
-      downvote();
+      this.downvote();
     }
   }
   setAsCurrent() {
