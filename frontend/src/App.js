@@ -21,10 +21,12 @@ var backend;
 export default class App extends Component {
   constructor(props) {
     super(props);
+    let defaultType = 'tracks';
     this.state = {
       now_playing: null,
       items: [],
-      activeType: 'tracks',
+      activeType: defaultType,
+      activeFeed: null,
       playlists: [],
       selected: null
     };
@@ -55,7 +57,8 @@ export default class App extends Component {
   _changeQueueType(type) {
     console.log('change type to', type);
     this.setState({
-      activeType: type
+      activeType: type,
+      activeFeed: this.refs[type]
     });
   }
   voteItem(value, item = this.currentItem()) {
@@ -64,32 +67,25 @@ export default class App extends Component {
       id: item.external_id,
       type: item.type
     });
+    item.value += value;
+    this.state.activeFeed.voteItem(item);
   }
   currentItem() {
-    let index = this.state.items.findIndex((item) => item.id === this.state.selected)
-    return this.state.items[index];
+    return this.state.activeFeed.currentItem();
   }
   addItem(mediaItem) {
     let {id, type} = mediaItem;
     backend.call('add_item', {id, type});
   }
   deleteItem() {
-    let selectedItem = this.state.items.find((item) => item.id === this.state.selected);
-    this.nextItem();
-
-    let items = this.state.items.filter((item) => item.id !== selectedItem.id);
+    let selectedItem = this.state.activeFeed.deleteItem();
     backend.call('remove_item', {id: selectedItem.external_id, type: selectedItem.type});
-    this._update_queue(items);
   }
   prevItem() {
-    let index = this.state.items.indexOf(this.currentItem());
-    index = Math.max(index - 1, 0);
-    this.setItem(this.state.items[index].id);
+    this.state.activeFeed.prevItem();
   }
   nextItem() {
-    let index = this.state.items.indexOf(this.currentItem());
-    index = Math.min(index + 1, this.state.items.length - 1);
-    this.setItem(this.state.items[index].id);
+    this.state.activeFeed.nextItem();
   }
   componentWillMount() {
     Mousetrap.registerKeys(this);
@@ -101,12 +97,17 @@ export default class App extends Component {
     });
     window.backend = backend;
   }
+  componentDidMount() {
+    this.setState({
+      activeFeed: this.refs[this.state.activeType]
+    });
+  }
   render() {
     return (
       <div>
         <Searchbox addItem={this.addItem.bind(this)} changeQueueType={this._changeQueueType.bind(this)} />
-        <VideoFeed active={this.state.activeType === 'playlists'} connected={this.backendConnected} methods={this.methods.playlists} voteItem={this.voteItem.bind(this)} />
-        <VideoFeed active={this.state.activeType === 'tracks'} connected={this.backendConnected} methods={this.methods.tracks} voteItem={this.voteItem.bind(this)} />
+        <VideoFeed active={this.state.activeType === 'playlists'} ref="playlists" connected={this.backendConnected} methods={this.methods.playlists} voteItem={this.voteItem.bind(this)} />
+        <VideoFeed active={this.state.activeType === 'tracks'} ref="tracks" connected={this.backendConnected} methods={this.methods.tracks} voteItem={this.voteItem.bind(this)} />
         <NowPlaying item={this.state.now_playing} />
       </div>
     );

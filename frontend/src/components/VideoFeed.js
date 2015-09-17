@@ -11,6 +11,10 @@ export default class VideoFeed extends Component {
       selected: null
     };
   }
+  currentItem() {
+    let index = this.state.items.findIndex((item) => item.id === this.state.selected)
+    return this.state.items[index];
+  }
   _update_queue(items) {
     items = items.sort(firstBy('value', -1).thenBy('created_at'));
     this.setState({items: items}, function() {
@@ -19,10 +23,31 @@ export default class VideoFeed extends Component {
       }
     });
   }
+  deleteItem() {
+    let selectedItem = this.state.items.find((item) => item.id === this.state.selected);
+    this.nextItem();
+
+    let items = this.state.items.filter((item) => item.id !== selectedItem.id);
+    this._update_queue(items);
+    return selectedItem;
+  }
   setItem(id) {
     if (id !== this.state.selected) {
       this.setState({selected: id});
     }
+  }
+  voteItem(item) {
+    this._update_item(item);
+  }
+  prevItem() {
+    let index = this.state.items.indexOf(this.currentItem());
+    index = Math.max(index - 1, 0);
+    this.setItem(this.state.items[index].id);
+  }
+  nextItem() {
+    let index = this.state.items.indexOf(this.currentItem());
+    index = Math.min(index + 1, this.state.items.length - 1);
+    this.setItem(this.state.items[index].id);
   }
   _update_now_playing(currentItem) {
     if (currentItem && currentItem.id && this.props.active) {
