@@ -31,6 +31,8 @@ export default class App extends Component {
       selected: null
     };
 
+    this.myItems = [];
+
     this.methods = {
       tracks: {
         queue_update: 'queue/update',
@@ -67,13 +69,13 @@ export default class App extends Component {
       id: item.external_id,
       type: item.type
     });
-    item.value += value;
     this.state.activeFeed.voteItem(item);
   }
   currentItem() {
     return this.state.activeFeed.currentItem();
   }
   addItem(mediaItem) {
+    this.myItems.push(mediaItem);
     let {id, type} = mediaItem;
     backend.call('add_item', {id, type});
   }
@@ -104,10 +106,10 @@ export default class App extends Component {
   }
   render() {
     return (
-      <div>
+      <div className="root">
         <Searchbox addItem={this.addItem.bind(this)} changeQueueType={this._changeQueueType.bind(this)} />
-        <VideoFeed active={this.state.activeType === 'playlists'} ref="playlists" connected={this.backendConnected} methods={this.methods.playlists} voteItem={this.voteItem.bind(this)} />
-        <VideoFeed active={this.state.activeType === 'tracks'} ref="tracks" connected={this.backendConnected} methods={this.methods.tracks} voteItem={this.voteItem.bind(this)} />
+        <VideoFeed active={this.state.activeType === 'playlists'} ref="playlists" connected={this.backendConnected} myItems={this.myItems} methods={this.methods.playlists} voteItem={this.voteItem.bind(this)} />
+        <VideoFeed active={this.state.activeType === 'tracks'} ref="tracks" connected={this.backendConnected} myItems={this.myItems} methods={this.methods.tracks} voteItem={this.voteItem.bind(this)} />
         <NowPlaying item={this.state.now_playing} />
       </div>
     );

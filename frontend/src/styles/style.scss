@@ -20,10 +20,6 @@ h1, h2, h3 {
 	margin: 0;
 }
 
-ol, header, .media {
-    background-color: $color-bg-sub;
-}
-
 a {
 	color: #fff;
 }
@@ -31,7 +27,8 @@ a {
 ol.view-feed {
     overflow-y: scroll;
     margin: 0;
-    padding: 0.5em 0;
+    padding: 0.5em 0 50px;
+    border-bottom: 1px solid $color-bg-sub;
 }
 
 .tglbutton {

@@ -3,23 +3,36 @@ import React, { Component } from "react";
 export default class VotingArrows extends Component {
   constructor(props) {
     super(props);
-    this.state = {
+    let savedState = JSON.parse(localStorage.getItem('vote-' + this.props.item.id));
+    console.log(savedState);
+    this.state = savedState || {
       value: 0,
       upvoted: false,
       downvoted: false
     };
   }
+  saveState(state) {
+    this.setState(state, function() {
+      localStorage.setItem('vote-' + this.props.item.id, JSON.stringify(state))
+    });
+  }
   upvote() {
+    if (this.state.upvoted) {
+      return;
+    }
     this.props.vote(1);
-    this.setState({
+    this.saveState({
       value: 1,
       upvoted: true,
       downvoted: false
     });
   }
   downvote() {
+    if (this.state.downvoted) {
+      return;
+    }
     this.props.vote(-1);
-    this.setState({
+    this.saveState({
       value: -1,
       downvoted: true,
       upvoted: false

@@ -4,7 +4,12 @@ import Helpers from "../lib/helpers.js";
 
 export default class VideoItem extends Component {
   vote(value) {
-    this.props.voteItem(value, this.props.item);
+    let arrows = this.refs.arrows;
+    if (value > 0) {
+      arrows.upvote();
+    } else {
+      arrows.downvote();
+    }
   }
   setAsCurrent() {
     this.props.setItem(this.props.item.id);
@@ -28,7 +33,7 @@ export default class VideoItem extends Component {
 
     return (
       <li className={classes.join(' ')} onClick={this.setAsCurrent.bind(this)}>
-        <VotingArrows item={item} value={item.value} vote={this.vote.bind(this)} />
+        <VotingArrows ref="arrows" item={item} value={item.value} vote={this.vote.bind(this)} />
         <div className="image">
           <a href={Helpers.get_link(item)} target="_blank">
             <img src={item.thumbnail} alt={item.external_id} />

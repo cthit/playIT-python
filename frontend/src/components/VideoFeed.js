@@ -16,6 +16,15 @@ export default class VideoFeed extends Component {
     return this.state.items[index];
   }
   _update_queue(items) {
+    items.map(item => {
+      if (this.props.myItems.some(i => i.id === item.id && i.type === item.type)) {
+        localStorage.setItem('vote-' + item.id, JSON.stringify({value: 1, upvoted: true, downvoted: false}));
+      }
+      return item;
+    })
+    let mine = items.find((el) => {
+      return this.props.myItems.some((item) => item.id === el.id && item.type === el.type);
+    });
     items = items.sort(firstBy('value', -1).thenBy('created_at'));
     this.setState({items: items}, function() {
       if (!this.state.selected && items[0]) {
