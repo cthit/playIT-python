@@ -143,15 +143,17 @@ export default class Searchbox extends Component {
     );
     let hidden = this.state.tracks !== 'tracks';
     return (
-      <form className="search-form" onSubmit={this._submitForm.bind(this)}>
-        <select ref="type" style={{'visibility': hidden ? 'hidden' : ''}} value={this.state.type} onChange={this._update_type.bind(this)} className={'search-type-select match-' + this.state.type}>
-          {options}
-        </select>
-        <input ref="query" type="search" onKeyUp={this.captureArrowKeys.bind(this)} onBlur={() => this.showResults(false)} onFocus={() => this.showResults(true)} id="insert_video" placeholder={this.searchPlaceholder()} />
+      <div className="search-form">
+        <form onSubmit={this._submitForm.bind(this)}>
+          <select ref="type" style={{'visibility': hidden ? 'hidden' : ''}} value={this.state.type} onChange={this._update_type.bind(this)} className={'search-type-select match-' + this.state.type}>
+            {options}
+          </select>
+          <input ref="query" type="search" onKeyUp={this.captureArrowKeys.bind(this)} onBlur={() => this.showResults(false)} onFocus={() => this.showResults(true)} id="insert_video" placeholder={this.searchPlaceholder()} />
+          <br/>
+          {resultContainer}
+        </form>
         <ToggleButton options={['tracks', 'playlists']} onChange={this.setQueueType.bind(this)} default={this.state.tracks} />
-        <br/>
-        {resultContainer}
-      </form>
+      </div>
     );
   }
 }

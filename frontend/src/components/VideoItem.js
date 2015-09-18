@@ -3,15 +3,45 @@ import VotingArrows from "./VotingArrows.js";
 import Helpers from "../lib/helpers.js";
 
 export default class VideoItem extends Component {
+  constructor(props) {
+    super(props);
+
+    let savedState = JSON.parse(localStorage.getItem('vote-' + this.props.item.id));
+    this.state = savedState || {value: 0};
+  }
+  saveState(state) {
+    this.setState(state, function() {
+      localStorage.setItem('vote-' + this.props.item.id, JSON.stringify(state))
+    });
+  }
+  upvote() {
+    if (this.state.value > 0) {
+      return;
+    }
+    this.saveState({value: 1});
+  }
+  downvote() {
+    if (this.state.value < 0) {
+      return;
+    }
+    this.saveState({value: -1});
+  }
   vote(value) {
-    this.props.voteItem(value, this.props.item);
+    if (value > 0) {
+      this.upvote();
+    } else {
+      this.downvote();
+    }
   }
   setAsCurrent() {
     this.props.setItem(this.props.item.id);
   }
-  componentDidUpdate() {
-    if (this.props.selected) {
-      React.findDOMNode(this).scrollIntoView();
+  componentDidUpdate(prevProps) {
+    if (this.props.selected && prevProps.selected !== this.props.selected) {
+      let node = React.findDOMNode(this);
+      if (!Helpers.elementInViewport(node)) {
+        node.scrollIntoView();
+      }
     }
   }
   render() {
@@ -28,7 +58,7 @@ export default class VideoItem extends Component {
 
     return (
       <li className={classes.join(' ')} onClick={this.setAsCurrent.bind(this)}>
-        <VotingArrows item={item} value={item.value} vote={this.vote.bind(this)} />
+        <VotingArrows item={item} value={this.state.value} vote={this.vote.bind(this)} />
         <div className="image">
           <a href={Helpers.get_link(item)} target="_blank">
             <img src={item.thumbnail} alt={item.external_id} />
