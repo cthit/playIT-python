@@ -44,7 +44,7 @@ export default class VideoFeed extends Component {
     }
   }
   voteItem(value, item) {
-    this.refs['item' + item.id].vote(value);
+    return this.refs['item' + item.id].vote(value);
   }
   prevItem() {
     let index = this.state.items.indexOf(this.currentItem());
