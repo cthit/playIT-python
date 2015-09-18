@@ -52,7 +52,7 @@ export default class VideoItem extends Component {
     }
 
     let duration;
-    if (!item.type.includes('_list')) {
+    if (item.type.indexOf('_list') != -1) {
       duration = '[' + Helpers.format_time(item.duration) + ']';
     }
 
