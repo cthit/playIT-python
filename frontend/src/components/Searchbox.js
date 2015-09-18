@@ -98,7 +98,6 @@ export default class Searchbox extends Component {
     }).catch(err => { throw err; });
   }
   resultClicked(result) {
-    console.log(result);
     this.props.addItem(result);
     React.findDOMNode(this.refs.query).blur();
   }
@@ -130,7 +129,7 @@ export default class Searchbox extends Component {
     let resultContainer;
     if (this.state.show && this.state.results.length > 0) {
       let results = this.state.results.map((result, index) =>
-        (<ResultItem key={result.id} clickEvent={this.resultClicked} setSelectedNode={this.setSelectedNode} selected={index === this.state.selectedIndex} result={result} />)
+        (<ResultItem key={result.id} onClick={this.resultClicked.bind(this)} setSelectedNode={this.setSelectedNode} selected={index === this.state.selectedIndex} result={result} />)
       );
       resultContainer = (
       <div className="results-container">
@@ -148,7 +147,7 @@ export default class Searchbox extends Component {
           <select ref="type" style={{'visibility': hidden ? 'hidden' : ''}} value={this.state.type} onChange={this._update_type.bind(this)} className={'search-type-select match-' + this.state.type}>
             {options}
           </select>
-          <input ref="query" type="search" onKeyUp={this.captureArrowKeys.bind(this)} onBlur={() => this.showResults(false)} onFocus={() => this.showResults(true)} id="insert_video" placeholder={this.searchPlaceholder()} />
+          <input ref="query" type="search" onKeyUp={this.captureArrowKeys.bind(this)} onBlur={() => setTimeout(() => this.showResults(false), 1000) } onFocus={() => this.showResults(true)} id="insert_video" placeholder={this.searchPlaceholder()} />
           <br/>
           {resultContainer}
         </form>

@@ -15,22 +15,30 @@ export default class VideoItem extends Component {
     });
   }
   upvote() {
-    if (this.state.value > 0) {
-      return;
+    if (this.state.upvoted) {
+      return false;
     }
-    this.saveState({value: 1});
+    this.saveState({value: 1, upvoted: true});
+    return true;
   }
   downvote() {
-    if (this.state.value < 0) {
-      return;
+    if (this.state.downvoted) {
+      return false;
     }
-    this.saveState({value: -1});
+    this.saveState({value: -1, downvoted: true});
+    return true;
   }
   vote(value) {
     if (value > 0) {
-      this.upvote();
+      return this.upvote();
     } else {
-      this.downvote();
+      return this.downvote();
+    }
+  }
+  updateButtons(value) {
+    let didVote = this.vote(value);
+    if (didVote) {
+      this.props.voteItem(value);
     }
   }
   setAsCurrent() {
@@ -58,7 +66,7 @@ export default class VideoItem extends Component {
 
     return (
       <li className={classes.join(' ')} onClick={this.setAsCurrent.bind(this)}>
-        <VotingArrows item={item} value={this.state.value} vote={this.vote.bind(this)} />
+        <VotingArrows item={item} value={this.state.value} vote={this.updateButtons.bind(this)} />
         <div className="image">
           <a href={Helpers.get_link(item)} target="_blank">
             <img src={item.thumbnail} alt={item.external_id} />

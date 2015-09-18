@@ -64,12 +64,15 @@ export default class App extends Component {
     });
   }
   voteItem(value, item = this.currentItem()) {
-    backend.call('add_vote', {
-      vote: value,
-      id: item.external_id,
-      type: item.type
-    });
-    this.state.activeFeed.voteItem(value, item);
+    let didVote = this.state.activeFeed.voteItem(value, item);
+
+    if (didVote) {
+      backend.call('add_vote', {
+        vote: value,
+        id: item.external_id,
+        type: item.type
+      });
+    }
   }
   currentItem() {
     return this.state.activeFeed.currentItem();

@@ -3,12 +3,11 @@ import React, { Component } from "react";
 export default class ResultItem extends Component {
   componentDidUpdate() {
     if (this.props.selected) {
-      React.findDOMNode(this).scrollIntoView();
+      React.findDOMNode(this).scrollIntoView(false);
     }
   }
   clickEvent(event) {
-    event.stopPropagation();
-    this.props.clickEvent(this.props.result);
+    this.props.onClick(this.props.result);
   }
   render() {
     let result = this.props.result;
