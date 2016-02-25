@@ -1,4 +1,3 @@
-var path = require('path');
 var webpack = require('webpack');
 
 var production = "production" === process.env.NODE_ENV;
@@ -13,11 +12,10 @@ if (!production) {
 }
 
 module.exports = {
-  devtool: 'eval',
+  devtool: 'source-map',
   entry: entry,
   output: {
-    path: path.join(__dirname, 'static'),
-    filename: 'bundle.js',
+    path: __dirname + '/static',
     publicPath: '/static/'
   },
   plugins: [
@@ -29,9 +27,9 @@ module.exports = {
   },
   module: {
     loaders: [{
-      test: /\.jsx?$/,
-      loaders: ['react-hot', 'babel'],
-      include: path.join(__dirname, 'src')
+      test: /(\.jsx|\.js)$/,
+      exclude: /(node_modules|bower_components)/,
+      loader: 'babel'
     }, {
       test: /\.scss$/,
       loader: 'style!css!sass?sourceMap'
@@ -39,5 +37,13 @@ module.exports = {
       test: /\.png$/,
       loader: 'file'
     }]
+  },
+  devServer: {
+    hot: true,
+    stats: {
+      color: true,
+      chunks: false
+    },
+    historyApiFallback: true
   }
 };
