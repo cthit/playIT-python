@@ -1,17 +1,32 @@
-import React, { Component } from "react";
+import React from "react";
 
-export default class VotingArrows extends Component {
-  render() {
-    return (
-      <div className="vote">
-          <span className={"upvote vote-arrow" + (this.props.value > 0 ? ' upvoted' : '')} onClick={() => this.props.vote(1)}>
-            <i className="fa fa-arrow-up"></i>
-          </span>
-          <span className="rating">{this.props.item.value + this.props.value}</span>
-          <span className={"downvote vote-arrow" + (this.props.value < 0 ? ' downvoted' : '')} onClick={() => this.props.vote(-1)}>
-            <i className="fa fa-arrow-down"></i>
-          </span>
-      </div>
-    );
+const getVoteValue = (upvoted, downvoted) => {
+  if (upvoted || downvoted) {
+    return upvoted ? 1 : -1
+  } else {
+    return 0
   }
 }
+
+const VotingArrows = ({ value, upvoted, downvoted, onUpvote, onDownvote }) => (
+  <div className="vote">
+      <span className={"upvote vote-arrow" + (upvoted ? ' upvoted' : '')} onClick={onUpvote}>
+        <i className="fa fa-arrow-up"></i>
+      </span>
+      <span className="rating">{value + getVoteValue(upvoted, downvoted)}</span>
+      <span className={"downvote vote-arrow" + (downvoted ? ' downvoted' : '')} onClick={onDownvote}>
+        <i className="fa fa-arrow-down"></i>
+      </span>
+  </div>
+)
+
+VotingArrows.propTypes = {
+  value: React.PropTypes.number.isRequired,
+  upvoted: React.PropTypes.bool,
+  downvoted: React.PropTypes.bool,
+  onUpvote: React.PropTypes.func.isRequired,
+  onDownvote: React.PropTypes.func.isRequired
+}
+
+
+export default VotingArrows
