@@ -1,4 +1,4 @@
-import './styles/style.scss';
+require('./styles/style.css');
 
 import React from 'react';
 import App from './App';

@@ -1,4 +1,6 @@
-var webpack = require('webpack');
+var webpack      = require('webpack');
+var autoprefixer = require('autoprefixer');
+var precss       = require('precss');
 
 var production = "production" === process.env.NODE_ENV;
 
@@ -31,13 +33,14 @@ module.exports = {
       exclude: /(node_modules|bower_components)/,
       loader: 'babel'
     }, {
-      test: /\.scss$/,
-      loader: 'style!css!sass?sourceMap'
+      test: /\.css$/,
+      loader: 'style!css!postcss'
     }, {
       test: /\.png$/,
       loader: 'file'
     }]
   },
+  postcss: function() { return [autoprefixer, precss] },
   devServer: {
     hot: true,
     stats: {
