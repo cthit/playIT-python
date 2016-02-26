@@ -8,8 +8,8 @@ var entry = ['./src/index'];
 
 if (!production) {
   entry = [
-    'webpack-dev-server/client?http://0.0.0.0:3000',
-    'webpack/hot/only-dev-server'
+    'webpack-dev-server/client?http://0.0.0.0:8080',
+    'webpack/hot/dev-server'
   ].concat(entry);
 }
 
@@ -21,8 +21,8 @@ module.exports = {
     publicPath: '/static/'
   },
   plugins: [
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin()
+    new webpack.NoErrorsPlugin(),
+    new webpack.HotModuleReplacementPlugin()
   ],
   resolve: {
     extensions: ['', '.js', '.jsx']
