@@ -7,7 +7,7 @@ polyfill();
 
 import NowPlaying from "./components/NowPlaying";
 import ActiveVideoFeed from "./components/ActiveVideoFeed";
-import Searchbox from "./components/Searchbox";
+import SearchBoxContainer from "./components/SearchBoxContainer";
 import backend from './lib/backend.js';
 
 window.React = React;
@@ -26,10 +26,8 @@ const App = React.createClass({
   render() {
     return (
       <div>
+        <SearchBoxContainer activeFeedId={this.props.activeFeedId}/>
         <ActiveVideoFeed activeFeedId={this.props.activeFeedId}/>
-      {/*
-        <Searchbox addItem={this.addItem} changeQueueType={this._changeQueueType} />
-      */}
         <NowPlaying />
       </div>
     )

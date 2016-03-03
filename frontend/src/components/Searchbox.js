@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import MediaEndpoints from "../lib/media_endpoints.js";
 import ResultItem from "./ResultItem";
-import ToggleButton from "./ToggleButton";
 
 
 let endpoints = new MediaEndpoints();
@@ -9,17 +8,6 @@ let endpoints = new MediaEndpoints();
 let lastSearch;
 
 export default class Searchbox extends Component {
-  constructor(props) {
-    super(props);
-    var type = localStorage.getItem('type');
-    this.state =  {
-      type: type || 'youtube',
-      tracks: 'tracks',
-      show: false,
-      selectedIndex: null,
-      results: []
-    };
-  }
   getOptionValues() {
     return [
       ["spotify", "Spotify"],
@@ -27,11 +15,7 @@ export default class Searchbox extends Component {
       ["soundcloud", "SoundCloud"]
     ];
   }
-  _update_type() {
-    let value = React.findDOMNode(this.refs.type).value;
-    localStorage.setItem('type', value);
-    this.setState({type: value, results: []});
-  }
+
   navigateDropdown(keyName) {
     let currentIndex = this.state.selectedIndex;
     let selectedIndex = currentIndex;
@@ -42,6 +26,7 @@ export default class Searchbox extends Component {
     }
     this.setState({ selectedIndex });
   }
+
   captureArrowKeys(event) {
     // console.log(event.key);
     switch (event.key) {
@@ -97,16 +82,12 @@ export default class Searchbox extends Component {
       this.setState({ results, selectedIndex: 0, showResults: true });
     }).catch(err => { throw err; });
   }
+
   resultClicked(result) {
     this.props.addItem(result);
     React.findDOMNode(this.refs.query).blur();
   }
-  setQueueType(type) {
-    this.props.changeQueueType(type);
-    this.setState({
-      tracks: type
-    });
-  }
+
   searchPlaceholder() {
     let switchType = this.state.type;
     if (this.state.tracks === 'playlists') {
@@ -127,33 +108,35 @@ export default class Searchbox extends Component {
   }
   render() {
     let resultContainer;
-    if (this.state.show && this.state.results.length > 0) {
-      let results = this.state.results.map((result, index) =>
-        (<ResultItem key={result.id} onClick={this.resultClicked.bind(this)} setSelectedNode={this.setSelectedNode} selected={index === this.state.selectedIndex} result={result} />)
-      );
-      resultContainer = (
-      <div className="results-container">
-        <ul className="results-list" ref="resultsList">{results}</ul>
-      </div>);
+    //if (this.state.show && this.state.results.length > 0) {
+    //  let results = this.state.results.map((result, index) =>
+    //    (<ResultItem key={result.id} onClick={this.resultClicked.bind(this)} setSelectedNode={this.setSelectedNode} selected={index === this.state.selectedIndex} result={result} />)
+    //  );
+    //  resultContainer = (
+    //  <div className="results-container">
+    //    <ul className="results-list" ref="resultsList">{results}</ul>
+    //  </div>);
 
-    }
+    //}
     let options = this.getOptionValues().map(([value, display]) =>
       (<option key={value} value={value}>{display}</option>)
     );
-    let hidden = this.state.tracks !== 'tracks';
+    const {onToggleButton, activeFeedId} = this.props
+    const hidden = activeFeedId !== 'tracks';
     return (
       <div className="search-form">
         <form onSubmit={this._submitForm.bind(this)}>
-          <select ref="type" style={{'visibility': hidden ? 'hidden' : ''}} value={this.state.type} onChange={this._update_type.bind(this)} className={'search-type-select match-' + this.state.type}>
-            {options}
-          </select>
-          <input ref="query" type="search" onKeyUp={this.captureArrowKeys.bind(this)} onBlur={() => setTimeout(() => this.showResults(false), 1000) } onFocus={() => this.showResults(true)} id="insert_video" placeholder={this.searchPlaceholder()} />
+        {
+          //<select ref="type" style={{'visibility': hidden ? 'hidden' : ''}} value={this.state.type} onChange={this._update_type.bind(this)} className={'search-type-select match-' + this.state.type}>
+          //  {options}
+          //</select>
+        }
+          <input ref="query" type="search" onKeyUp={this.captureArrowKeys.bind(this)} onBlur={() => setTimeout(() => this.showResults(false), 1000) } onFocus={() => this.showResults(true)} id="insert_video" />
           <br/>
           {resultContainer}
         </form>
-        <ToggleButton options={['tracks', 'playlists']} onChange={this.setQueueType.bind(this)} default={this.state.tracks} />
+        <button onClick={onToggleButton}>{activeFeedId}</button>
       </div>
     );
   }
 }
-
