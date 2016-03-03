@@ -1,9 +1,15 @@
-import { createStore, applyMiddleware } from 'redux'
+import { createStore, applyMiddleware, compose } from 'redux'
+import { persistStore, autoRehydrate } from 'redux-persist'
 
 import reducer from './reducer'
 
-export default createStore(
+const store = createStore(
   reducer,
-  {},
-  window.devToolsExtension ? window.devToolsExtension() : undefined
+  undefined,
+  compose(
+    autoRehydrate(),
+    window.devToolsExtension ? window.devToolsExtension() : undefined
+  )
 );
+persistStore(store)
+export default store
