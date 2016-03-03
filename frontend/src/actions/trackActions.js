@@ -1,3 +1,5 @@
+import backend from '../lib/backend'
+
 export const TRACK_ADD_NEW = 'TRACK_ADD_NEW'
 export const TRACK_UPVOTE = 'TRACK_UPVOTE'
 export const TRACK_DOWNVOTE = 'TRACK_DOWNVOTE'
@@ -13,15 +15,29 @@ export const addNewTrack = (track) => ({
     track
 })
 
-export const upvoteTrack = (track) => ({
-    type: TRACK_UPVOTE,
-    track
-})
+export const upvoteTrack = (track) => {
+    addVote(track, 1)
+    return {
+      type: TRACK_UPVOTE,
+      track
+    }
+}
 
-export const downvoteTrack = (track) => ({
-    type: TRACK_DOWNVOTE,
-    track
-})
+export const downvoteTrack = (track) => {
+    addVote(track, -1)
+    return {
+      type: TRACK_DOWNVOTE,
+      track
+    }
+}
+
+const addVote = (track, vote) => {
+  backend.call('add_vote', {
+    vote,
+    id: track.external_id,
+    type: track.type
+  })
+}
 
 export const updateTrack = (track) => ({
     type: TRACK_UPDATE,

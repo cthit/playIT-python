@@ -7,12 +7,10 @@ function get_cookie() {
   return document.cookie.replace(re, "$1");
 }
 
-export default class Backend {
-  constructor(url, dispatch) {
-    this.url = url;
-    this.dispatch = dispatch;
-  }
-  connect() {
+class Backend {
+  connect(url, dispatch) {
+    this.url = url
+    this.dispatch = dispatch
     return new Promise((resolve, reject) => {
       this.socket = new WebSocket(this.url);
       this.socket.onmessage = this._messageReceived.bind(this);
@@ -66,3 +64,5 @@ export default class Backend {
     this._serverLog('CLOSED, reason', data.reason);
   }
 }
+
+export default new Backend()
