@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import MediaEndpoints from "../lib/media_endpoints.js";
 import ResultItem from "./ResultItem";
 
+const titleCase = (string) => string[0].toUpperCase() + string.slice(1);
 
 let endpoints = new MediaEndpoints();
 
@@ -135,7 +136,7 @@ export default class Searchbox extends Component {
           <br/>
           {resultContainer}
         </form>
-        <button onClick={onToggleButton}>{activeFeedId}</button>
+        <button onClick={onToggleButton}>{titleCase(activeFeedId)}</button>
       </div>
     );
   }
