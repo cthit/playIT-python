@@ -1,9 +1,11 @@
-export const PLAYLIST_ADD_NEW = Symbol()
-export const PLAYLIST_UPVOTE = Symbol()
-export const PLAYLIST_DOWNVOTE = Symbol()
-export const PLAYLIST_UPDATE = Symbol()
-export const PLAYLIST_REMOVE = Symbol()
-
+export const PLAYLIST_ADD_NEW = 'PLAYLIST_ADD_NEW'
+export const PLAYLIST_UPVOTE = 'PLAYLIST_UPVOTE'
+export const PLAYLIST_DOWNVOTE = 'PLAYLIST_DOWNVOTE'
+export const PLAYLIST_UPDATE = 'PLAYLIST_UPDATE'
+export const PLAYLIST_REMOVE = 'PLAYLIST_REMOVE'
+export const PLAYLISTS_REQUEST = 'PLAYLISTS_REQUEST'
+export const PLAYLISTS_RECEIVE_SUCCESS = 'PLAYLISTS_RECEIVE_SUCCESS'
+export const PLAYLISTS_RECEIVE_ERROR = 'PLAYLISTS_RECEIVE_ERROR'
 
 export const addNewPlaylist = (playlist) => ({
     type: PLAYLIST_ADD_NEW,
@@ -28,4 +30,18 @@ export const updatePlaylist = (playlist) => ({
 export const removePlaylist = (playlist) => ({
     type: PLAYLIST_REMOVE,
     playlist
+})
+
+export const requestPlaylists = () => ({
+    type: PLAYLISTS_REQUEST
+})
+
+export const receivePlaylistsSuccess = (playlists) => ({
+    type: PLAYLISTS_RECEIVE_SUCCESS,
+    playlists
+})
+
+export const receivePlaylistsError = (error) => ({
+    type: PLAYLISTS_RECEIVE_ERROR,
+    error
 })

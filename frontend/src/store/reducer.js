@@ -1,4 +1,4 @@
-import { combineReducers, createStore } from 'redux'
+import { combineReducers } from 'redux'
 
 import * as mainActions from '../actions/mainActions'
 import * as trackActions from '../actions/trackActions'
@@ -81,11 +81,8 @@ const playlists = (state = [], action) => {
     }
 }
 
-const app = combineReducers({
+export default combineReducers({
     main,
     tracks,
     playlists
 })
-
-
-export default createStore(app);

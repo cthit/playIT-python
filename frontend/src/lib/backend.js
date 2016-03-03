@@ -1,14 +1,16 @@
 import { cookieName } from '../config';
 
+import transformTopicToAction from './topicToActionTransformer';
+
 function get_cookie() {
   var re = new RegExp("(?:(?:^|.*;\\s*)" + cookieName + "\\s*\\=\\s*([^;]*).*$)|^.*$")
   return document.cookie.replace(re, "$1");
 }
 
 export default class Backend {
-  constructor(url) {
+  constructor(url, dispatch) {
     this.url = url;
-    this.listeners = {};
+    this.dispatch = dispatch;
   }
   connect() {
     return new Promise((resolve, reject) => {
@@ -34,21 +36,12 @@ export default class Backend {
   _clientLog(topic, args) {
     this._log('CLIENT', topic, args);
   }
-  registerListener(event, callback) {
-    event = this.normalizeEventName(event);
-    if (!this.listeners[event]) {
-      this.listeners[event] = [];
-    }
-    this.listeners[event].push(callback);
-  }
-  removeListener(event, callback) {
-    event = this.normalizeEventName(event);
-    this.listeners[event] = this.listeners[event].filter((a) => a !== callback);
-  }
-  _notifyListeners(topic, args) {
-    topic = this.normalizeEventName(topic);;
-    if (this.listeners[topic] && this.listeners[topic].length > 0) {
-      this.listeners[topic].forEach((func) => func(args));
+  _dispatchAction(topic, args) {
+    topic = this.normalizeEventName(topic);
+    const action = transformTopicToAction(topic, args);
+
+    if (action) {
+      this.dispatch(action);
     }
   }
   call(method, args = {}) {
@@ -67,7 +60,7 @@ export default class Backend {
   _messageReceived(event) {
     let [topic, args] = this._parseResponse(event.data);
     this._serverLog(topic, args);
-    this._notifyListeners(topic, args);
+    this._dispatchAction(topic, args);
   }
   _socketClosed(data) {
     this._serverLog('CLOSED, reason', data.reason);
