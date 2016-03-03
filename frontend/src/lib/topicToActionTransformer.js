@@ -11,7 +11,8 @@ export default (topic, args) => {
         return trackActions.receiveTracksSuccess(args);
       case 'media_item/update':
         return trackActions.updateTrack(args);
-
+      case 'media_item/new':
+        return trackActions.addNewTrack(args)
       case 'media_list/queue/update':
         return playlistActions.receivePlaylistsSuccess(args);
       case 'media_list/update':

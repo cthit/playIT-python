@@ -69,6 +69,18 @@ const tracks = (state = [], action) => {
             })
         case trackActions.TRACK_REMOVE:
             return state.filter(track => track.id !== action.track.id)
+        case trackActions.TRACKS_RECEIVE_SUCCESS:
+          return action.tracks.map(track => {
+            const oldTrack = state.find(oldTrack => oldTrack.id === track.id)
+            if (oldTrack) {
+              return {
+                ...oldTrack,
+                ...track
+              }
+            } else {
+              return track
+            }
+          })
         default:
             return state
     }

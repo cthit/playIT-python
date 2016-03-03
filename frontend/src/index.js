@@ -5,11 +5,11 @@ import { Provider } from 'react-redux';
 
 import store from './store/store';
 import App from './App';
-import config from './config';
+import {url} from './config';
 
 ReactDOM.render(
     <Provider store={store}>
-        <App url={config.url} />
+        <App url={url} />
     </Provider>,
     document.getElementById('root')
 )

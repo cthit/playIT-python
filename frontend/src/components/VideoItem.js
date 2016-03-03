@@ -4,9 +4,6 @@ import Helpers from "../lib/helpers";
 
 const VideoItem = ({ item, onUpvote, onDownvote }) => {
   let classes = ['media', item.type];
-  if (this.props.selected) {
-    classes.push('selected');
-  }
   const className = classes.join(' ')
 
   let duration;
