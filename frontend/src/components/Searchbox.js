@@ -107,31 +107,30 @@ export default class Searchbox extends Component {
     }
   }
   render() {
-    let resultContainer;
-    if (this.state.show && this.state.results.length > 0) {
-      let results = this.state.results.map((result, index) =>
-        (<ResultItem key={result.id} onClick={this.resultClicked.bind(this)} setSelectedNode={this.setSelectedNode} selected={index === this.state.selectedIndex} result={result} />)
-      );
-      resultContainer = (
-      <div className="results-container">
-        <ul className="results-list" ref="resultsList">{results}</ul>
-      </div>);
+    const { show, results, selectedIndex } = this.state;
+    const { onToggleButton, activeFeedId, searchSource, onSelectSource } = this.props
+    const hidden = activeFeedId !== 'tracks'
+    const options = ["spotify", "youtube", "soundcloud"]
 
-    }
-    const options = ["spotify", "youtube", "soundcloud"].map((value) =>
-      (<option key={value} value={value}>{value}</option>)
-    );
-    const {onToggleButton, activeFeedId, searchSource, onSelectSource} = this.props
-    const hidden = activeFeedId !== 'tracks';
     return (
       <div className="search-form">
         <form onSubmit={this._submitForm.bind(this)}>
           <select ref="type" style={{'visibility': hidden ? 'hidden' : ''}} value={searchSource} onChange={(event) => onSelectSource(event.target.value)} className={'search-type-select match-' + searchSource}>
-            {options}
+            {options.map((value) =>
+              (<option key={value} value={value}>{value}</option>)
+            )}
           </select>
           <input ref="query" type="search" onKeyUp={this.captureArrowKeys.bind(this)} onBlur={() => setTimeout(() => this.showResults(false), 1000) } onFocus={() => this.showResults(true)} id="insert_video" />
           <br/>
-          {resultContainer}
+          {show && results.length && (
+            <div className="results-container">
+              <ul className="results-list" ref="resultsList">
+                {results.map((result, index) =>
+                  (<ResultItem key={result.id} onClick={this.resultClicked.bind(this)} setSelectedNode={this.setSelectedNode} selected={index === selectedIndex} result={result} />)
+                )}
+              </ul>
+            </div>
+          )}
         </form>
         <button onClick={onToggleButton}>{titleCase(activeFeedId)}</button>
       </div>
