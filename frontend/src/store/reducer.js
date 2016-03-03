@@ -3,6 +3,8 @@ import { combineReducers } from 'redux'
 import * as mainActions from '../actions/mainActions'
 import * as trackActions from '../actions/trackActions'
 
+import searchBox from './searchBoxReducer'
+
 const main = (state = { show: 'tracks' }, action) => {
     switch (action.type) {
         case mainActions.SHOW_TRACKS:
@@ -96,5 +98,6 @@ const playlists = (state = [], action) => {
 export default combineReducers({
     main,
     tracks,
-    playlists
+    playlists,
+    searchBox
 })

@@ -9,13 +9,6 @@ let endpoints = new MediaEndpoints();
 let lastSearch;
 
 export default class Searchbox extends Component {
-  getOptionValues() {
-    return [
-      ["spotify", "Spotify"],
-      ["youtube", "YouTube"],
-      ["soundcloud", "SoundCloud"]
-    ];
-  }
 
   navigateDropdown(keyName) {
     let currentIndex = this.state.selectedIndex;
@@ -79,7 +72,8 @@ export default class Searchbox extends Component {
       return;
     }
 
-    endpoints['search_' + this.state.type](query).then((results) => {
+    const {searchSource} = this.props
+    endpoints['search_' + searchSource](query).then((results) => {
       this.setState({ results, selectedIndex: 0, showResults: true });
     }).catch(err => { throw err; });
   }
@@ -119,19 +113,17 @@ export default class Searchbox extends Component {
     //  </div>);
 
     //}
-    let options = this.getOptionValues().map(([value, display]) =>
-      (<option key={value} value={value}>{display}</option>)
+    const options = ["spotify", "youtube", "soundcloud"].map((value) =>
+      (<option key={value} value={value}>{value}</option>)
     );
-    const {onToggleButton, activeFeedId} = this.props
+    const {onToggleButton, activeFeedId, searchSource, onSelectSource} = this.props
     const hidden = activeFeedId !== 'tracks';
     return (
       <div className="search-form">
         <form onSubmit={this._submitForm.bind(this)}>
-        {
-          //<select ref="type" style={{'visibility': hidden ? 'hidden' : ''}} value={this.state.type} onChange={this._update_type.bind(this)} className={'search-type-select match-' + this.state.type}>
-          //  {options}
-          //</select>
-        }
+          <select ref="type" style={{'visibility': hidden ? 'hidden' : ''}} value={searchSource} onChange={(event) => onSelectSource(event.target.value)} className={'search-type-select match-' + searchSource}>
+            {options}
+          </select>
           <input ref="query" type="search" onKeyUp={this.captureArrowKeys.bind(this)} onBlur={() => setTimeout(() => this.showResults(false), 1000) } onFocus={() => this.showResults(true)} id="insert_video" />
           <br/>
           {resultContainer}
