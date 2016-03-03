@@ -10,11 +10,11 @@ const getVoteValue = (upvoted, downvoted) => {
 
 const VotingArrows = ({ value, upvoted, downvoted, onUpvote, onDownvote }) => (
   <div className="vote">
-      <span className={"upvote vote-arrow" + (upvoted ? ' upvoted' : '')} onClick={onUpvote}>
+      <span className={"upvote vote-arrow" + (upvoted ? ' upvoted' : '')} onClick={upvoted ? null : onUpvote}>
         <i className="fa fa-arrow-up"></i>
       </span>
       <span className="rating">{value + getVoteValue(upvoted, downvoted)}</span>
-      <span className={"downvote vote-arrow" + (downvoted ? ' downvoted' : '')} onClick={onDownvote}>
+      <span className={"downvote vote-arrow" + (downvoted ? ' downvoted' : '')} onClick={downvoted ? null : onDownvote}>
         <i className="fa fa-arrow-down"></i>
       </span>
   </div>

@@ -3,7 +3,7 @@ import VotingArrows from "./VotingArrows";
 import Helpers from "../lib/helpers";
 
 const VideoItem = ({ item, onUpvote, onDownvote }) => {
-  let classes = ['media', item.type];
+  let classes = ['media', item.type, 'selected'];
   const className = classes.join(' ')
 
   let duration;

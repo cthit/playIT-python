@@ -7,7 +7,6 @@ import VideoFeed from './VideoFeed'
 
 
 const mapStateToProps = (state) => ({
-  activeFeedId: state.main.show,
   items: state[state.main.show]
 })
 

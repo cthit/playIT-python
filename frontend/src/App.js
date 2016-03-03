@@ -29,7 +29,7 @@ const App = React.createClass({
   render() {
     return (
       <div>
-        <ActiveVideoFeed />
+        <ActiveVideoFeed activeFeedId={this.props.activeFeedId}/>
       {/*
         <Searchbox addItem={this.addItem} changeQueueType={this._changeQueueType} />
       */}
@@ -39,4 +39,6 @@ const App = React.createClass({
   }
 })
 
-export default connect(() => ({}))(App)
+export default connect((state) => ({
+  activeFeedId: state.main.show
+}))(App)
