@@ -9,7 +9,14 @@ let endpoints = new MediaEndpoints();
 let lastSearch;
 
 export default class Searchbox extends Component {
-
+  constructor(props) {
+    super(props)
+    this.state = {
+      show: false,
+      results: [],
+      selectedIndex: 0
+    }
+  }
   navigateDropdown(keyName) {
     let currentIndex = this.state.selectedIndex;
     let selectedIndex = currentIndex;
@@ -66,13 +73,13 @@ export default class Searchbox extends Component {
       return;
     }
     lastSearch = query;
+    const {searchSource, activeFeedId} = this.props
 
-    if (!query || this.state.tracks === 'playlists') {
+    if (!query || activeFeedId === 'playlists') {
       this.setState({results: []});
       return;
     }
 
-    const {searchSource} = this.props
     endpoints['search_' + searchSource](query).then((results) => {
       this.setState({ results, selectedIndex: 0, showResults: true });
     }).catch(err => { throw err; });
@@ -84,35 +91,33 @@ export default class Searchbox extends Component {
   }
 
   searchPlaceholder() {
-    let switchType = this.state.type;
-    if (this.state.tracks === 'playlists') {
-      switchType = 'playlists';
+    const {searchSource, activeFeedId} = this.props
+    if (activeFeedId === 'playlists') {
+      return "Enter playlist URL"
     }
-    switch (switchType) {
+    switch (searchSource) {
       case "spotify":
         return "Search for tracks on Spotify";
       case "soundcloud":
         return "Search for tracks on SoundCloud";
       case "youtube":
         return "Search for YouTube videos";
-      case "playlists":
-        return "Enter playlist URL";
       default:
         return "Search for videos or music";
     }
   }
   render() {
     let resultContainer;
-    //if (this.state.show && this.state.results.length > 0) {
-    //  let results = this.state.results.map((result, index) =>
-    //    (<ResultItem key={result.id} onClick={this.resultClicked.bind(this)} setSelectedNode={this.setSelectedNode} selected={index === this.state.selectedIndex} result={result} />)
-    //  );
-    //  resultContainer = (
-    //  <div className="results-container">
-    //    <ul className="results-list" ref="resultsList">{results}</ul>
-    //  </div>);
+    if (this.state.show && this.state.results.length > 0) {
+      let results = this.state.results.map((result, index) =>
+        (<ResultItem key={result.id} onClick={this.resultClicked.bind(this)} setSelectedNode={this.setSelectedNode} selected={index === this.state.selectedIndex} result={result} />)
+      );
+      resultContainer = (
+      <div className="results-container">
+        <ul className="results-list" ref="resultsList">{results}</ul>
+      </div>);
 
-    //}
+    }
     const options = ["spotify", "youtube", "soundcloud"].map((value) =>
       (<option key={value} value={value}>{value}</option>)
     );
