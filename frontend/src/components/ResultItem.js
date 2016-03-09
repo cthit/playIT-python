@@ -1,9 +1,10 @@
 import React, { Component } from "react";
+import ReactDOM from "react-dom";
 
 export default class ResultItem extends Component {
   componentDidUpdate() {
     if (this.props.selected) {
-      React.findDOMNode(this).scrollIntoView(false);
+      ReactDOM.findDOMNode(this).scrollIntoView(false);
     }
   }
   clickEvent(event) {
