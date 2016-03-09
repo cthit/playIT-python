@@ -20,9 +20,13 @@ define('redis_host', default=os.environ.get('REDIS_HOST', 'localhost'), help='Re
 define('static_path', default=os.environ.get('STATIC_PATH', 'static/'), help='Setup static url path.')
 define('debug', default=os.environ.get('DEBUG', False), help='Enables debug output.')
 
-define('soundcloud_key', default=os.environ.get('SOUNDCLOUD_ID', None), help='Enables debug output.')
-define('youtube_key', default=os.environ.get('YOUTUBE_KEY', None), help='Enables debug output.')
-define('spotify_key', default=os.environ.get('SPOTIFY_KEY', None), help='Enables debug output.')
+define('soundcloud_key', default=os.environ.get('SOUNDCLOUD_ID', None), help='Soundcloud api key.')
+define('youtube_key', default=os.environ.get('YOUTUBE_KEY', None), help='youtube api key')
+define('spotify_key', default=os.environ.get('SPOTIFY_KEY', None), help='spotify app api key')
+define('spotify_id', default=os.environ.get('SPOTIFY_CLIENT_ID', None), help='spotify app id')
+define('spotify_client_secret', default=os.environ.get('SPOTIFY_CLIENT_SECRET', None), help='spotify app client secret')
+define('spotify_redirect_uri', default=os.environ.get('SPOTIFY_REDIRECT_URI', None), help='spotidy app redirect uri')
+
 
 define('database', default=os.environ.get('DATABASE'), help="Database")
 define('database_host', default=os.environ.get('DATABASE_HOST', 'localhost'), help="Database host")
