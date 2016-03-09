@@ -13,9 +13,14 @@ export default (state = {source: 'youtube', searchResultVisible: false, searchRe
             searchResultVisible: action.visible
           }
         case searchBoxActions.SET_SEARCH_QUERY:
+          let searchResults = state.searchResults
+          if (action.query.trim() === "") {
+            searchResults = []
+          }
           return {
             ...state,
-            searchQuery: action.query
+            searchQuery: action.query,
+            searchResults
           }
         case searchBoxActions.RECEIVE_SEARCH_RESULTS:
           return {

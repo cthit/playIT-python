@@ -119,7 +119,7 @@ export default class Searchbox extends Component {
           </select>
           <input ref={elem => this.query = elem} type="search" onKeyUp={this.captureArrowKeys.bind(this)} onBlur={() => setTimeout(() => setShowResults(false), 1000) } onFocus={() => setShowResults(true)} id="insert_video" autoComplete="off" />
           <br/>
-          {searchResultVisible && searchResults.length && (
+          {searchResultVisible && Boolean(searchResults.length) && (
             <div className="results-container">
               <ul className="results-list" ref={elem => this.resultsList = elem}>
                 {searchResults.map((result, index) =>

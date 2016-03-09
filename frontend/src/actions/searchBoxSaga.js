@@ -11,7 +11,7 @@ export function* searchSaga() {
 
 function* search(action) {
   try {
-    if (action.activeFeedId === 'playlists') {
+    if (action.activeFeedId === 'playlists' || action.query === "") {
       return;
     }
 
