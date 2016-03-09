@@ -7,12 +7,14 @@ import Searchbox from './Searchbox'
 
 
 const mapStateToProps = (state) => ({
-  searchSource: state.searchBox.source
+  searchSource: state.searchBox.source,
+  searchResultVisible: state.searchBox.searchResultVisible
 })
 
 const mapDispatchToProps = (dispatch, props) => {
   const actions = {
-    onSelectSource: (source) => dispatch(searchBoxActions.setSearchSource(source))
+    onSelectSource: (source) => dispatch(searchBoxActions.setSearchSource(source)),
+    setShowResults: (visible) => dispatch(searchBoxActions.setSearchResultVisibility(visible))
   }
   if (props.activeFeedId === 'tracks') {
     return {

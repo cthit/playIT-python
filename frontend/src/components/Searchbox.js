@@ -107,8 +107,8 @@ export default class Searchbox extends Component {
     }
   }
   render() {
-    const { show, results, selectedIndex } = this.state;
-    const { onToggleButton, activeFeedId, searchSource, onSelectSource } = this.props
+    const { results, selectedIndex } = this.state;
+    const { onToggleButton, activeFeedId, searchSource, onSelectSource, searchResultVisible, setShowResults} = this.props
     const hidden = activeFeedId !== 'tracks'
     const options = ["spotify", "youtube", "soundcloud"]
 
@@ -120,9 +120,9 @@ export default class Searchbox extends Component {
               (<option key={value} value={value}>{value}</option>)
             )}
           </select>
-          <input ref={elem => this.query = elem} type="search" onKeyUp={this.captureArrowKeys.bind(this)} onBlur={() => setTimeout(() => this.showResults(false), 1000) } onFocus={() => this.showResults(true)} id="insert_video" />
+          <input ref={elem => this.query = elem} type="search" onKeyUp={this.captureArrowKeys.bind(this)} onBlur={() => setTimeout(() => setShowResults(false), 1000) } onFocus={() => setShowResults(true)} id="insert_video" />
           <br/>
-          {show && results.length && (
+          {searchResultVisible && results.length && (
             <div className="results-container">
               <ul className="results-list" ref={elem => this.resultsList = elem}>
                 {results.map((result, index) =>
