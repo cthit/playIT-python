@@ -18,14 +18,14 @@ export default class Searchbox extends Component {
     }
   }
   navigateDropdown(keyName) {
-    let currentIndex = this.state.selectedIndex;
-    let selectedIndex = currentIndex;
+    const { selectedIndex, results } = this.state;
+    let nextIndex = selectedIndex;
     if (keyName === 'ArrowUp') {
-        selectedIndex = Math.max(currentIndex - 1, 0);
+        nextIndex = Math.max(selectedIndex - 1, 0);
     } else {
-        selectedIndex = Math.min(currentIndex + 1, this.state.results.length - 1);
+        nextIndex = Math.min(selectedIndex + 1, results.length - 1);
     }
-    this.setState({ selectedIndex });
+    this.setState({ selectedIndex: nextIndex });
   }
 
   captureArrowKeys(event) {
