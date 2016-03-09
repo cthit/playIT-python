@@ -1,10 +1,7 @@
 import React, { Component } from "react";
-import MediaEndpoints from "../lib/media_endpoints.js";
 import ResultItem from "./ResultItem";
 
 const titleCase = (string) => string[0].toUpperCase() + string.slice(1);
-
-let endpoints = new MediaEndpoints();
 
 let lastSearch;
 
@@ -29,6 +26,7 @@ export default class Searchbox extends Component {
   }
 
   captureArrowKeys(event) {
+    const {setSearchQuery, setShowResults} = this.props
     // console.log(event.key);
     switch (event.key) {
       case 'ArrowUp': case 'ArrowDown':
@@ -44,12 +42,11 @@ export default class Searchbox extends Component {
         break;
 
       case 'Escape':
-        this.showResults(false);
+        setShowResults(false)
         break;
 
       default:
-        let query = this.query.value;
-        this.searchMedia(query);
+        setSearchQuery(this.query.value, this.props.searchSource)
     }
   }
   showResults(show) {
@@ -108,7 +105,7 @@ export default class Searchbox extends Component {
   }
   render() {
     const { results, selectedIndex } = this.state;
-    const { onToggleButton, activeFeedId, searchSource, onSelectSource, searchResultVisible, setShowResults} = this.props
+    const { onToggleButton, activeFeedId, searchSource, onSelectSource, searchResultVisible, setShowResults, searchResults} = this.props
     const hidden = activeFeedId !== 'tracks'
     const options = ["spotify", "youtube", "soundcloud"]
 
@@ -120,12 +117,12 @@ export default class Searchbox extends Component {
               (<option key={value} value={value}>{value}</option>)
             )}
           </select>
-          <input ref={elem => this.query = elem} type="search" onKeyUp={this.captureArrowKeys.bind(this)} onBlur={() => setTimeout(() => setShowResults(false), 1000) } onFocus={() => setShowResults(true)} id="insert_video" />
+          <input ref={elem => this.query = elem} type="search" onKeyUp={this.captureArrowKeys.bind(this)} onBlur={() => setTimeout(() => setShowResults(false), 1000) } onFocus={() => setShowResults(true)} id="insert_video" autoComplete="off" />
           <br/>
-          {searchResultVisible && results.length && (
+          {searchResultVisible && searchResults.length && (
             <div className="results-container">
               <ul className="results-list" ref={elem => this.resultsList = elem}>
-                {results.map((result, index) =>
+                {searchResults.map((result, index) =>
                   (<ResultItem key={result.id} onClick={this.resultClicked.bind(this)} setSelectedNode={this.setSelectedNode} selected={index === selectedIndex} result={result} />)
                 )}
               </ul>

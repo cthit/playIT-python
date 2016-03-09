@@ -1,5 +1,6 @@
 require('./styles/style.css');
 
+import "babel-polyfill"
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 
