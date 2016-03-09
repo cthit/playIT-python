@@ -48,7 +48,7 @@ export default class Searchbox extends Component {
         break;
 
       default:
-        let query = React.findDOMNode(this.refs.query).value;
+        let query = this.query.value;
         this.searchMedia(query);
     }
   }
@@ -57,7 +57,7 @@ export default class Searchbox extends Component {
   }
   _submitForm(e) {
     e.preventDefault();
-    let query = React.findDOMNode(this.refs.query).value;
+    let query = this.query.value;
     let urlResults = endpoints.urlToMediaItem(query);
 
     if (urlResults.length > 0) {
@@ -87,7 +87,7 @@ export default class Searchbox extends Component {
 
   resultClicked(result) {
     this.props.addItem(result);
-    React.findDOMNode(this.refs.query).blur();
+    this.query.blur();
   }
 
   searchPlaceholder() {
@@ -115,16 +115,16 @@ export default class Searchbox extends Component {
     return (
       <div className="search-form">
         <form onSubmit={this._submitForm.bind(this)}>
-          <select ref="type" style={{'visibility': hidden ? 'hidden' : ''}} value={searchSource} onChange={(event) => onSelectSource(event.target.value)} className={'search-type-select match-' + searchSource}>
+          <select ref={elem => this.type = elem} style={{'visibility': hidden ? 'hidden' : ''}} value={searchSource} onChange={(event) => onSelectSource(event.target.value)} className={'search-type-select match-' + searchSource}>
             {options.map((value) =>
               (<option key={value} value={value}>{value}</option>)
             )}
           </select>
-          <input ref="query" type="search" onKeyUp={this.captureArrowKeys.bind(this)} onBlur={() => setTimeout(() => this.showResults(false), 1000) } onFocus={() => this.showResults(true)} id="insert_video" />
+          <input ref={elem => this.query = elem} type="search" onKeyUp={this.captureArrowKeys.bind(this)} onBlur={() => setTimeout(() => this.showResults(false), 1000) } onFocus={() => this.showResults(true)} id="insert_video" />
           <br/>
           {show && results.length && (
             <div className="results-container">
-              <ul className="results-list" ref="resultsList">
+              <ul className="results-list" ref={elem => this.resultsList = elem}>
                 {results.map((result, index) =>
                   (<ResultItem key={result.id} onClick={this.resultClicked.bind(this)} setSelectedNode={this.setSelectedNode} selected={index === selectedIndex} result={result} />)
                 )}
