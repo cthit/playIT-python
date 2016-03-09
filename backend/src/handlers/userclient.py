@@ -4,6 +4,7 @@ from src.models.media_item import MediaItem, MediaItemError
 from src.models.playlist_item import PlaylistItem
 from src.models.vote import Vote, PlaylistVote
 from src.utils.memcache import RedisMemcache
+from src.services.spotify_oauth_service import SpotifyOauthService
 import logging
 
 SETTINGS = "SETTINGS"
@@ -12,6 +13,8 @@ LIST = "MEDIA_LIST"
 QUEUE = "QUEUE"
 VOTE = "VOTE"
 PLAYING = "PLAYING"
+SPOTIFY_SERVICE = "SPOTIFY_SERVICE"
+AUTHORIZED = "/AUTHORIZED"
 
 
 class UserClient(BaseHandler):
@@ -132,6 +135,23 @@ class UserClient(BaseHandler):
             return SETTINGS+UPDATE+SUCCESS, "Limit for %s update to %s" % (media_type, limit)
         else:
             return SETTINGS+UPDATE+FAIL, "Limit not update for %s" % media_type
+
+    @Authorized()
+    def action_spotify_is_authorized(self, data):
+        if SpotifyOauthService.get_token():
+            return SPOTIFY_SERVICE+AUTHORIZED+SUCCESS, ""
+        else:
+            return SPOTIFY_SERVICE+AUTHORIZED+FAIL, "Not authorized with spotify"
+
+    @Authorized()
+    def action_get_spotify_authorize_url(self, data):
+        return SPOTIFY_SERVICE+UPDATE+SUCCESS, SpotifyOauthService.get_authorize_uri()
+
+    @Authorized()
+    def action_spotify_auth(self, data):
+        code = data.get("spotify_code")
+        cid = self.get_cid()
+        SpotifyOauthService.authorize(cid, code)
 
     @staticmethod
     def get_item(data):

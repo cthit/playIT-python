@@ -4,17 +4,10 @@ import spotipy
 from tornado.options import options
 from src.utils import DictNoNone
 
-# used to generate a token which is then placed in env.server_example as SPOTIFY_KEY
-# https://developer.spotify.com/my-applications
-#import spotipy.util as util
-#token = util.prompt_for_user_token("tejpbit")
-#print("%r" %token)
-
-sp = spotipy.Spotify(auth=options.spotify_key)
-
 class SpotifyService:
     @staticmethod
-    def get_playlist(username, playlist_id):
+    def get_playlist(token, username, playlist_id):
+        sp = spotipy.Spotify(auth=token)
         
         playlist = sp.user_playlist(username, playlist_id=playlist_id)
 
@@ -38,6 +31,7 @@ class SpotifyService:
 
     @staticmethod
     def get_track(track_id):
+        sp = spotipy.Spotify()
         track = sp.track(track_id)
 
         if track:

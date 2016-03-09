@@ -96,6 +96,7 @@ class PlaylistItem(BaseModel):
         item = PlaylistItem()
         item.external_id = external_id
         item.type = media_type
+        item.cid = cid
 
         if item.exists():
             raise PlaylistItemError("Item already exists")
@@ -108,7 +109,6 @@ class PlaylistItem(BaseModel):
         item.item_count = item_dict.get("item_count")
 
         user = Auth.get_user(cid)
-        item.cid = cid
         if user:
             item.nick = user.get("nick", "")
 
