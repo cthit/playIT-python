@@ -9,11 +9,21 @@ export const TRACKS_REQUEST = 'TRACKS_REQUEST'
 export const TRACKS_RECEIVE_SUCCESS = 'TRACKS_RECEIVE_SUCCESS'
 export const TRACKS_RECEIVE_ERROR = 'TRACKS_RECEIVE_ERROR'
 
+const addVote = (track, vote) => {
+  backend.call('add_vote', {
+    vote,
+    id: track.external_id,
+    type: track.type
+  })
+}
 
-export const addNewTrack = (track) => ({
+export const addNewTrack = (track) => {
+  addVote(track, 1)
+  return {
     type: TRACK_ADD_NEW,
     track
-})
+  }
+}
 
 export const upvoteTrack = (track) => {
     addVote(track, 1)
@@ -29,14 +39,6 @@ export const downvoteTrack = (track) => {
       type: TRACK_DOWNVOTE,
       track
     }
-}
-
-const addVote = (track, vote) => {
-  backend.call('add_vote', {
-    vote,
-    id: track.external_id,
-    type: track.type
-  })
 }
 
 export const updateTrack = (track) => ({
