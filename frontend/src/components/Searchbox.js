@@ -38,7 +38,7 @@ export default class Searchbox extends Component {
         break;
 
       case 'Escape':
-        setShowResults(false)
+        this.props.setShowResults(false)
         break;
     }
   }
