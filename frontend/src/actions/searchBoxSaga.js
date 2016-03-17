@@ -1,12 +1,10 @@
-import { takeEvery } from 'redux-saga'
+import { takeLatest } from 'redux-saga'
 import { put, call } from 'redux-saga/effects'
 import * as searchBoxActions from "./searchBoxActions"
-import MediaEndpoints from "../lib/media_endpoints.js";
-
-const endpoints = new MediaEndpoints();
+import endpoints from "../lib/media_endpoints";
 
 export function* searchSaga() {
-  yield* takeEvery(searchBoxActions.SET_SEARCH_QUERY, search)
+  yield* takeLatest(searchBoxActions.SET_SEARCH_QUERY, search)
 }
 
 function* search(action) {
@@ -19,6 +17,8 @@ function* search(action) {
 
     yield put(searchBoxActions.receiveSearchResults(results))
   } catch (e) {
-    throw e
+    if (e.type !== "MANUAL_CANCEL") {
+      throw e
+    }
   }
 }

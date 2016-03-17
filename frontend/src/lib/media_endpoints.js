@@ -18,7 +18,7 @@ const RESULT_LIMIT = 20;
 
 const urlparams = (params) => Object.keys(params).map((k) => k + '=' + params[k]).join('&')
 
-export default class MediaEndpoints {
+class MediaEndpoints {
   isURL(string) {
     return Object.keys(regexes).filter((k) => regexes[k].regex.test(string)).length > 0;
   }
@@ -77,3 +77,5 @@ export default class MediaEndpoints {
     }));
   }
 }
+
+export default new MediaEndpoints()

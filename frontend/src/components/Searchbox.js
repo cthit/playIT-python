@@ -1,16 +1,13 @@
 import React, { Component } from "react";
 import ResultItem from "./ResultItem";
+import endpoints from "../lib/media_endpoints";
 
 const titleCase = (string) => string[0].toUpperCase() + string.slice(1);
-
-let lastSearch;
 
 export default class Searchbox extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      show: false,
-      results: [],
       selectedIndex: 0
     }
   }
@@ -26,7 +23,7 @@ export default class Searchbox extends Component {
   }
 
   captureArrowKeys(event) {
-    const {setSearchQuery, setShowResults} = this.props
+    const { setShowResults } = this.props
     // console.log(event.key);
     switch (event.key) {
       case 'ArrowUp': case 'ArrowDown':
@@ -44,14 +41,13 @@ export default class Searchbox extends Component {
       case 'Escape':
         setShowResults(false)
         break;
-
-      default:
-        setSearchQuery(this.query.value, this.props.searchSource)
     }
   }
-  showResults(show) {
-    this.setState({ show });
+
+  handleOnChange(event) {
+    this.props.setSearchQuery(event.target.value, this.props.searchSource)
   }
+
   _submitForm(e) {
     e.preventDefault();
     let query = this.query.value;
@@ -62,24 +58,7 @@ export default class Searchbox extends Component {
       this.resultClicked(result);
       return;
     } else {
-      this.searchMedia(query);
     }
-  }
-  searchMedia(query) {
-    if (query === lastSearch) {
-      return;
-    }
-    lastSearch = query;
-    const {searchSource, activeFeedId} = this.props
-
-    if (!query || activeFeedId === 'playlists') {
-      this.setState({results: []});
-      return;
-    }
-
-    endpoints['search_' + searchSource](query).then((results) => {
-      this.setState({ results, selectedIndex: 0, showResults: true });
-    }).catch(err => { throw err; });
   }
 
   resultClicked(result) {
@@ -105,19 +84,31 @@ export default class Searchbox extends Component {
   }
   render() {
     const { results, selectedIndex } = this.state;
-    const { onToggleButton, activeFeedId, searchSource, onSelectSource, searchResultVisible, setShowResults, searchResults} = this.props
+    const { onToggleButton, activeFeedId, searchSource, onSelectSource, searchResultVisible, setShowResults, searchResults, searchQuery} = this.props
     const hidden = activeFeedId !== 'tracks'
     const options = ["spotify", "youtube", "soundcloud"]
 
     return (
       <div className="search-form">
         <form onSubmit={this._submitForm.bind(this)}>
-          <select ref={elem => this.type = elem} style={{'visibility': hidden ? 'hidden' : ''}} value={searchSource} onChange={(event) => onSelectSource(event.target.value)} className={'search-type-select match-' + searchSource}>
+          <select ref={elem => this.type = elem}
+                  style={{'visibility': hidden ? 'hidden' : ''}}
+                  value={searchSource}
+                  onChange={(event) => onSelectSource(event.target.value)}
+                  className={'search-type-select match-' + searchSource}>
             {options.map((value) =>
               (<option key={value} value={value}>{value}</option>)
             )}
           </select>
-          <input ref={elem => this.query = elem} type="search" onKeyUp={this.captureArrowKeys.bind(this)} onBlur={() => setTimeout(() => setShowResults(false), 1000) } onFocus={() => setShowResults(true)} id="insert_video" autoComplete="off" />
+          <input ref={elem => this.query = elem}
+                 type="search"
+                 onKeyUp={this.captureArrowKeys.bind(this)}
+                 onChange={(event) => this.handleOnChange(event)}
+                 onBlur={() => setTimeout(() => setShowResults(false), 1000) }
+                 onFocus={() => setShowResults(true)}
+                 id="insert_video"
+                 autoComplete="off"
+                 value={searchQuery} />
           <br/>
           {searchResultVisible && Boolean(searchResults.length) && (
             <div className="results-container">
