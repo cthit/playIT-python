@@ -1,4 +1,6 @@
 import * as searchBoxActions from '../actions/searchBoxActions'
+import * as trackActions from '../actions/trackActions'
+import * as playlistActions from '../actions/playlistActions'
 
 const initialState = {
   source: 'youtube',
@@ -20,13 +22,16 @@ export default (state = initialState, action) => {
           }
         case searchBoxActions.SET_SEARCH_QUERY:
           let searchResults = state.searchResults
+          let searchResultsVisible = true
           if (action.query.trim() === "") {
             searchResults = []
+            searchResultsVisible = false
           }
           return {
             ...state,
             searchQuery: action.query,
-            searchResults
+            searchResults,
+            searchResultsVisible
           }
         case searchBoxActions.RECEIVE_SEARCH_RESULTS:
           return {
@@ -42,6 +47,11 @@ export default (state = initialState, action) => {
           return {
             ...state,
             dropdownIndex: newValue
+          }
+        case trackActions.TRACK_ADD_NEW: case playlistActions.PLAYLIST_ADD_NEW:
+          return {
+            ...initialState,
+            source: state.source
           }
         default:
             return state

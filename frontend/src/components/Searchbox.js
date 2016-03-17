@@ -33,9 +33,8 @@ export default class Searchbox extends Component {
 
       case 'Enter':
         event.preventDefault();
-        if (this.state.results[this.state.selectedIndex]) {
-          this.resultClicked(this.state.results[this.state.selectedIndex]);
-        }
+        console.log(this.props.searchResults[this.props.dropdownIndex]);
+        this.props.submitMedia(this.props.searchResults[this.props.dropdownIndex])
         break;
 
       case 'Escape':
@@ -114,7 +113,7 @@ export default class Searchbox extends Component {
                  type="search"
                  onKeyUp={this.captureArrowKeys.bind(this)}
                  onChange={(event) => this.handleOnChange(event)}
-                 onBlur={() => setTimeout(() => setShowResults(false), 1000) }
+                 /*onBlur={() => setTimeout(() => setShowResults(false), 1000) }*/
                  onFocus={() => setShowResults(true)}
                  id="insert_video"
                  autoComplete="off"

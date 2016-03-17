@@ -18,7 +18,7 @@ const addVote = (track, vote) => {
 }
 
 export const addNewTrack = (track) => {
-  addVote(track, 1)
+  backend.call('add_item', track);
   return {
     type: TRACK_ADD_NEW,
     track
