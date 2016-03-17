@@ -1,6 +1,12 @@
 import * as searchBoxActions from '../actions/searchBoxActions'
 
-export default (state = {source: 'youtube', searchResultVisible: false, searchResults: []}, action) => {
+const initialState = {
+  source: 'youtube',
+  searchResultVisible: false,
+  searchResults: [],
+  dropdownIndex: 0
+}
+export default (state = initialState, action) => {
     switch (action.type) {
         case searchBoxActions.SET_SEARCH_SOURCE:
           return {
@@ -26,6 +32,16 @@ export default (state = {source: 'youtube', searchResultVisible: false, searchRe
           return {
             ...state,
             searchResults: action.results
+          }
+        case searchBoxActions.NAVIGATE_DROPDOWN:
+          let newValue = state.dropdownIndex + action.direction
+          newValue %= state.searchResults.length
+          if (newValue < 0) {
+            newValue = newValue + state.searchResults.length
+          }
+          return {
+            ...state,
+            dropdownIndex: newValue
           }
         default:
             return state

@@ -28,7 +28,7 @@ export default class Searchbox extends Component {
     switch (event.key) {
       case 'ArrowUp': case 'ArrowDown':
         event.preventDefault();
-        this.navigateDropdown(event.key);
+        this.props.navigateDropdown(event.key === 'ArrowUp' ? -1 : 1)
         break;
 
       case 'Enter':
@@ -84,7 +84,17 @@ export default class Searchbox extends Component {
   }
   render() {
     const { results, selectedIndex } = this.state;
-    const { onToggleButton, activeFeedId, searchSource, onSelectSource, searchResultVisible, setShowResults, searchResults, searchQuery} = this.props
+    const {
+      onToggleButton,
+      activeFeedId,
+      searchSource,
+      onSelectSource,
+      searchResultVisible,
+      setShowResults,
+      searchResults,
+      searchQuery,
+      dropdownIndex
+    } = this.props
     const hidden = activeFeedId !== 'tracks'
     const options = ["spotify", "youtube", "soundcloud"]
 
@@ -114,7 +124,7 @@ export default class Searchbox extends Component {
             <div className="results-container">
               <ul className="results-list" ref={elem => this.resultsList = elem}>
                 {searchResults.map((result, index) =>
-                  (<ResultItem key={result.id} onClick={this.resultClicked.bind(this)} setSelectedNode={this.setSelectedNode} selected={index === selectedIndex} result={result} />)
+                  (<ResultItem key={result.id} onClick={this.resultClicked.bind(this)} setSelectedNode={this.setSelectedNode} selected={index === dropdownIndex} result={result} />)
                 )}
               </ul>
             </div>
