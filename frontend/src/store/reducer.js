@@ -29,11 +29,6 @@ const main = (state = { show: 'tracks' }, action) => {
 
 const tracks = (state = [], action) => {
     switch (action.type) {
-        case trackActions.TRACK_ADD_NEW:
-            return [
-                ...state,
-                action.track
-            ]
         case trackActions.TRACK_UPVOTE:
             return state.map(track => {
                 if (track.id === action.track.id) {
@@ -71,6 +66,14 @@ const tracks = (state = [], action) => {
             })
         case trackActions.TRACK_REMOVE:
             return state.filter(track => track.id !== action.track.id)
+        case trackActions.TRACK_RECEIVE:
+            return [
+                ...state,
+                {
+                  ...action.track,
+                  value: action.track.value || 0
+                }
+            ]
         case trackActions.TRACKS_RECEIVE_SUCCESS:
           return action.tracks.map(track => {
             const oldTrack = state.find(oldTrack => oldTrack.id === track.id)

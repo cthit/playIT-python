@@ -6,6 +6,7 @@ export const TRACK_DOWNVOTE = 'TRACK_DOWNVOTE'
 export const TRACK_UPDATE = 'TRACK_UPDATE'
 export const TRACK_REMOVE = 'TRACK_REMOVE'
 export const TRACKS_REQUEST = 'TRACKS_REQUEST'
+export const TRACK_RECEIVE = 'TRACK_RECEIVE'
 export const TRACKS_RECEIVE_SUCCESS = 'TRACKS_RECEIVE_SUCCESS'
 export const TRACKS_RECEIVE_ERROR = 'TRACKS_RECEIVE_ERROR'
 
@@ -18,9 +19,18 @@ const addVote = (track, vote) => {
 }
 
 export const addNewTrack = (track) => {
-  backend.call('add_item', track);
+  backend.call('add_item', {
+    ...track
+  });
   return {
     type: TRACK_ADD_NEW,
+    track
+  }
+}
+
+export const receiveTrack = (track) => {
+  return {
+    type: TRACK_RECEIVE,
     track
   }
 }
