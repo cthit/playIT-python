@@ -34,8 +34,7 @@ const tracks = (state = [], action) => {
                 if (track.id === action.track.id) {
                     return {
                         ...track,
-                        downvoted: false,
-                        upvoted: true
+                        user_vote: 1
                     }
                 } else {
                     return track
@@ -46,8 +45,7 @@ const tracks = (state = [], action) => {
                 if (track.id === action.track.id) {
                     return {
                         ...track,
-                        downvoted: true,
-                        upvoted: false
+                        user_vote: -1
                     }
                 } else {
                     return track

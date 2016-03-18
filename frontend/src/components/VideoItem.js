@@ -31,6 +31,7 @@ const VideoItem = ({ item, onUpvote, onDownvote }) => {
 VideoItem.propTypes = {
   item: React.PropTypes.shape({
     id: React.PropTypes.any.isRequired,
+    user_vote: React.PropTypes.number,
     value: React.PropTypes.number.isRequired
   }).isRequired,
   onUpvote: React.PropTypes.func.isRequired,

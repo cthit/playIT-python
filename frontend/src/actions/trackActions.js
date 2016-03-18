@@ -13,7 +13,7 @@ export const TRACKS_RECEIVE_ERROR = 'TRACKS_RECEIVE_ERROR'
 const addVote = (track, vote) => {
   backend.call('add_vote', {
     vote,
-    id: track.external_id,
+    id: track.id,
     type: track.type
   })
 }
