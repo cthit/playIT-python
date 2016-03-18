@@ -1,15 +1,13 @@
 import re
-import peewee
-import requests
 import functools
 import json
 import logging
 
 from tornado import websocket, escape
-from src.models.base import BaseModel, Serializer
+from src.models.base import Serializer
 from src.utils.memcache import RedisMemcache
+from src.services.user_service import UserService
 
-TOKEN_CHECK_URL = "https://account.chalmers.it/userInfo.php?token=%s"
 PLAYER_TOKEN = "42BabaYetuHerpaderp"
 ADMIN_GROUP = "playITAdmin"
 
@@ -39,16 +37,9 @@ class Authorized(object):
                 return method(cls, *args, **kwargs)
 
             cls._token = token
-            user = RedisMemcache.get(token)
+            user = UserService.get_user(token)
 
             if not user:
-                url = TOKEN_CHECK_URL % token
-                response = requests.get(url)
-                data = response.json()
-                if data.get("cid"):
-                    user = data
-                    RedisMemcache.set("token:"+token, user)
-                else:
                     raise AuthenticationError("INVALID TOKEN")
 
             if self._group and self._group not in user.get("groups"):

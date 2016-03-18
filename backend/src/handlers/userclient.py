@@ -8,6 +8,7 @@ from src.services.voting_service import VotingService
 from src.services.admin_actions_service import AdminActionsService
 from src.services.item_service import ItemService
 from src.services.clients_service import ClientsService
+from src.services.user_service import UserService
 
 from src.constants import *
 import logging
@@ -25,7 +26,15 @@ class UserClient(BaseHandler):
         ClientsService.remove_user_client(self)
 
     def action_get_queue(self, data):
-        return QUEUE+UPDATE, UserClientActionsService.get_queue(self.get_cid())
+        user = None
+        if not self._token:
+            user = UserService.get_user(data.get("token"))
+
+        cid = "NO_CID"
+        if user:
+            cid = user.get("cid")
+
+        return QUEUE+UPDATE, UserClientActionsService.get_queue(cid)
 
     def action_get_playlist_queue(self, data):
         return LIST+"/"+QUEUE+UPDATE, UserClientActionsService.get_playlist_queue(self.get_cid())
