@@ -90,6 +90,10 @@ class PlaylistItem(BaseModel):
         ).first()
 
     @staticmethod
+    def get_item_with_id(item_id):
+        return PlaylistItem.fetch().where(PlaylistItem.id == item_id).first()
+
+    @staticmethod
     def create_media_item(cid, media_type, external_id):
         creator = PlaylistItem.get_creator(media_type)
 
@@ -137,7 +141,7 @@ class PlaylistItem(BaseModel):
         return isinstance(cid, str) and len(cid) > 0
 
     @staticmethod
-    def get_queue():
+    def get_queue(cid=None):
         from src.models.vote import PlaylistVote
         return PlaylistItem.fetch(
             PlaylistItem, fn.Sum(PlaylistVote.value).alias("value")

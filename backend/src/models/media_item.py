@@ -1,6 +1,3 @@
-import requests
-import logging
-import isodate
 import importlib
 from peewee import CharField, IntegerField, TextField, fn
 from src.utils.auth import Auth
@@ -90,11 +87,7 @@ class MediaItem(BaseModel):
             MediaItem.id == self.id
         ).join(Vote).group_by(MediaItem.external_id).order_by(fn.Sum(Vote.value).desc())
 
-        item = query.first()
-        item_dict = item.get_dictionary()
-        item_dict["value"] = item.value
-
-        return item_dict
+        return query.first()
 
     def delete_instance(self, permanently=False, recursive=False, delete_nullable=False):
         from src.models.vote import Vote
@@ -103,11 +96,21 @@ class MediaItem(BaseModel):
         return super(MediaItem, self).delete_instance(permanently, recursive, delete_nullable)
 
     @staticmethod
-    def get_item(media_type, external_id):
-        return MediaItem.fetch().where(
+    def get_item(media_type, external_id, user_id=None):
+        item = MediaItem.fetch().where(
             (MediaItem.external_id == external_id) &
             (MediaItem.type == media_type)
         ).first()
+
+        if user_id:
+            item = MediaItem.decorate_with_self_voted(item, user_id)
+
+        return item
+
+    @staticmethod
+    def get_item_with_id(item_id):
+        return MediaItem.fetch().where(MediaItem.id == item_id).first()
+
 
     @staticmethod
     def create_media_item(cid, media_type, external_id):
@@ -154,9 +157,12 @@ class MediaItem(BaseModel):
     @staticmethod
     def get_queue():
         from src.models.vote import Vote
-        return MediaItem.fetch(
+        items = MediaItem.fetch(
             MediaItem, fn.Sum(Vote.value).alias("value")
-        ).join(Vote).group_by(MediaItem.external_id).order_by(fn.Sum(Vote.value).desc(), MediaItem.created_at)
+        ).join(Vote).group_by(MediaItem.external_id)\
+        .order_by(fn.Sum(Vote.value).desc(), MediaItem.created_at)
+
+        return items
 
     @staticmethod
     def change_limit(media_type, limit):

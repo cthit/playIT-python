@@ -1,26 +1,17 @@
-__author__ = 'horv'
-
-from tornado import websocket, escape
 import re
 import peewee
 import requests
 import functools
 import json
 import logging
+
+from tornado import websocket, escape
 from src.models.base import BaseModel, Serializer
 from src.utils.memcache import RedisMemcache
-clients = set()
 
 TOKEN_CHECK_URL = "https://account.chalmers.it/userInfo.php?token=%s"
 PLAYER_TOKEN = "42BabaYetuHerpaderp"
 ADMIN_GROUP = "playITAdmin"
-
-SUCCESS = "/SUCCESS"
-NEW = "/NEW"
-UPDATE = "/UPDATE"
-FAIL = "/FAIL"
-DELETE = "/DELETE"
-STATUS = "/STATUS"
 
 
 class AuthenticationError(Exception):
@@ -87,7 +78,6 @@ class BaseHandler(websocket.WebSocketHandler):
             return False
 
     def destroy(self):
-        clients.remove(self)
         RedisMemcache.delete("token:"+self._token)
 
     def close(self, code=None, reason=None):
@@ -95,7 +85,6 @@ class BaseHandler(websocket.WebSocketHandler):
         super(BaseHandler, self).close(code, reason)
 
     def open(self):
-        clients.add(self)
         logging.info("New connection")
         self.send("GREETING")
 
@@ -135,12 +124,8 @@ class BaseHandler(websocket.WebSocketHandler):
                 package = response[1]
             else:
                 package = dict()
-            if no_responses > 2:
-                formatter = response[2]
-            else:
-                formatter = lambda x: x # noqa
 
-            self.send(topic, package, formater=formatter)
+            self.send(topic, package)
         else:
             logging.error("No response")
             self.close(500, "Internal server error")
@@ -149,29 +134,23 @@ class BaseHandler(websocket.WebSocketHandler):
         self.destroy()
         logging.info("Connection closed")
 
-    @staticmethod
-    def broadcast(topic, msg, formater=lambda x: x, client_type=None):
-        for client in clients:
-            if not client_type or type(client) == client_type:
-                client.send(topic, msg, formater=formater)
-
-    def send(self, topic, obj=dict(), serializer=Serializer.datetime, formater=lambda x: x, format_dict=True):
-        if isinstance(obj, BaseModel):
-            dump = obj.to_json()
-        else:
-            if isinstance(obj, peewee.SelectQuery):
-                obj = [formater(d) for d in obj.dicts(dicts=format_dict)]
-            else:
-                obj = formater(obj)
-
+    def send(self, topic, obj=dict(), serializer=Serializer.datetime):
+        dump = None
+        try:
             dump = json.dumps(obj, default=serializer)
+        except Exception as e:
+            msg = "Failed to JSON dump item of type: %s with representation %r with error: %r" % (type(obj), obj, e)
+            logging.error(msg)
 
         if isinstance(dump, dict):
-            dump = formater(dump)
             dump = escape.json_encode(dump)
+
+        if not dump:
+            dump = escape.json_encode(json.dumps("Internal server error", default=serializer))
 
         msg = "%s %s" % (topic, dump)
         logging.info("Sending: "+msg)
+
         super(BaseHandler, self).write_message(msg)
 
 handlers = [

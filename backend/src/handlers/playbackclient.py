@@ -1,16 +1,23 @@
-from src.handlers.base import BaseHandler, Authorized, NEW, SUCCESS, FAIL, UPDATE
+from src.constants import *
+from src.handlers.base import BaseHandler, Authorized
 from src.models.media_item import MediaItem
 from src.models.playlist_item import PlaylistItem
-from src.handlers.userclient import UserClient
-
-ITEM = "MEDIA_ITEM"
-
+from src.services.clients_service import ClientsService
+from src.services.item_service import ItemService
 
 class PlaybackClient(BaseHandler):
 
     _current_item = None
     _current_playlist = None
     _index = 0
+
+    def open(self):
+        super(BaseHandler, self).open()
+        ClientsService.add_playback_client(self)
+
+    def close(self, *args, **kwargs):
+        super(BaseHandler, self).close(args, kwargs)
+        ClientsService.remove_playback_client(self)
 
     @Authorized(group="player")
     def action_pop(self, data):
@@ -19,9 +26,9 @@ class PlaybackClient(BaseHandler):
             return self._play_playlist_item()
 
         self._current_item = item
-        UserClient.set_current(item)
+        ItemService.set_current(item)
         item.delete_instance()
-        self.broadcast(ITEM+NEW, item, client_type=PlaybackClient)
+        ClientsService.broadcast_to_playback_clients(ITEM+NEW, item)
 
         return ITEM+SUCCESS, ""
 
@@ -29,7 +36,7 @@ class PlaybackClient(BaseHandler):
         playlist = PlaylistItem.get_queue().first()
         if not playlist:
             self._current_item = None
-            UserClient.set_current(None)
+            ItemService.set_current(None)
             return ITEM+FAIL, "No item in queue"
 
         if playlist != self._current_playlist:
@@ -43,8 +50,8 @@ class PlaybackClient(BaseHandler):
         self._current_playlist = playlist
         self._index = index + 1
         self._current_item = item
-        UserClient.set_current(item)
-        self.broadcast(ITEM+NEW, item)
+        ItemService.set_current(item)
+        ClientsService.broadcast(ITEM+NEW, item)
 
         return ITEM+SUCCESS, ""
 
