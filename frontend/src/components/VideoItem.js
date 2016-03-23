@@ -2,8 +2,11 @@ import React from "react";
 import VotingArrows from "./VotingArrows";
 import Helpers from "../lib/helpers";
 
-const VideoItem = ({ item, onUpvote, onDownvote }) => {
-  let classes = ['media', item.type, 'selected'];
+const VideoItem = ({ item, onUpvote, onDownvote, active }) => {
+  let classes = ['media', item.type];
+  if (active) {
+    classes.push("selected")
+  }
   const className = classes.join(' ')
 
   let duration;
@@ -35,7 +38,8 @@ VideoItem.propTypes = {
     value: React.PropTypes.number.isRequired
   }).isRequired,
   onUpvote: React.PropTypes.func.isRequired,
-  onDownvote: React.PropTypes.func.isRequired
+  onDownvote: React.PropTypes.func.isRequired,
+  active: React.PropTypes.bool.isRequired
 }
 
 export default VideoItem

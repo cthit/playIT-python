@@ -6,6 +6,9 @@ export const PLAYLIST_REMOVE = 'PLAYLIST_REMOVE'
 export const PLAYLISTS_REQUEST = 'PLAYLISTS_REQUEST'
 export const PLAYLISTS_RECEIVE_SUCCESS = 'PLAYLISTS_RECEIVE_SUCCESS'
 export const PLAYLISTS_RECEIVE_ERROR = 'PLAYLISTS_RECEIVE_ERROR'
+export const PLAYLISTS_FEED_NAVIGATE = 'PLAYLISTS_FEED_NAVIGATE'
+export const PLAYLISTS_FEED_NAVIGATE_TOP = 'PLAYLISTS_FEED_NAVIGATE_TOP'
+export const PLAYLISTS_FEED_NAVIGATE_BOTTOM = 'PLAYLISTS_FEED_NAVIGATE_BOTTOM'
 
 export const addNewPlaylist = (playlist) => ({
     type: PLAYLIST_ADD_NEW,
@@ -44,4 +47,17 @@ export const receivePlaylistsSuccess = (playlists) => ({
 export const receivePlaylistsError = (error) => ({
     type: PLAYLISTS_RECEIVE_ERROR,
     error
+})
+
+export const feedNavigate = (direction) => ({
+    type: PLAYLISTS_FEED_NAVIGATE,
+    direction
+})
+
+export const feedNavigateTop = () => ({
+    type: PLAYLISTS_FEED_NAVIGATE_TOP
+})
+
+export const feedNavigateBottom = () => ({
+    type: PLAYLISTS_FEED_NAVIGATE_BOTTOM
 })

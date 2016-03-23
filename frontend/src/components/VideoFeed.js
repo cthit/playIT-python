@@ -5,12 +5,14 @@ import VideoItem from "./VideoItem"
 const VideoFeed = React.createClass({
 
   render() {
-    const { items, onUpvote, onDownvote } = this.props
+    const { items, onUpvote, onDownvote, selectedId } = this.props
+    console.log("wat: " + selectedId);
     return (
       <ol className="view-feed">
         {items.map(item => (
           <VideoItem key={item.id}
                      item={item}
+                     active={selectedId === item.id}
                      onUpvote={() => onUpvote(item)}
                      onDownvote={() => onDownvote(item)} />
         ))}
@@ -32,7 +34,8 @@ VideoFeed.propTypes = {
     value: React.PropTypes.number.isRequired
   }).isRequired).isRequired,
   onUpvote: React.PropTypes.func.isRequired,
-  onDownvote: React.PropTypes.func.isRequired
+  onDownvote: React.PropTypes.func.isRequired,
+  selectedId: React.PropTypes.number.isRequired
 }
 
 export default VideoFeed

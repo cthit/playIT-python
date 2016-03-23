@@ -9,6 +9,9 @@ export const TRACKS_REQUEST = 'TRACKS_REQUEST'
 export const TRACK_RECEIVE = 'TRACK_RECEIVE'
 export const TRACKS_RECEIVE_SUCCESS = 'TRACKS_RECEIVE_SUCCESS'
 export const TRACKS_RECEIVE_ERROR = 'TRACKS_RECEIVE_ERROR'
+export const TRACKS_FEED_NAVIGATE = 'TRACKS_FEED_NAVIGATE'
+export const TRACKS_FEED_NAVIGATE_TOP = 'TRACKS_FEED_NAVIGATE_TOP'
+export const TRACKS_FEED_NAVIGATE_BOTTOM = 'TRACKS_FEED_NAVIGATE_BOTTOM'
 
 const addVote = (track, vote) => {
   backend.call('add_vote', {
@@ -73,4 +76,17 @@ export const receiveTracksSuccess = (tracks) => ({
 export const receiveTracksError = (error) => ({
     type: TRACKS_RECEIVE_ERROR,
     error
+})
+
+export const feedNavigate = (direction) => ({
+    type: TRACKS_FEED_NAVIGATE,
+    direction
+})
+
+export const feedNavigateTop = () => ({
+    type: TRACKS_FEED_NAVIGATE_TOP
+})
+
+export const feedNavigateBottom = () => ({
+    type: TRACKS_FEED_NAVIGATE_BOTTOM
 })

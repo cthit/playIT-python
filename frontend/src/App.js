@@ -5,6 +5,7 @@ import Mousetrap from "./lib/mousetrap";
 import polyfill from "./lib/polyfill";
 polyfill();
 
+import KeyBindsListener from "./components/KeyBindsListener";
 import NowPlaying from "./components/NowPlaying";
 import ActiveVideoFeed from "./components/ActiveVideoFeed";
 import SearchBoxContainer from "./components/SearchBoxContainer";
@@ -24,10 +25,12 @@ const App = React.createClass({
     window.backend = backend;
   },
   render() {
+    const activeFeedId = this.props.activeFeedId
     return (
       <div>
-        <SearchBoxContainer activeFeedId={this.props.activeFeedId}/>
-        <ActiveVideoFeed activeFeedId={this.props.activeFeedId}/>
+        <KeyBindsListener activeFeedId={activeFeedId}/>
+        <SearchBoxContainer activeFeedId={activeFeedId}/>
+        <ActiveVideoFeed activeFeedId={activeFeedId}/>
         <NowPlaying />
       </div>
     )

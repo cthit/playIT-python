@@ -7,7 +7,8 @@ import VideoFeed from './VideoFeed'
 
 
 const mapStateToProps = (state) => ({
-  items: state[state.main.show]
+  items: state[state.main.show].items,
+  selectedId: state[state.main.show].selectedId
 })
 
 const mapDispatchToProps = (dispatch, props) => {
