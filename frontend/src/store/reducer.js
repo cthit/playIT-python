@@ -34,7 +34,8 @@ const tracks = (state = [], action) => {
                 if (track.id === action.track.id) {
                     return {
                         ...track,
-                        user_vote: 1
+                        user_vote: 1,
+                        value: track.value + (track.user_vote === 0 ? 1 : 2)
                     }
                 } else {
                     return track
@@ -45,7 +46,8 @@ const tracks = (state = [], action) => {
                 if (track.id === action.track.id) {
                     return {
                         ...track,
-                        user_vote: -1
+                        user_vote: -1,
+                        value: track.value - (track.user_vote === 0 ? 1 : 2)
                     }
                 } else {
                     return track
