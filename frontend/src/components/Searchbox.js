@@ -47,24 +47,6 @@ export default class Searchbox extends Component {
     this.props.setSearchQuery(event.target.value, this.props.searchSource)
   }
 
-  _submitForm(e) {
-    e.preventDefault();
-    let query = this.query.value;
-    let urlResults = endpoints.urlToMediaItem(query);
-
-    if (urlResults.length > 0) {
-      let [result] = urlResults;
-      this.resultClicked(result);
-      return;
-    } else {
-    }
-  }
-
-  resultClicked(result) {
-    this.props.addItem(result);
-    this.query.blur();
-  }
-
   searchPlaceholder() {
     const {searchSource, activeFeedId} = this.props
     if (activeFeedId === 'playlists') {
@@ -99,7 +81,7 @@ export default class Searchbox extends Component {
 
     return (
       <div className="search-form">
-        <form onSubmit={this._submitForm.bind(this)}>
+        <form>
           <select ref={elem => this.type = elem}
                   style={{'visibility': hidden ? 'hidden' : ''}}
                   value={searchSource}
