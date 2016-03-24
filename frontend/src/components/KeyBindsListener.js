@@ -18,19 +18,15 @@ const KeyBindsListener = React.createClass({
       //  document.getElementById('insert_video').blur();
       //});
       Mousetrap.bind(['j', 'down'], () => {
-        console.log("mousetrap j");
         this.props.dispatch(this.currentFeedObject.feedNavigate(1))
       });
       Mousetrap.bind(['k', 'up'], () => {
-        console.log("mousetrap k");
         this.props.dispatch(this.currentFeedObject.feedNavigate(-1))
       });
       Mousetrap.bind(['g g', 'home'], () => {
-        console.log("mousetrap g g");
         this.props.dispatch(this.currentFeedObject.feedNavigateTop())
       });
       Mousetrap.bind(['G', 'end'], () => {
-        console.log("mousetrap G");
         this.props.dispatch(this.currentFeedObject.feedNavigateBottom())
       });
       //Mousetrap.bind('a', () => {
