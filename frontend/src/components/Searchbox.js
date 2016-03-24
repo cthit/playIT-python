@@ -5,28 +5,11 @@ import endpoints from "../lib/media_endpoints";
 const titleCase = (string) => string[0].toUpperCase() + string.slice(1);
 
 export default class Searchbox extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      selectedIndex: 0
-    }
-  }
-  navigateDropdown(keyName) {
-    const { selectedIndex, results } = this.state;
-    let nextIndex = selectedIndex;
-    if (keyName === 'ArrowUp') {
-        nextIndex = Math.max(selectedIndex - 1, 0);
-    } else {
-        nextIndex = Math.min(selectedIndex + 1, results.length - 1);
-    }
-    this.setState({ selectedIndex: nextIndex });
-  }
   submitResultItem(resultItem) {
     this.props.submitMedia(resultItem)
   }
   captureArrowKeys(event) {
     const { setShowResults } = this.props
-    // console.log(event.key);
     switch (event.key) {
       case 'ArrowUp': case 'ArrowDown':
         event.preventDefault();
@@ -65,7 +48,6 @@ export default class Searchbox extends Component {
     }
   }
   render() {
-    const { results, selectedIndex } = this.state;
     const {
       onToggleButton,
       activeFeedId,
@@ -101,7 +83,6 @@ export default class Searchbox extends Component {
                  id="insert_video"
                  autoComplete="off"
                  value={searchQuery} />
-          <br/>
           {searchResultVisible && Boolean(searchResults.length) && (
             <div className="results-container">
               <ul className="results-list" ref={elem => this.resultsList = elem}>
