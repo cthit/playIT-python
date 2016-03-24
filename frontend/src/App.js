@@ -15,14 +15,13 @@ window.React = React;
 
 const App = React.createClass({
   componentWillMount() {
-    // Mousetrap.registerKeys(this);
-    this.backendConnected = backend.connect(this.props.url, this.props.dispatch);
-    this.backendConnected.then((backend) => {
-      backend.call('get_current');
-      backend.call('get_queue');
-      backend.call('get_playlist_queue');
+    backend.connect(this.props.url, this.props.dispatch)
+      .then((backend) => {
+        backend.call('get_current');
+        backend.call('get_queue');
+        backend.call('get_playlist_queue');
+        window.backend = backend;
     });
-    window.backend = backend;
   },
   render() {
     return (
