@@ -9,6 +9,11 @@ export default (state = {items: [], selectedId: null}, action) => {
             ...state,
             selectedId: navigateId(state.items, state.selectedId, action.direction)
           }
+      case playlistActions.PLAYLISTS_FEED_NAVIGATE_SETSET:
+          return {
+              ...state,
+              selectedId: action.playlistId
+          }
       case playlistActions.PLAYLISTS_FEED_NAVIGATE_TOP:
           const firstItem = state.items[0]
           return {
