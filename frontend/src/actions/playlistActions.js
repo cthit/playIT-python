@@ -7,6 +7,7 @@ export const PLAYLISTS_REQUEST = 'PLAYLISTS_REQUEST'
 export const PLAYLISTS_RECEIVE_SUCCESS = 'PLAYLISTS_RECEIVE_SUCCESS'
 export const PLAYLISTS_RECEIVE_ERROR = 'PLAYLISTS_RECEIVE_ERROR'
 export const PLAYLISTS_FEED_NAVIGATE = 'PLAYLISTS_FEED_NAVIGATE'
+export const PLAYLISTS_FEED_NAVIGATE_SET = 'PLAYLISTS_FEED_NAVIGATE_SET'
 export const PLAYLISTS_FEED_NAVIGATE_TOP = 'PLAYLISTS_FEED_NAVIGATE_TOP'
 export const PLAYLISTS_FEED_NAVIGATE_BOTTOM = 'PLAYLISTS_FEED_NAVIGATE_BOTTOM'
 
@@ -52,6 +53,11 @@ export const receivePlaylistsError = (error) => ({
 export const feedNavigate = (direction) => ({
     type: PLAYLISTS_FEED_NAVIGATE,
     direction
+})
+
+export const setFeedNavigate = (playlistId) => ({
+    type: TRACKS_FEED_NAVIGATE_SET,
+    playlistId
 })
 
 export const feedNavigateTop = () => ({
