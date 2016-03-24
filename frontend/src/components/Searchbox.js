@@ -21,7 +21,9 @@ export default class Searchbox extends Component {
     }
     this.setState({ selectedIndex: nextIndex });
   }
-
+  submitResultItem(resultItem) {
+    this.props.submitMedia(resultItem)
+  }
   captureArrowKeys(event) {
     const { setShowResults } = this.props
     // console.log(event.key);
@@ -33,8 +35,7 @@ export default class Searchbox extends Component {
 
       case 'Enter':
         event.preventDefault();
-        console.log(this.props.searchResults[this.props.dropdownIndex]);
-        this.props.submitMedia(this.props.searchResults[this.props.dropdownIndex])
+        this.submitResultItem(this.props.searchResults[this.props.dropdownIndex]);
         break;
 
       case 'Escape':
@@ -105,7 +106,7 @@ export default class Searchbox extends Component {
             <div className="results-container">
               <ul className="results-list" ref={elem => this.resultsList = elem}>
                 {searchResults.map((result, index) =>
-                  (<ResultItem key={result.id} onClick={this.resultClicked.bind(this)} setSelectedNode={this.setSelectedNode} selected={index === dropdownIndex} result={result} />)
+                  (<ResultItem key={result.id} onClick={() => this.submitResultItem(result)} setSelectedNode={this.setSelectedNode} selected={index === dropdownIndex} result={result} />)
                 )}
               </ul>
             </div>
