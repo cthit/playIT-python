@@ -16,15 +16,16 @@ const VideoItem = React.createClass({
       value: React.PropTypes.number.isRequired
     }).isRequired,
     onUpvote: React.PropTypes.func.isRequired,
+    onClick: React.PropTypes.func.isRequired,
     onDownvote: React.PropTypes.func.isRequired,
     active: React.PropTypes.bool.isRequired
   },
   render() {
-    const { item, onUpvote, onDownvote, active } = this.props;
+    const { item, onUpvote, onDownvote, onClick, active } = this.props;
     const itemIsPlaylist = item.type.indexOf('_list') !== -1;
 
     return (
-      <li className={['media', item.type, (active ? 'selected' : '')].join(' ')}>
+      <li className={['media', item.type, (active ? 'selected' : '')].join(' ')} onClick={onClick}>
         <VotingArrows {...item} onUpvote={onUpvote} onDownvote={onDownvote} />
         <div className="image">
           <a href={Helpers.get_link(item)} target="_blank">

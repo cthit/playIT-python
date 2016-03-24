@@ -2,11 +2,12 @@ import React from "react"
 import VideoItem from "./VideoItem"
 
 
-const VideoFeed = ({ items, onUpvote, onDownvote, selectedId }) => (
+const VideoFeed = ({ items, onUpvote, onClickItem, onDownvote, selectedId }) => (
   <ol className="view-feed">
     {items.map(item => (
       <VideoItem key={item.id}
                  item={item}
+                 onClick={() => onClickItem(item)}
                  active={selectedId === item.id}
                  onUpvote={() => onUpvote(item)}
                  onDownvote={() => onDownvote(item)} />
@@ -23,6 +24,7 @@ VideoFeed.propTypes = {
     value: React.PropTypes.number.isRequired
   }).isRequired).isRequired,
   onUpvote: React.PropTypes.func.isRequired,
+  onClickItem: React.PropTypes.func.isRequired,
   onDownvote: React.PropTypes.func.isRequired,
   selectedId: React.PropTypes.number.isRequired
 }
