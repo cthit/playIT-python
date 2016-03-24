@@ -57,4 +57,4 @@ const KeyBindsListener = React.createClass({
     }
 })
 
-export default connect()(KeyBindsListener)
+export default connect(state => ({activeFeedId: state.main.show}))(KeyBindsListener)

@@ -25,18 +25,15 @@ const App = React.createClass({
     window.backend = backend;
   },
   render() {
-    const activeFeedId = this.props.activeFeedId
     return (
       <div>
-        <KeyBindsListener activeFeedId={activeFeedId}/>
-        <SearchBoxContainer activeFeedId={activeFeedId}/>
-        <ActiveVideoFeed activeFeedId={activeFeedId}/>
+        <KeyBindsListener />
+        <SearchBoxContainer />
+        <ActiveVideoFeed />
         <NowPlaying />
       </div>
     )
   }
 })
 
-export default connect((state) => ({
-  activeFeedId: state.main.show
-}))(App)
+export default connect()(App)
