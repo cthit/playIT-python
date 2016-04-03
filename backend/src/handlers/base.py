@@ -5,7 +5,7 @@ import logging
 
 from tornado import websocket, escape
 from src.models.base import Serializer
-from src.cache import cache
+from src.services.token_cache_service import TokenCacheService
 from src.services.user_service import UserService
 
 
@@ -55,6 +55,9 @@ class Authorized(object):
 
 class BaseHandler(websocket.WebSocketHandler):
 
+    def data_received(self, chunk):
+        raise NotImplementedError("Not implemented yet")
+
     _token = ""
     _user = None
 
@@ -70,7 +73,7 @@ class BaseHandler(websocket.WebSocketHandler):
             return False
 
     def destroy(self):
-        cache.delete("token:"+self._token)
+        TokenCacheService.delete_token(self._token)
 
     def close(self, code=None, reason=None):
         self.destroy()

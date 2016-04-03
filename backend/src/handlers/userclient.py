@@ -9,7 +9,7 @@ from src.services.spotify_oauth_service import SpotifyOauthService
 from src.services.user_client_actions_service import UserClientActionsService
 from src.services.user_service import UserService
 from src.services.voting_service import VotingService
-from src.cache import cache
+from src.services.token_cache_service import TokenCacheService
 
 
 class UserClient(BaseHandler):
@@ -41,7 +41,7 @@ class UserClient(BaseHandler):
         return LIST+"/"+QUEUE+UPDATE, UserClientActionsService.get_playlist_queue(self.get_cid())
 
     def get_cid(self):
-        user = cache.get("token:"+self._token)
+        user = TokenCacheService.get_token(self._token)
         if user:
             return user.get("cid")
         else:
