@@ -5,9 +5,6 @@ import os
 import tornado.httpserver
 from tornado.options import options, define
 
-
-define("app_identifier", default=os.environ.get("APP_IDENTIFIER", ""), help="Unique identifier for app")
-
 define('server', default=os.environ.get('SERVER', False), help='Launching tornado webserver.')
 define('port', default=os.environ.get('PORT', 80), help='Webserver listening port.')
 define('cors_host', default=os.environ.get('CORS_HOST', 'http://localhost/'), help='Setting cors for host')
