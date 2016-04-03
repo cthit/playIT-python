@@ -21,7 +21,7 @@ class ClientsService(object):
         ClientsService._broadcast(ClientsService.USER_CLIENTS, topic, msg)
 
     @staticmethod
-    def broadcast_to_playback_clients(topic, msg, formater=lambda x: x):
+    def broadcast_to_playback_clients(topic, msg):
         ClientsService._broadcast(ClientsService.PLAYBACK_CLIENTS, topic, msg)
 
     @staticmethod
