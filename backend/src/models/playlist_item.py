@@ -1,11 +1,10 @@
-import requests
 import importlib
-from tornado.options import options
+
 from peewee import CharField, IntegerField, fn
-from src.utils.auth import Auth
+
 from src.models.base import BaseModel
-from src.models.media_item import MediaItem
-from src.utils.memcache import RedisMemcache
+from src.utils.auth import Auth
+from src.cache import cache
 
 SPOTIFY_LIST = "spotify_list"
 
@@ -150,27 +149,24 @@ class PlaylistItem(BaseModel):
 
     @staticmethod
     def _retrieve_cache(external_id, media_type):
-        items = RedisMemcache.get(external_id)
+        items = cache.get(external_id)
         if items:
             return items
         else:
             cacher = PlaylistItem.get_cacher(media_type)
             cacher(external_id)
-            return RedisMemcache.get(external_id)
+            return cache.get(external_id)
 
     @staticmethod
     def get_index(playlist, index):
-        print(index)
         items = PlaylistItem._retrieve_cache(playlist.external_id, playlist.type)
         if not items:
             return
 
-        index = index % len(items)
-        print(len(items))
+        index %= len(items)
         item = items[index]
         if item:
             item["type"] = playlist.type[:-5]
             item["nick"] = playlist.nick
-            print(item)
 
         return item

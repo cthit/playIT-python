@@ -1,7 +1,6 @@
 
 import requests
-from src.utils.memcache import RedisMemcache
-
+from src.cache import cache
 
 TOKEN_CHECK_URL = "https://account.chalmers.it/userInfo.php?token=%s"
 
@@ -13,7 +12,7 @@ class UserService(object):
         if not token:
             return None
 
-        user = RedisMemcache.get(token)
+        user = cache.get(token)
 
         if not user:
             url = TOKEN_CHECK_URL % token
@@ -21,7 +20,7 @@ class UserService(object):
             data = response.json()
             if data.get("cid"):
                 user = data
-                RedisMemcache.set("token:" + token, user)
+                cache.set("token:" + token, user)
 
         return user
 

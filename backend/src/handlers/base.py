@@ -5,8 +5,9 @@ import logging
 
 from tornado import websocket, escape
 from src.models.base import Serializer
-from src.utils.memcache import RedisMemcache
+from src.cache import cache
 from src.services.user_service import UserService
+
 
 PLAYER_TOKEN = "42BabaYetuHerpaderp"
 ADMIN_GROUP = "playITAdmin"
@@ -69,7 +70,7 @@ class BaseHandler(websocket.WebSocketHandler):
             return False
 
     def destroy(self):
-        RedisMemcache.delete("token:"+self._token)
+        cache.delete("token:"+self._token)
 
     def close(self, code=None, reason=None):
         self.destroy()

@@ -1,20 +1,21 @@
-from src.handlers.base import Authorized, BaseHandler, ADMIN_GROUP, AuthenticationError
-from src.models.media_item import MediaItem
-from src.models.playlist_item import PlaylistItem
-from src.utils.memcache import RedisMemcache
-from src.services.spotify_oauth_service import SpotifyOauthService
-from src.services.user_client_actions_service import UserClientActionsService
-from src.services.voting_service import VotingService
-from src.services.admin_actions_service import AdminActionsService
-from src.services.item_service import ItemService
-from src.services.clients_service import ClientsService
-from src.services.user_service import UserService
+import logging
 
 from src.constants import *
-import logging
+from src.handlers.base import Authorized, BaseHandler, ADMIN_GROUP, AuthenticationError
+from src.services.admin_actions_service import AdminActionsService
+from src.services.clients_service import ClientsService
+from src.services.item_service import ItemService
+from src.services.spotify_oauth_service import SpotifyOauthService
+from src.services.user_client_actions_service import UserClientActionsService
+from src.services.user_service import UserService
+from src.services.voting_service import VotingService
+from src.cache import cache
 
 
 class UserClient(BaseHandler):
+
+    def data_received(self, chunk):
+        raise NotImplementedError("Not supported yet")
 
     def open(self):
         logging.info("UserClient opened new connection")
@@ -40,7 +41,7 @@ class UserClient(BaseHandler):
         return LIST+"/"+QUEUE+UPDATE, UserClientActionsService.get_playlist_queue(self.get_cid())
 
     def get_cid(self):
-        user = RedisMemcache.get("token:"+self._token)
+        user = cache.get("token:"+self._token)
         if user:
             return user.get("cid")
         else:

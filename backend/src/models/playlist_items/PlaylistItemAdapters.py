@@ -3,7 +3,8 @@ from src.services.spotify_service import SpotifyService
 from src.services.spotify_oauth_service import SpotifyOauthService
 from src.services.soundcloud_service import SoundcloudService
 from src.models.playlist_item import PlaylistItemError
-from src.utils.memcache import RedisMemcache
+from src.cache import cache
+
 
 class YoutubePlaylistItemAdapter(object):
 
@@ -18,7 +19,7 @@ class YoutubePlaylistItemAdapter(object):
     def cache_list(playlist_id):
         video_ids = YoutubeService.playlist_items_ids(playlist_id)
         videos = YoutubeService.videos(video_ids)
-        RedisMemcache.set(playlist_id, videos)
+        cache.set(playlist_id, videos)
 
 
 class SoundcloudPlaylistItemAdapter(object):
@@ -26,9 +27,10 @@ class SoundcloudPlaylistItemAdapter(object):
     @staticmethod
     def create_item(item):
         soundcloud_item = SoundcloudService.get_playlist(item.external_id)
-        RedisMemcache.set(item.external_id, soundcloud_item.get('tracks'))
+        cache.set(item.external_id, soundcloud_item.get('tracks'))
 
         return soundcloud_item
+
 
 class SpotifyPlaylistItemAdapter(object):
 
@@ -38,7 +40,7 @@ class SpotifyPlaylistItemAdapter(object):
         token = SpotifyOauthService.get_token(item.cid)
         if token:
             playlist = SpotifyService.get_playlist(token, id_parts[2], id_parts[4])
-            RedisMemcache.set(item.external_id, playlist.get('tracks'))
+            cache.set(item.external_id, playlist.get('tracks'))
             return playlist
         else:
             raise PlaylistItemError("Not authorized with spotify")
