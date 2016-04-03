@@ -1,5 +1,3 @@
-import logging
-
 from src.constants import *
 from src.models.playlist_item import PlaylistItem
 from src.models.media_item import MediaItem

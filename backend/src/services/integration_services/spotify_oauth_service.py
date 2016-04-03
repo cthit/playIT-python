@@ -1,6 +1,5 @@
 import spotipy.oauth2 as oauth2
 from tornado.options import options
-from src.utils import DictNoNone
 
 # used to generate a token which is then placed in env.server_example as SPOTIFY_KEY
 # https://developer.spotify.com/my-applications
@@ -9,6 +8,7 @@ from src.utils import DictNoNone
 #print("%r" %token)
 
 MEMCACCHE_PREFIX = "SPOTIFY_OAUTH"
+
 
 class SpotifyOauthService:
     auth_map = dict()

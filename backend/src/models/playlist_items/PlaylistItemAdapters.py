@@ -1,9 +1,10 @@
-from src.services.youtube_service import YoutubeService
-from src.services.spotify_service import SpotifyService
-from src.services.spotify_oauth_service import SpotifyOauthService
 from src.services.soundcloud_service import SoundcloudService
-from src.models.playlist_item import PlaylistItemError
+from src.services.spotify_oauth_service import SpotifyOauthService
+
 from src.cache import cache
+from src.models.playlist_item import PlaylistItemError
+from src.services.integration_services.spotify_service import SpotifyService
+from src.services.integration_services.youtube_service import YoutubeService
 
 
 class YoutubePlaylistItemAdapter(object):

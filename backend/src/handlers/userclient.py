@@ -1,15 +1,16 @@
 import logging
 
+
 from src.constants import *
 from src.handlers.base import Authorized, BaseHandler, ADMIN_GROUP, AuthenticationError
-from src.services.admin_actions_service import AdminActionsService
 from src.services.clients_service import ClientsService
+from src.services.integration_services.spotify_oauth_service import SpotifyOauthService
 from src.services.item_service import ItemService
-from src.services.spotify_oauth_service import SpotifyOauthService
-from src.services.user_client_actions_service import UserClientActionsService
+from src.services.token_cache_service import TokenCacheService
 from src.services.user_service import UserService
 from src.services.voting_service import VotingService
-from src.services.token_cache_service import TokenCacheService
+from src.services.action_services.user_client_actions_service import UserClientActionsService
+from src.services.action_services.admin_actions_service import AdminActionsService
 
 
 class UserClient(BaseHandler):
@@ -76,6 +77,7 @@ class UserClient(BaseHandler):
         else:
             return VOTE+DELETE+FAIL, "No such item: %s" % data.get("id", "NO_ID_SUPPLIED")
 
+    @staticmethod
     def action_get_current(self, data):
         return PLAYING+STATUS, ItemService.get_current()
 

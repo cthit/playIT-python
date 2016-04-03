@@ -1,6 +1,7 @@
-from src.services.youtube_service import YoutubeService
-from src.services.spotify_service import SpotifyService
 from src.services.soundcloud_service import SoundcloudService
+
+from src.services.integration_services.spotify_service import SpotifyService
+from src.services.integration_services.youtube_service import YoutubeService
 
 
 class YoutubeMediaItemAdapter(object):

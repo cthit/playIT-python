@@ -4,6 +4,7 @@ import spotipy
 from tornado.options import options
 from src.utils import DictNoNone
 
+
 class SpotifyService:
     @staticmethod
     def get_playlist(token, username, playlist_id):
@@ -27,7 +28,6 @@ class SpotifyService:
     @staticmethod
     def get_playlist_tracks(playlist_id):
         pass
-
 
     @staticmethod
     def get_track(track_id):
