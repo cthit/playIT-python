@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import logging
+
 import tornado.httpserver
 from tornado.options import options, define
 
@@ -24,7 +25,6 @@ define('database_user', default='root', help="Database username", group="databas
 define('database_pass', help="Database password", group="database")
 define('create_tables', default=False, help="Create tables")
 
-
 options.parse_config_file("options.py")
 options.parse_command_line()
 
@@ -39,7 +39,7 @@ logging.basicConfig(level=level,
                     format='%(asctime)s %(levelname)-8s %(message)s',
                     datefmt='%a, %d %b %Y %H:%M:%S')
 
-from src.database import setup_database
+from src.database import setup_database  # noqa
 (success, msg) = setup_database(options.group_dict("database"))
 
 if not success:
@@ -47,7 +47,7 @@ if not success:
     exit(1)
 
 logging.info("Importing handlers...")
-from src.handlers import handlers
+from src.handlers import handlers  # noqa
 
 logging.info("Creating web application...")
 application = tornado.web.Application(handlers, '', **settings)
