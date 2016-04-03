@@ -2,6 +2,7 @@
 cors_host = "http://app.playit.se:8080"
 
 database_backend = "sqlite"
+database_dir = "/db"
 
 # database = "playit" Only required for mysql backend
 # database_host = "127.0.0.1"

@@ -43,10 +43,10 @@ def create_database(database_options):
         return mysql.create(database_options)
     elif "sqlite" in backend:
         logging.info("Using Sqlite-backend")
-        return sqlite.create()
+        return sqlite.create(database_options.get("database_dir", ""))
     else:
         logging.info("No specific database backend stated, using default sqlite")
-        return sqlite.create()
+        return sqlite.create("")
 
 
 def setup_database(database_options):

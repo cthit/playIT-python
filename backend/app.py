@@ -23,6 +23,7 @@ define('database', help="Database", group="database")
 define('database_host', default='localhost', help="Database host", group="database")
 define('database_user', default='root', help="Database username", group="database")
 define('database_pass', help="Database password", group="database")
+define('database_dir', help="Database directory for sqlite files", group="database")
 define('create_tables', default=False, help="Create tables")
 
 options.parse_config_file("options.py")

@@ -15,7 +15,8 @@ E.g. tells the playback client that a new item is to be played.
 1. Copy `options_example.py` to `options_local.py` or something similar (try to avoid `options.py` since then it will be copied into the docker image when built)
 2. Fill in required environment variables, api-keys etc.
 3. Build docker with: `docker build -t playit .`
-4. Run image with: `docker run -it -v $(pwd)/options_local.py:/usr/src/app/options.py --rm --name playit-running playit`
+4. Run image with: `docker run -it -v db:/db -v $(pwd)/options_local.py:/usr/src/app/options.py -p 8888:80 --rm --name playit-running playit`
+This runs the image with a logical volume db for storing sqlite db between restarts of docker-run and exposes port 8888 as the app port.
 
 ### Frontend
 

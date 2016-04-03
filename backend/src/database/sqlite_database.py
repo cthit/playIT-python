@@ -1,5 +1,8 @@
+import logging
 from peewee import SqliteDatabase
 
 
-def create():
-    return SqliteDatabase("playit.db")
+def create(dir):
+    file = dir+"/playit.db"
+    logging.info("Using DB file: " + file)
+    return SqliteDatabase(file)
