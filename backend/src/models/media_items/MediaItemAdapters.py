@@ -14,7 +14,7 @@ class SoundcloudMediaItemAdapter(object):
 
     @staticmethod
     def create_item(item):
-        return  SoundcloudService.get_track(item.external_id)
+        return SoundcloudService.get_track(item.external_id)
 
 
 class SpotifyMediaItemAdapter(object):

@@ -2,14 +2,9 @@
 
 import logging
 import os
-import sys
-sys.path.insert(0, 'libs')
-
-import tornado.web
 import tornado.httpserver
-import tornado.autoreload
-import tornado.websocket
 from tornado.options import options, define
+
 
 define("app_identifier", default=os.environ.get("APP_IDENTIFIER", ""), help="Unique identifier for app")
 
@@ -28,10 +23,11 @@ define('spotify_client_secret', default=os.environ.get('SPOTIFY_CLIENT_SECRET', 
 define('spotify_redirect_uri', default=os.environ.get('SPOTIFY_REDIRECT_URI', None), help='spotidy app redirect uri')
 
 
-define('database', default=os.environ.get('DATABASE'), help="Database")
-define('database_host', default=os.environ.get('DATABASE_HOST', 'localhost'), help="Database host")
-define('database_user', default=os.environ.get('DATABASE_USER', 'root'), help="Database username")
-define('database_pass', default=os.environ.get('DATABASE_PASS'), help="Database password")
+define('database_backend', default=os.environ.get('DATABASE_BACKEND'), help="Choose database backend, MySQL and SQLite supported", group="database")
+define('database', default=os.environ.get('DATABASE'), help="Database", group="database")
+define('database_host', default=os.environ.get('DATABASE_HOST', 'localhost'), help="Database host", group="database")
+define('database_user', default=os.environ.get('DATABASE_USER', 'root'), help="Database username", group="database")
+define('database_pass', default=os.environ.get('DATABASE_PASS'), help="Database password", group="database")
 define('create_tables', default=os.environ.get('CREATE_TABLES', False), help="Create tables")
 
 settings = {
@@ -46,6 +42,13 @@ level = logging.DEBUG if options.debug else logging.INFO
 logging.basicConfig(level=level,
                     format='%(asctime)s %(levelname)-8s %(message)s',
                     datefmt='%a, %d %b %Y %H:%M:%S')
+
+from src.database import setup_database
+(success, msg) = setup_database(options.group_dict("database"))
+
+if not success:
+    logging.error(msg)
+    exit(1)
 
 logging.info("Importing handlers...")
 from src.handlers import handlers
