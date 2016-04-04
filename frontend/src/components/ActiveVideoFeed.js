@@ -15,13 +15,13 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   tracks: {
-    onUpvote: (track) => dispatch(trackActions.upvoteTrack(track)),
-    onDownvote: (track) => dispatch(trackActions.downvoteTrack(track)),
+    onUpvote: (track) => dispatch(trackActions.upvoteItem(track)),
+    onDownvote: (track) => dispatch(trackActions.downvoteItem(track)),
     onClickItem: (track) => dispatch(trackActions.setFeedNavigate(track.id))
   },
   playlists: {
-    onUpvote: (playlist) => dispatch(playlistActions.upvotePlaylist(playlist)),
-    onDownvote: (playlist) => dispatch(playlistActions.downvotePlaylist(playlist)),
+    onUpvote: (playlist) => dispatch(playlistActions.upvoteItem(playlist)),
+    onDownvote: (playlist) => dispatch(playlistActions.downvoteItem(playlist)),
     onClickItem: (playlist) => dispatch(playlistActions.setFeedNavigate(playlist.id))
   }
 })

@@ -14,15 +14,7 @@ export const TRACKS_FEED_NAVIGATE_SET = 'TRACKS_FEED_NAVIGATE_SET'
 export const TRACKS_FEED_NAVIGATE_TOP = 'TRACKS_FEED_NAVIGATE_TOP'
 export const TRACKS_FEED_NAVIGATE_BOTTOM = 'TRACKS_FEED_NAVIGATE_BOTTOM'
 
-const addVote = (track, vote) => {
-  backend.call('add_vote', {
-    vote,
-    id: track.id,
-    type: track.type
-  })
-}
-
-export const addNewTrack = (track) => {
+export const addNewItem = (track) => {
   backend.call('add_item', {
     ...track
   });
@@ -32,14 +24,14 @@ export const addNewTrack = (track) => {
   }
 }
 
-export const receiveTrack = (track) => {
+export const receiveItem = (track) => {
   return {
     type: TRACK_RECEIVE,
     track
   }
 }
 
-export const upvoteTrack = (track) => {
+export const upvoteItem = (track) => {
     addVote(track, 1)
     return {
       type: TRACK_UPVOTE,
@@ -47,7 +39,7 @@ export const upvoteTrack = (track) => {
     }
 }
 
-export const downvoteTrack = (track) => {
+export const downvoteItem = (track) => {
     addVote(track, -1)
     return {
       type: TRACK_DOWNVOTE,
@@ -55,12 +47,12 @@ export const downvoteTrack = (track) => {
     }
 }
 
-export const updateTrack = (track) => ({
+export const updateItem = (track) => ({
     type: TRACK_UPDATE,
     track
 })
 
-export const removeTrack = (track) => {
+export const removeItem = (track) => {
   backend.call('remove_item', {
     ...track
   });
@@ -70,16 +62,16 @@ export const removeTrack = (track) => {
   }
 }
 
-export const requestTracks = () => ({
+export const requestItems = () => ({
     type: TRACKS_REQUEST
 })
 
-export const receiveTracksSuccess = (tracks) => ({
+export const receiveItemsSuccess = (tracks) => ({
     type: TRACKS_RECEIVE_SUCCESS,
     tracks
 })
 
-export const receiveTracksError = (error) => ({
+export const receiveItemsError = (error) => ({
     type: TRACKS_RECEIVE_ERROR,
     error
 })
