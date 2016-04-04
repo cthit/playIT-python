@@ -1,4 +1,5 @@
 import { connect } from "react-redux"
+import _ from 'lodash'
 
 import * as trackActions from '../actions/trackActions'
 import * as playlistActions from '../actions/playlistActions'
@@ -8,7 +9,7 @@ import VideoFeed from './VideoFeed'
 
 const mapStateToProps = (state) => ({
   activeFeedId: state.main.show,
-  items: state[state.main.show].items,
+  items: _.orderBy(state[state.main.show].items, ["value", "created_at"], ['desc', 'asc']),
   selectedId: state[state.main.show].selectedId
 })
 
