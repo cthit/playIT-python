@@ -16,6 +16,7 @@ token = util.prompt_for_user_token(
 )
 print("%r" % token)
 
+# noinspection PyPep8
 """
 Request:
 https://accounts.spotify.com/authorize/?client_id=82b8c1d6b7e449848e43b82a0ee0d313&response_type=code&redirect_uri=http%3A%2F%2Fapp.playit.se%3A8080&scope=user-read-private%20user-read-email

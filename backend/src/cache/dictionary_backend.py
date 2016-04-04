@@ -2,7 +2,8 @@ from dogpile.cache.api import CacheBackend, NO_VALUE
 
 
 class DictionaryBackend(CacheBackend):
-    def __init__(self, args):
+    def __init__(self, arguments):
+        super().__init__(arguments)
         self.cache = {}
 
     def get(self, key):

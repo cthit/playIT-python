@@ -23,7 +23,8 @@ class BaseItem(BaseModel):
             BaseItem.type == self.type
         ).exists()
 
-    def _get_votes(self):
+    @staticmethod
+    def _get_votes():
         raise Exception("SUBCLASS SHOULD IMPLEMENT THIS")
 
     def value(self):

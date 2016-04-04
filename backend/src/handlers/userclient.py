@@ -77,6 +77,7 @@ class UserClient(BaseHandler):
         else:
             return VOTE+DELETE+FAIL, "No such item: %s" % data.get("id", "NO_ID_SUPPLIED")
 
+    # noinspection PyUnusedLocal
     @staticmethod
     def action_get_current(data):
         return PLAYING+STATUS, ItemService.get_current()
@@ -109,6 +110,7 @@ class UserClient(BaseHandler):
         else:
             return SETTINGS+UPDATE+FAIL, "Limit not update for %s" % media_type
 
+    # noinspection PyUnusedLocal
     @Authorized()
     def action_spotify_is_authorized(self, data):
         if SpotifyOauthService.get_token(self.get_cid()):
@@ -116,6 +118,7 @@ class UserClient(BaseHandler):
         else:
             return SPOTIFY_SERVICE+AUTHORIZED+FAIL, "Not authorized with spotify"
 
+    # noinspection PyUnusedLocal
     @Authorized()
     def action_get_spotify_authorize_url(self, data):
         return SPOTIFY_SERVICE+UPDATE+SUCCESS, SpotifyOauthService.get_authorize_uri()
