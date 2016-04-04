@@ -11,8 +11,10 @@ class TokenCacheService(object):
 
     @staticmethod
     def set_token(token, user):
-        return cache.get(TokenCacheService.TOKEN_PREFIX + token, user)
+        return cache.set(TokenCacheService.TOKEN_PREFIX + token, user)
 
     @staticmethod
     def delete_token(token):
+        if not token:
+            return
         return cache.delete(TokenCacheService.TOKEN_PREFIX + token)

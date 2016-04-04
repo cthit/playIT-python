@@ -92,7 +92,7 @@ class UserClient(BaseHandler):
             UserClientActionsService.delete_item(item)
             return ItemService.get_item_uri(item)+DELETE+SUCCESS, item
         else:
-            raise AuthenticationError("Not your item to delete and you're not admin")
+            return ItemService.get_item_uri(item)+DELETE+FAIL, "Not your item to delete and you're not admin"
 
     @Authorized(group=ADMIN_GROUP)
     def action_set_limit(self, data):

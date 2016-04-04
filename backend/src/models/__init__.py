@@ -16,7 +16,7 @@ if options.create_tables or None:
         try:
             model.create_table()
         except peewee.OperationalError as e:
-            logging.error("Create tables: Operational error: %s" % e)
+            logging.warning("Create tables: Operational error: %s" % e)
         except peewee.IntegrityError as e:
             logging.error("Create tables: %s" % e)
         except peewee.InternalError as e:
