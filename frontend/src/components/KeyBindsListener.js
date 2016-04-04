@@ -29,15 +29,19 @@ const KeyBindsListener = React.createClass({
       Mousetrap.bind(['G', 'end'], () => {
         this.props.dispatch(this.currentFeedObject.feedNavigateBottom())
       });
-      //Mousetrap.bind('a', () => {
-      //  app.voteItem(1);
-      //});
-      //Mousetrap.bind('z', () => {
-      //  app.voteItem(-1);
-      //});
-      //Mousetrap.bind(['d d', 'x'], () => {
-      //  app.deleteItem();
-      //});
+      Mousetrap.bind('a', () => {
+        if(this.props.selectedItem.user_vote !== 1) {
+          this.props.dispatch(this.currentFeedObject.upvoteTrack(this.props.selectedItem))
+        }
+      });
+      Mousetrap.bind('z', () => {
+        if(this.props.selectedItem.user_vote !== -1) {
+          this.props.dispatch(this.currentFeedObject.downvoteTrack(this.props.selectedItem))
+        }
+      });
+      Mousetrap.bind('d d', () => {
+        this.props.dispatch(this.currentFeedObject.removeTrack(this.props.selectedItem))
+      });
     },
 
     componentWillReceiveProps(props) {
@@ -53,4 +57,14 @@ const KeyBindsListener = React.createClass({
     }
 })
 
-export default connect(state => ({activeFeedId: state.main.show}))(KeyBindsListener)
+const mapStateToProps = state => {
+  const activeFeedId = state.main.show
+  const selectedId = state[activeFeedId].selectedId
+
+  return {
+    activeFeedId,
+    selectedItem: state[activeFeedId].items.find(item => item.id === selectedId)
+  }
+}
+
+export default connect(mapStateToProps)(KeyBindsListener)
