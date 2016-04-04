@@ -1,5 +1,3 @@
-import logging
-
 from src.models.media_item import MediaItem
 
 

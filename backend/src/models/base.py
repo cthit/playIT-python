@@ -7,8 +7,8 @@ from peewee import Model, DateTimeField, BooleanField, TextField, ForeignKeyFiel
 
 
 class Serializer(object):
-
-    def convert_value(self, value):
+    @staticmethod
+    def convert_value(value):
         is1 = isinstance(value, datetime.datetime)
         is2 = isinstance(value, datetime.date)
         is3 = isinstance(value, datetime.time)
@@ -51,7 +51,8 @@ class Serializer(object):
 
 
 class Deserializer(object):
-    def deserialize_object(self, model, data):
+    @staticmethod
+    def deserialize_object(model, data):
         return BaseModel.get_model_from_dictionary(model, data)
 
 
@@ -65,7 +66,7 @@ class BaseModel(Model, Serializer, Deserializer):
 
     @classmethod
     def fetch(cls, *selection):
-        return cls.select(*selection).where(cls.deleted == False) # noqa
+        return cls.select(*selection).where(cls.deleted == False)  # noqa
 
     def save(self, *args, **kwargs):
         self.modified_at = datetime.datetime.now()
@@ -177,7 +178,6 @@ class JsonField(TextField):
 
 
 class EnumField(TextField):
-
     def values(self, values):
         self.values = values
         return self

@@ -55,6 +55,6 @@ def setup_database(database_options):
     if not success:
         return False, msg
     else:
-        # noinspection PyShadowingNames
+        # noinspection PyShadowingNames,PyUnusedLocal
         database = create_database(database_options)
         return True, ""

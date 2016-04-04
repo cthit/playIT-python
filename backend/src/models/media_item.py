@@ -10,9 +10,9 @@ SOUNDCLOUD = "soundcloud"
 
 VOTE_LIMIT = -2
 DURATION_LIMIT_MAP = {
-    YOUTUBE: 60*60*3,  # 3 hour
-    SPOTIFY: 60*60,  # 1 hour
-    SOUNDCLOUD: 60*60,  # 1 hour
+    YOUTUBE: 60 * 60 * 3,  # 3 hour
+    SPOTIFY: 60 * 60,  # 1 hour
+    SOUNDCLOUD: 60 * 60,  # 1 hour
 }
 
 YOUTUBE_URL = "https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=%s&fields=items&key="
@@ -30,7 +30,6 @@ class MediaItemError(Exception):
 
 
 class MediaItem(BaseModel):
-
     title = CharField(default="")
     author = CharField(default="", null=True)
     description = TextField(default="", null=True)
@@ -111,7 +110,6 @@ class MediaItem(BaseModel):
     def get_item_with_id(item_id):
         return MediaItem.fetch().where(MediaItem.id == item_id).first()
 
-
     @staticmethod
     def create_media_item(cid, media_type, external_id):
         creator = MediaItem.get_creator(media_type)
@@ -123,7 +121,7 @@ class MediaItem(BaseModel):
             raise MediaItemError("Item already exists")
 
         item_dict = creator(item)
-        
+
         item.title = item_dict.get("title")
         item.author = item_dict.get('author')
         item.thumbnail = item_dict.get("thumbnail", "")
@@ -160,8 +158,8 @@ class MediaItem(BaseModel):
         from src.models.vote import Vote
         items = MediaItem.fetch(
             MediaItem, fn.Sum(Vote.value).alias("value")
-        ).join(Vote).group_by(MediaItem.external_id)\
-        .order_by(fn.Sum(Vote.value).desc(), MediaItem.created_at)
+        ).join(Vote).group_by(MediaItem.external_id) \
+            .order_by(fn.Sum(Vote.value).desc(), MediaItem.created_at)
 
         return items
 
