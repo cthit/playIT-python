@@ -19,11 +19,11 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => {
   const tracks = {
     onToggleButton: () => dispatch(mainActions.showPlaylists()),
-    submitMedia: (track) => dispatch(trackActions.addNewTrack(track))
+    submitMedia: (track) => dispatch(trackActions.addNewItem(track))
   }
   const playlists = {
     onToggleButton: () => dispatch(mainActions.showTracks()),
-    submitMedia: (playlist) => dispatch(playlistActions.addNewPlaylist(playlist))
+    submitMedia: (playlist) => dispatch(playlistActions.addNewItem(playlist))
   }
 
   return {

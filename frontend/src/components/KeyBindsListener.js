@@ -31,16 +31,16 @@ const KeyBindsListener = React.createClass({
       });
       Mousetrap.bind('a', () => {
         if(this.props.selectedItem.user_vote !== 1) {
-          this.props.dispatch(this.currentFeedObject.upvoteTrack(this.props.selectedItem))
+          this.props.dispatch(this.currentFeedObject.upvoteItem(this.props.selectedItem))
         }
       });
       Mousetrap.bind('z', () => {
         if(this.props.selectedItem.user_vote !== -1) {
-          this.props.dispatch(this.currentFeedObject.downvoteTrack(this.props.selectedItem))
+          this.props.dispatch(this.currentFeedObject.downvoteItem(this.props.selectedItem))
         }
       });
       Mousetrap.bind('d d', () => {
-        this.props.dispatch(this.currentFeedObject.removeTrack(this.props.selectedItem))
+        this.props.dispatch(this.currentFeedObject.removeItem(this.props.selectedItem))
       });
     },
 

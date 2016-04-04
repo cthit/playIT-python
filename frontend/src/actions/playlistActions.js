@@ -4,6 +4,7 @@ export const PLAYLIST_DOWNVOTE = 'PLAYLIST_DOWNVOTE'
 export const PLAYLIST_UPDATE = 'PLAYLIST_UPDATE'
 export const PLAYLIST_REMOVE = 'PLAYLIST_REMOVE'
 export const PLAYLISTS_REQUEST = 'PLAYLISTS_REQUEST'
+export const PLAYLIST_RECEIVE = 'PLAYLIST_RECEIVE'
 export const PLAYLISTS_RECEIVE_SUCCESS = 'PLAYLISTS_RECEIVE_SUCCESS'
 export const PLAYLISTS_RECEIVE_ERROR = 'PLAYLISTS_RECEIVE_ERROR'
 export const PLAYLISTS_FEED_NAVIGATE = 'PLAYLISTS_FEED_NAVIGATE'
@@ -11,41 +12,48 @@ export const PLAYLISTS_FEED_NAVIGATE_SET = 'PLAYLISTS_FEED_NAVIGATE_SET'
 export const PLAYLISTS_FEED_NAVIGATE_TOP = 'PLAYLISTS_FEED_NAVIGATE_TOP'
 export const PLAYLISTS_FEED_NAVIGATE_BOTTOM = 'PLAYLISTS_FEED_NAVIGATE_BOTTOM'
 
-export const addNewPlaylist = (playlist) => ({
+export const addNewItem = (playlist) => ({
     type: PLAYLIST_ADD_NEW,
     playlist
 })
 
-export const upvotePlaylist = (playlist) => ({
+export const receiveItem = (playlist) => {
+  return {
+    type: PLAYLIST_RECEIVE,
+    playlist
+  }
+}
+
+export const upvoteItem = (playlist) => ({
     type: PLAYLIST_UPVOTE,
     playlist
 })
 
-export const downvotePlaylist = (playlist) => ({
+export const downvoteItem = (playlist) => ({
     type: PLAYLIST_DOWNVOTE,
     playlist
 })
 
-export const updatePlaylist = (playlist) => ({
+export const updateItem = (playlist) => ({
     type: PLAYLIST_UPDATE,
     playlist
 })
 
-export const removePlaylist = (playlist) => ({
+export const removeItem = (playlist) => ({
     type: PLAYLIST_REMOVE,
     playlist
 })
 
-export const requestPlaylists = () => ({
+export const requestItem = () => ({
     type: PLAYLISTS_REQUEST
 })
 
-export const receivePlaylistsSuccess = (playlists) => ({
+export const receiveItemsSuccess = (playlists) => ({
     type: PLAYLISTS_RECEIVE_SUCCESS,
     playlists
 })
 
-export const receivePlaylistsError = (error) => ({
+export const receiveItemsError = (error) => ({
     type: PLAYLISTS_RECEIVE_ERROR,
     error
 })

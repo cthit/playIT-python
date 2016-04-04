@@ -8,15 +8,15 @@ export default (topic, args) => {
         return mainActions.setNowPlaying(args);
 
       case 'queue/update':
-        return trackActions.receiveTracksSuccess(args);
+        return trackActions.receiveItemsSuccess(args);
       case 'media_item/update':
-        return trackActions.updateTrack(args);
+        return trackActions.updateItem(args);
       case 'media_item/new':
-        return trackActions.receiveTrack(args)
+        return trackActions.receiveItem(args)
       case 'media_list/queue/update':
-        return playlistActions.receivePlaylistsSuccess(args);
+        return playlistActions.receiveItemsSuccess(args);
       case 'media_list/update':
-        return playlistActions.updatePlaylist(args);
+        return playlistActions.updateItem(args);
       default:
         return null;
     }
