@@ -1,18 +1,16 @@
 import React, { Component } from "react";
+import ReactDOM from "react-dom";
 
 export default class ResultItem extends Component {
   componentDidUpdate() {
     if (this.props.selected) {
-      React.findDOMNode(this).scrollIntoView(false);
+      ReactDOM.findDOMNode(this).scrollIntoView(false);
     }
   }
-  clickEvent(event) {
-    this.props.onClick(this.props.result);
-  }
   render() {
-    let result = this.props.result;
+    const { result, onClick, selected } = this.props;
     return (
-      <li onClick={this.clickEvent.bind(this)} className={this.props.selected ? 'selected' : ''}>
+      <li onClick={() => onClick(result)} className={selected ? 'selected' : ''}>
         <img src={result.thumbnail} className="video-thumbnail" />
         <div className="details">
           <div className="name">

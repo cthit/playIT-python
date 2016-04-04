@@ -1,1 +1,0 @@
-app.constant('SERVER', 'ws://localhost:8888/ws/action');

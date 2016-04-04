@@ -1,4 +1,2 @@
-export default {
-    url: 'ws://kamino.chalmers.it:8888/ws/action',
-    cookieName: 'chalmers_lan_auth'
-}
+export const url = 'ws://ndushi.chalmers.it:8888/ws/action'
+export const cookieName = 'chalmersItAuth'

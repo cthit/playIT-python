@@ -1,90 +1,32 @@
-import React, { Component } from "react";
-import VideoItem from "./VideoItem.js";
-import firstBy from "../lib/thenby.js";
+import React from "react"
+import VideoItem from "./VideoItem"
 
-export default class VideoFeed extends Component {
-  constructor(props) {
-    super(props);
 
-    this.state = {
-      items: [],
-      selected: null
-    };
-  }
-  currentItem() {
-    let index = this.state.items.findIndex((item) => item.id === this.state.selected)
-    return this.state.items[index];
-  }
-  _update_queue(items) {
-    items = items.map(item => {
-      if (this.props.myItems.some(i => i.id === item.id && i.type === item.type)) {
-        localStorage.setItem('vote-' + item.id, JSON.stringify({value: 1, upvoted: true, downvoted: false}));
-      }
-      return item;
+const VideoFeed = ({ items, onUpvote, onClickItem, onDownvote, selectedId }) => (
+  <ol className="view-feed">
+    {items.map(item => (
+      <VideoItem key={item.id}
+                 item={item}
+                 onClick={() => onClickItem(item)}
+                 active={selectedId === item.id}
+                 onUpvote={() => onUpvote(item)}
+                 onDownvote={() => onDownvote(item)} />
+    ))}
+  </ol>
+);
 
-    }).sort(firstBy('value', -1).thenBy('created_at'));
 
-    this.setState({items: items}, function() {
-      if (!this.state.selected && items[0]) {
-        this.setState({selected: items[0].id});
-      }
-    });
-  }
-  deleteItem() {
-    let selectedItem = this.state.items.filter((item) => item.id === this.state.selected)[0];
-    this.nextItem();
 
-    let items = this.state.items.filter((item) => item.id !== selectedItem.id);
-    this._update_queue(items);
-    return selectedItem;
-  }
-  setItem(id) {
-    if (id !== this.state.selected) {
-      this.setState({selected: id});
-    }
-  }
-  voteItem(value, item) {
-    return this.refs['item' + item.id].vote(value);
-  }
-  prevItem() {
-    let index = this.state.items.indexOf(this.currentItem());
-    index = Math.max(index - 1, 0);
-    this.setItem(this.state.items[index].id);
-  }
-  nextItem() {
-    let index = this.state.items.indexOf(this.currentItem());
-    index = Math.min(index + 1, this.state.items.length - 1);
-    this.setItem(this.state.items[index].id);
-  }
-  _update_now_playing(currentItem) {
-    if (currentItem && currentItem.id && this.props.active) {
-      let items = this.state.items.filter((item) => item.id !== currentItem.id);
-      this._update_queue(items);
-    }
-  }
-  _update_item(newItem) {
-    let items = this.state.items.map((item) => {
-      if (item.id == newItem.id) {
-        return newItem;
-      } else {
-        return item;
-      }
-    });
-    this._update_queue(items);
-  }
-  componentDidMount() {
-    let methods = this.props.methods;
-    this.props.connected.then((backend) => {
-      backend.registerListener(methods.queue_update, this._update_queue.bind(this));
-      backend.registerListener(methods.update, this._update_item.bind(this));
-      backend.registerListener('playing/status', this._update_now_playing.bind(this));
-      backend.call(methods.get);
-    });
-  }
-  render() {
-    let items = this.state.items.map((item) => {
-      return (<VideoItem ref={'item' + item.id} key={item.id} item={item} setItem={this.setItem.bind(this)} voteItem={this.props.voteItem} setSelectedNode={this.setSelectedNode} selected={item.id === this.state.selected} />);
-    });
-    return (<ol style={{display: this.props.active ? 'block' : 'none'}} className="view-feed">{items}</ol>);
-  }
+VideoFeed.propTypes = {
+  items: React.PropTypes.arrayOf(React.PropTypes.shape({
+    id: React.PropTypes.any.isRequired,
+    user_vote: React.PropTypes.number,
+    value: React.PropTypes.number.isRequired
+  }).isRequired).isRequired,
+  onUpvote: React.PropTypes.func.isRequired,
+  onClickItem: React.PropTypes.func.isRequired,
+  onDownvote: React.PropTypes.func.isRequired,
+  selectedId: React.PropTypes.number.isRequired
 }
+
+export default VideoFeed
