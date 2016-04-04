@@ -64,7 +64,7 @@ export default class Searchbox extends Component {
 
     return (
       <div className="search-form">
-        <form>
+        <form onSubmit={e => e.preventDefault()}>
           <select ref={elem => this.type = elem}
                   style={{'visibility': hidden ? 'hidden' : ''}}
                   value={searchSource}
