@@ -55,5 +55,6 @@ def setup_database(database_options):
     if not success:
         return False, msg
     else:
+        # noinspection PyShadowingNames
         database = create_database(database_options)
         return True, ""

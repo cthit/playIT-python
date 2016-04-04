@@ -3,9 +3,9 @@ from tornado.options import options
 
 # used to generate a token which is then placed in env.server_example as SPOTIFY_KEY
 # https://developer.spotify.com/my-applications
-#import spotipy.util as util
-#token = util.prompt_for_user_token("tejpbit")
-#print("%r" %token)
+# import spotipy.util as util
+# token = util.prompt_for_user_token("tejpbit")
+# print("%r" %token)
 
 MEMCACCHE_PREFIX = "SPOTIFY_OAUTH"
 
@@ -33,7 +33,7 @@ class SpotifyOauthService:
 
     @staticmethod
     def get_authorize_uri():
-        return SpotifyOauthService._new_oauth_instance.get_authorize_url()
+        return SpotifyOauthService._new_oauth_instance().get_authorize_url()
 
     @staticmethod
     def authorize(user_id, code):

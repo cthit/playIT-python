@@ -52,7 +52,7 @@ class MediaItem(BaseModel):
     def save(self, *args, **kwargs):
         allowed_duration = DURATION_LIMIT_MAP.get(self.type)
         if self.duration > allowed_duration:
-            raise MediaItemError("duration %d is longer then allowed %d" % (self.duration, allowed_duration))
+            raise MediaItemError(u"duration {0:d} is longer then allowed {1:d}".format(self.duration, allowed_duration))
 
         super(MediaItem, self).save(*args, **kwargs)
 
@@ -140,6 +140,7 @@ class MediaItem(BaseModel):
 
     @staticmethod
     def get_creator(media_type):
+        # noinspection PyPep8Naming
         Klass = MediaItem.get_class(media_type)
         return getattr(Klass, "create_item")
 

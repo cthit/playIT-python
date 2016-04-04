@@ -1,5 +1,5 @@
-from src.services.soundcloud_service import SoundcloudService
-from src.services.spotify_oauth_service import SpotifyOauthService
+from src.services.integration_services.soundcloud_service import SoundcloudService
+from src.services.integration_services.spotify_oauth_service import SpotifyOauthService
 
 from src.cache import cache
 from src.models.playlist_item import PlaylistItemError

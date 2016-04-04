@@ -172,7 +172,7 @@ class JsonField(TextField):
         try:
             return json.loads(value)
         except ValueError as e:
-            logging.error("Failed to encode JSON: %s" % e.message)
+            logging.error("Failed to encode JSON: %s" % e)
             return dict()
 
 

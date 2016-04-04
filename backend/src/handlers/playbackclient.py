@@ -5,6 +5,7 @@ from src.models.playlist_item import PlaylistItem
 from src.services.clients_service import ClientsService
 from src.services.item_service import ItemService
 
+
 class PlaybackClient(BaseHandler):
 
     _current_item = None

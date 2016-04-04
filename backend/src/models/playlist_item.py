@@ -15,13 +15,11 @@ URL_MAP = {
 }
 
 
-
 class PlaylistItemError(Exception):
     pass
 
 
 class PlaylistItem(BaseModel):
-
     title = CharField(default="")
     author = CharField(default="")
     description = CharField(default="")
@@ -105,7 +103,7 @@ class PlaylistItem(BaseModel):
             raise PlaylistItemError("Item already exists")
 
         item_dict = creator(item)
-        
+
         item.title = item_dict.get("title")
         item.author = item_dict.get('author')
         item.thumbnail = item_dict.get("thumbnail", "")
@@ -119,6 +117,7 @@ class PlaylistItem(BaseModel):
 
     @staticmethod
     def get_creator(media_type):
+        # noinspection PyPep8Naming
         Klass = PlaylistItem.get_class(media_type)
         return getattr(Klass, "create_item")
 
@@ -128,9 +127,9 @@ class PlaylistItem(BaseModel):
         klass_name = media_type[:-5].capitalize() + 'PlaylistItemAdapter'
         return getattr(mod, klass_name)
 
-
     @staticmethod
     def get_cacher(media_type):
+        # noinspection PyPep8Naming
         Klass = PlaylistItem.get_class(media_type)
         return getattr(Klass, "cache_list")
 
@@ -144,7 +143,7 @@ class PlaylistItem(BaseModel):
         from src.models.vote import PlaylistVote
         return PlaylistItem.fetch(
             PlaylistItem, fn.Sum(PlaylistVote.value).alias("value")
-        ).join(PlaylistVote).group_by(PlaylistItem.external_id)\
+        ).join(PlaylistVote).group_by(PlaylistItem.external_id) \
             .order_by(fn.Sum(PlaylistVote.value).desc(), PlaylistItem.created_at)
 
     @staticmethod

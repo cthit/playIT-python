@@ -1,21 +1,20 @@
 #!/usr/bin/python
 # used to generate a token which is then placed in env.server_example as SPOTIFY_KEY
 # https://developer.spotify.com/my-applications
-
-SPOTIFY_ID='82b8c1d6b7e449848e43b82a0ee0d313'
-SPOTIFY_SECRET='8973a4ccad614f7889b40a9f483e4f30'
-SPOTIFY_REDIRECT_URI='http://app.playit.se:8080'
-
 import spotipy.util as util
+
+SPOTIFY_ID = '82b8c1d6b7e449848e43b82a0ee0d313'
+SPOTIFY_SECRET = '8973a4ccad614f7889b40a9f483e4f30'
+SPOTIFY_REDIRECT_URI = 'http://app.playit.se:8080'
+
+
 token = util.prompt_for_user_token(
-	"tejpbit",
-	client_id=SPOTIFY_ID,
-	client_secret=SPOTIFY_SECRET,
-	redirect_uri=SPOTIFY_REDIRECT_URI
+    "tejpbit",
+    client_id=SPOTIFY_ID,
+    client_secret=SPOTIFY_SECRET,
+    redirect_uri=SPOTIFY_REDIRECT_URI
 )
-print("%r" %token)
-
-
+print("%r" % token)
 
 """
 Request:

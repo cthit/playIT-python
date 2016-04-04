@@ -9,7 +9,6 @@ from src.constants import *
 
 
 class UserClientActionsService(object):
-
     @staticmethod
     def add_item(cid, data, external_id, media_type):
         if "list" in media_type:
@@ -54,7 +53,8 @@ class UserClientActionsService(object):
 
     @staticmethod
     def get_playlist_queue(cid):
-        return [ItemService.convert_from_query_item_and_decorate_playlist_item_user_voted(i, cid) for i in PlaylistItem.get_queue(cid)]
+        return [ItemService.convert_from_query_item_and_decorate_playlist_item_user_voted(i, cid) for i in
+                PlaylistItem.get_queue(cid)]
 
     @staticmethod
     def delete_item(item):

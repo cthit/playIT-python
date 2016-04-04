@@ -19,7 +19,7 @@ class VotingService(object):
                 ClientsService.broadcast_to_user_clients(ItemService.get_item_uri(item) + DELETE, item)
             elif not new:
                 ClientsService.broadcast_to_user_clients(ItemService.get_item_uri(item) + UPDATE,
-                                                         ItemService.convert_from_query_item_and_decorate_item_user_voted(item.with_value(), cid))
+                                                         ItemService.convert_from_query_item_and_decorate_item_user_voted(item.with_value(), cid))  # noqa
 
             return VOTE + NEW + SUCCESS, ""
         else:

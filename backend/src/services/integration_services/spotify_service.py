@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import spotipy
-from tornado.options import options
+
 from src.utils import DictNoNone
 
 
@@ -9,7 +9,7 @@ class SpotifyService:
     @staticmethod
     def get_playlist(token, username, playlist_id):
         sp = spotipy.Spotify(auth=token)
-        
+
         playlist = sp.user_playlist(username, playlist_id=playlist_id)
 
         playlist_tracks = sp.user_playlist_tracks(username, playlist_id=playlist_id)
@@ -45,5 +45,5 @@ class SpotifyService:
             external_id=str(track.get('id')),
             author=", ".join((a.get("name") for a in track.get("artists"))),
             thumbnail=track.get('album').get("images")[0].get("url"),
-            duration=int(track.get('duration_ms')/1000 + 0.5)
+            duration=int(track.get('duration_ms') / 1000 + 0.5)
         )
