@@ -60,10 +60,15 @@ export const updateTrack = (track) => ({
     track
 })
 
-export const removeTrack = (track) => ({
+export const removeTrack = (track) => {
+  backend.call('remove_item', {
+    ...track
+  });
+  return {
     type: TRACK_REMOVE,
     track
-})
+  }
+}
 
 export const requestTracks = () => ({
     type: TRACKS_REQUEST
