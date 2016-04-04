@@ -17,13 +17,13 @@ class ItemService(object):
 
     @staticmethod
     def get_item(data, user_id=None):
-        external_id = data.get("id", "NO_ID_SUPPLIED")
+        internal_id = data.get("id", "NO_ID_SUPPLIED")
         media_type = data.get("type", "NO_TYPE_SUPPLIED")
 
         if "list" in media_type:
-            item = PlaylistItem.get_item(media_type, external_id)
+            item = PlaylistItem.get_item_with_id(internal_id)
         else:
-            item = MediaItem.get_item(media_type, external_id, user_id)
+            item = MediaItem.get_item_with_id(internal_id)
 
         return item
 
