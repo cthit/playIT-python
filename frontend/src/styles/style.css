@@ -261,10 +261,5 @@ section {
 *::selection {
 	color: #fff;
 	text-shadow: none;
-	background-color: #002224; /* Safari */
-}
-*::-moz-selection {
-	color: #fff;
-	text-shadow: none;
-	background-color: #002224; /* Firefox */
+	background-color: #002224;
 }

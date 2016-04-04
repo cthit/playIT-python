@@ -1,5 +1,3 @@
-.sass-cache
-assets/js/config.js
 node_modules
-build
+dist
 *.map

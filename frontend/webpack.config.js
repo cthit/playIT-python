@@ -1,5 +1,6 @@
-var path = require('path');
-var webpack = require('webpack');
+var webpack      = require('webpack');
+var autoprefixer = require('autoprefixer');
+var precss       = require('precss');
 
 var production = "production" === process.env.NODE_ENV;
 
@@ -7,37 +8,45 @@ var entry = ['./src/index'];
 
 if (!production) {
   entry = [
-    'webpack-dev-server/client?http://0.0.0.0:3000',
-    'webpack/hot/only-dev-server'
+    'webpack-dev-server/client?http://0.0.0.0:8080',
+    'webpack/hot/dev-server'
   ].concat(entry);
 }
 
 module.exports = {
-  devtool: 'eval',
+  devtool: 'source-map',
   entry: entry,
   output: {
-    path: path.join(__dirname, 'static'),
-    filename: 'bundle.js',
+    path: __dirname + '/static',
     publicPath: '/static/'
   },
   plugins: [
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin()
+    new webpack.NoErrorsPlugin(),
+    new webpack.HotModuleReplacementPlugin()
   ],
   resolve: {
     extensions: ['', '.js', '.jsx']
   },
   module: {
     loaders: [{
-      test: /\.jsx?$/,
-      loaders: ['react-hot', 'babel'],
-      include: path.join(__dirname, 'src')
+      test: /(\.jsx|\.js)$/,
+      exclude: /(node_modules|bower_components)/,
+      loader: 'babel'
     }, {
-      test: /\.scss$/,
-      loader: 'style!css!sass?sourceMap'
+      test: /\.css$/,
+      loader: 'style!css!postcss'
     }, {
       test: /\.png$/,
       loader: 'file'
     }]
+  },
+  postcss: function() { return [autoprefixer, precss] },
+  devServer: {
+    hot: true,
+    stats: {
+      color: true,
+      chunks: false
+    },
+    historyApiFallback: true
   }
 };
