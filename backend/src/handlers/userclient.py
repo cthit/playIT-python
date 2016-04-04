@@ -78,7 +78,7 @@ class UserClient(BaseHandler):
             return VOTE+DELETE+FAIL, "No such item: %s" % data.get("id", "NO_ID_SUPPLIED")
 
     @staticmethod
-    def action_get_current(self, data):
+    def action_get_current(data):
         return PLAYING+STATUS, ItemService.get_current()
 
     @Authorized()
