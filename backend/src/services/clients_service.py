@@ -17,8 +17,8 @@ class ClientsService(object):
         ClientsService.PLAYBACK_CLIENTS.append(client)
 
     @staticmethod
-    def broadcast_to_user_clients(topic, msg):
-        ClientsService._broadcast(ClientsService.USER_CLIENTS, topic, msg)
+    def broadcast_to_user_clients(topic, msg, exclude_clients=list()):
+        ClientsService._broadcast([c for c in ClientsService.USER_CLIENTS if c not in exclude_clients], topic, msg)
 
     @staticmethod
     def broadcast_to_playback_clients(topic, msg):

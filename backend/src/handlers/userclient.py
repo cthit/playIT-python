@@ -57,7 +57,11 @@ class UserClient(BaseHandler):
         (success, msg, item) = UserClientActionsService.add_item(cid, data, external_id, media_type)
 
         if success:
-            return ITEM + NEW, item
+            ClientsService.broadcast_to_user_clients(ITEM+NEW, item.get_dictionary(), exclude_clients=[self])
+            if not ItemService.get_current():
+                ClientsService.broadcast_to_playback_clients(QUEUE + UPDATE, item.get_dictionary())
+
+            return ITEM + NEW + SUCCESS, ItemService.convert_from_query_item_and_decorate_item_user_voted(item, cid)
         else:
             return ITEM + NEW + FAIL, msg
 
@@ -90,7 +94,7 @@ class UserClient(BaseHandler):
 
         if self._user.get("cid") == item.cid or ADMIN_GROUP in self._user.get("groups"):
             UserClientActionsService.delete_item(item)
-            return ItemService.get_item_uri(item)+DELETE+SUCCESS, item
+            return ItemService.get_item_uri(item)+DELETE+SUCCESS, item.get_dictionary()
         else:
             return ItemService.get_item_uri(item)+DELETE+FAIL, "Not your item to delete and you're not admin"
 

@@ -16,10 +16,7 @@ class UserClientActionsService(object):
         else:
             (success, msg, item) = UserClientActionsService._add_item(cid, data, media_type, external_id)
 
-        if not ItemService.get_current():
-            ClientsService.broadcast_to_playback_clients(QUEUE + UPDATE, item)
-
-        return success, msg, ItemService.convert_from_query_item_and_decorate_item_user_voted(item, cid)
+        return success, msg, item
 
     @staticmethod
     def _add_list_item(cid, data, media_type, external_id):
@@ -58,4 +55,5 @@ class UserClientActionsService(object):
 
     @staticmethod
     def delete_item(item):
+        ClientsService.broadcast_to_user_clients(ITEM+DELETE, item.get_dictionary())
         return item.delete_instance()
