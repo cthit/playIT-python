@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 """ The client controller for the playIT backend
 by Horv, Eda and rekoil - 2013, 2014
 
