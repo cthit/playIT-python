@@ -1,19 +1,44 @@
-Playback client
+playIT playback client
 ===============
 Requires Python >= 3.3
 
 Depends on:
 
-1. [mopidy](http://www.mopidy.com/) - for Spotify and Soundcloud playback. Note that you'll need both the spotify and soundcloud plugins.
-2. [python-mpd2](https://github.com/Mic92/python-mpd2) - library used to control mopidy
-3. [python-websocket-client](https://pypi.python.org/pypi/websocket-client) - (python library) for managing WebSockets used in communication between backend and frontend.
-4. [mpv](http://mpv.io/) - for video/YouTube playback.
-5. [youtube-dl](http://rg3.github.io/youtube-dl/) - for retreiving (a more reliable) stream url from youtube. 
+1. [mopidy](http://www.mopidy.com/) - for Spotify and Soundcloud playback. Note that you'll need both the `mopidy-spotify` and `mopidy-soundcloud` plugins.
+2. [mpv](http://mpv.io/) - for video/YouTube playback.
+3. [youtube-dl](http://rg3.github.io/youtube-dl/) - for retreiving (a more reliable) stream url from youtube.
 
 
-### Installing dependencies on ArchLinux
-#### Using yaourt and pacman
+## Installing dependencies:
+### ArchLinux: Using yaourt and pacman
 ```bash
     $ yaourt -S mopidy mopidy-spotify mopidy-soundcloud python-websocket-client-git python-mpd2
     $ sudo pacman -S mpv youtube-dl
+```
+
+### OS X: Using homebrew
+```bash
+    $ brew install mpv youtube-dl
+    $ brew tap mopidy/mopidy
+    $ brew install mopidy mopidy-spotify mopidy-soundcloud
+```
+
+
+### Then install python packages:
+```bash
+    $ pip install -r requirements.txt
+```
+
+## Running the playback client:
+```bash
+    $ ./playIT_client [OPTIONS]
+#    OPTIONS:
+#      -m, --monitor-number <num>
+#        Set the `--screen`-option for `mpv`
+#      -s, --server <url>
+#        Backend url to connect the playback client
+#      -v, --verbose
+#        Display verbose output
+#      -S, --slave
+#        Run the client as slave (only one client should be started without this option)
 ```
