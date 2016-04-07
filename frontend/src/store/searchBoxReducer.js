@@ -22,20 +22,21 @@ export default (state = initialState, action) => {
           }
         case searchBoxActions.SET_SEARCH_QUERY:
           let searchResults = state.searchResults
-          let searchResultsVisible = true
+          let searchResultVisible = true
           if (action.query.trim() === "") {
             searchResults = []
-            searchResultsVisible = false
+            searchResultVisible = false
           }
           return {
             ...state,
             searchQuery: action.query,
             searchResults,
-            searchResultsVisible
+            searchResultVisible
           }
         case searchBoxActions.RECEIVE_SEARCH_RESULTS:
           return {
             ...state,
+            searchResultVisible: true,
             searchResults: action.results
           }
         case searchBoxActions.NAVIGATE_DROPDOWN:
