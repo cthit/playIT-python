@@ -14,6 +14,14 @@ export const TRACKS_FEED_NAVIGATE_SET = 'TRACKS_FEED_NAVIGATE_SET'
 export const TRACKS_FEED_NAVIGATE_TOP = 'TRACKS_FEED_NAVIGATE_TOP'
 export const TRACKS_FEED_NAVIGATE_BOTTOM = 'TRACKS_FEED_NAVIGATE_BOTTOM'
 
+function addVote(track, vote) {
+  backend.call('add_vote', {
+    vote,
+    id: track.id,
+    type: track.type
+  })
+}
+
 export const addNewItem = (track) => {
   backend.call('add_item', {
     ...track
