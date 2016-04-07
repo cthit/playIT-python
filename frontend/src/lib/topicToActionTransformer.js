@@ -3,6 +3,11 @@ import * as trackActions from '../actions/trackActions'
 import * as playlistActions from '../actions/playlistActions'
 
 export default (topic, args) => {
+    if (typeof args === 'string' && args.match(/Internal server error/)) {
+      console.error(topic, args);
+      return
+    }
+
     switch (topic) {
       case 'playing/status':
         return mainActions.setNowPlaying(args);
