@@ -4,7 +4,12 @@ import ReactDOM from "react-dom";
 export default class ResultItem extends Component {
   componentDidUpdate() {
     if (this.props.selected) {
-      ReactDOM.findDOMNode(this).scrollIntoView(false);
+      const node = ReactDOM.findDOMNode(this)
+      if (node.scrollIntoViewIfNeeded) {
+        node.scrollIntoViewIfNeeded(false)
+      } else {
+        node.scrollIntoView();
+      }
     }
   }
   render() {
