@@ -29,7 +29,7 @@ class PlaybackClient(BaseHandler):
         self._current_item = item
         ItemService.set_current(item)
         item.delete_instance()
-        ClientsService.broadcast_to_playback_clients(ITEM+NEW, item)
+        ClientsService.broadcast_to_playback_clients(ITEM+NEW, item.get_dictionary())
 
         return ITEM+SUCCESS, ""
 

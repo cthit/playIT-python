@@ -39,11 +39,16 @@ class ItemService(object):
     @staticmethod
     def set_current(item):
         ItemService.CURRENT_ITEM = item
+        if item:
+            item = item.get_dictionary()
         ClientsService.broadcast(PLAYING + STATUS, item)
 
     @staticmethod
     def get_current():
-        return ItemService.CURRENT_ITEM
+        if ItemService.CURRENT_ITEM:
+            return ItemService.CURRENT_ITEM.get_dictionary()
+        else:
+            return None
 
     @staticmethod
     def convert_from_query_item_and_decorate_playlist_item_user_voted(playlist_item, user_id=None):
