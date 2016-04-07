@@ -3,9 +3,9 @@ import { connect } from "react-redux"
 
 import Helpers from "../lib/helpers"
 
-const NowPlaying = ({ track }) => (
+const NowPlaying = ({ item }) => (
   <div className="now-playing">
-    {track ?
+    {item ?
       <span>
         Now playing: <a href={Helpers.get_link(item)}>{item.title}</a> [{Helpers.format_time(item.duration)}] - {item.author} <em>Queued by {item.nick}</em>
       </span>
@@ -16,5 +16,5 @@ const NowPlaying = ({ track }) => (
 )
 
 export default connect(state => ({
-  track: state.main.nowPlaying
+  item: state.main.nowPlaying
 }))(NowPlaying)
