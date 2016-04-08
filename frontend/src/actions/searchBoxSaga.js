@@ -9,7 +9,7 @@ export function* searchSaga() {
   yield* takeLatest(searchBoxActions.SET_SEARCH_QUERY, search)
 }
 
-function* search(action) {
+export function* search(action) {
   try {
     if (action.activeFeedId === 'playlists' || action.query === "") {
       return;
@@ -40,7 +40,7 @@ export function* addItemSaga() {
   yield* takeEvery(
     [
       trackActions.TRACK_ADD_NEW,
-      playlistActions.PLAYLIST_ADD_NEW,
+      playlistActions.PLAYLIST_ADD_NEW
     ]
     , addItem)
 }
@@ -54,7 +54,7 @@ export function* removeItemSaga() {
     , removeItem)
 }
 
-function addVote(action) {
+export function addVote(action) {
   console.log("action:",action);
   const { item } = action
   backend.call('add_vote', {
@@ -64,7 +64,7 @@ function addVote(action) {
   })
 }
 
-function* addItem(action) {
+export function* addItem(action) {
   const { item } = action
   backend.call('add_item', {
     ...item
