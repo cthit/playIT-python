@@ -11,7 +11,7 @@ const store = createStore(
   compose(
     applyMiddleware(createSagaMiddleware(searchSaga)),
     autoRehydrate(),
-    window.devToolsExtension()
+    window.devToolsExtension ? window.devToolsExtension() : null
   )
 );
 
