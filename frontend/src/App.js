@@ -25,7 +25,7 @@ const App = React.createClass({
   },
   render() {
     return (
-      <div>
+      <div className="app">
         <KeyBindsListener />
         <SearchBoxContainer />
         <ActiveVideoFeed />
