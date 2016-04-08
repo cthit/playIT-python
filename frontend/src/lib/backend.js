@@ -8,9 +8,10 @@ function get_cookie() {
 }
 
 class Backend {
-  connect(url, dispatch) {
+  connect(url, dispatch, onDisconnect) {
     this.url = url
     this.dispatch = dispatch
+    this.onDisconnect = onDisconnect
     return new Promise((resolve, reject) => {
       this.socket = new WebSocket(this.url);
       this.socket.onmessage = this._messageReceived.bind(this);
@@ -62,6 +63,7 @@ class Backend {
   }
   _socketClosed(data) {
     this._serverLog('CLOSED, reason', data.reason);
+    this.onDisconnect();
   }
 }
 
