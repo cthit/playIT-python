@@ -26,11 +26,13 @@ export const receiveItem = (playlist) => {
 
 export const upvoteItem = (playlist) => ({
     type: PLAYLIST_UPVOTE,
+    user_vote: 1,
     playlist
 })
 
 export const downvoteItem = (playlist) => ({
     type: PLAYLIST_DOWNVOTE,
+    user_vote: -1,
     playlist
 })
 

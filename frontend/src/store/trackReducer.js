@@ -46,7 +46,7 @@ const reduceItems = (state = [], action) => {
     switch (action.type) {
         case trackActions.TRACK_UPVOTE:
             return state.map(track => {
-                if (track.id === action.track.id) {
+                if (track.id === action.item.id) {
                     return {
                         ...track,
                         user_vote: 1,
@@ -58,7 +58,7 @@ const reduceItems = (state = [], action) => {
             })
         case trackActions.TRACK_DOWNVOTE:
             return state.map(track => {
-                if (track.id === action.track.id) {
+                if (track.id === action.item.id) {
                     return {
                         ...track,
                         user_vote: -1,

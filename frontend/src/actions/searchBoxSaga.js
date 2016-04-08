@@ -1,6 +1,8 @@
-import { takeLatest } from 'redux-saga'
+import { takeLatest, takeEvery } from 'redux-saga'
 import { put, call } from 'redux-saga/effects'
 import * as searchBoxActions from "./searchBoxActions"
+import * as trackActions from "./trackActions"
+import * as playlistActions from "./trackActions"
 import endpoints from "../lib/media_endpoints";
 
 export function* searchSaga() {
@@ -22,3 +24,26 @@ function* search(action) {
     }
   }
 }
+
+export function* addVoteSaga() {
+  yield* takeEvery(
+    [
+      trackActions.TRACK_UPVOTE,
+      trackActions.TRACK_DOWNVOTE,
+      trackActions.PLAYLIST_UPVOTE,
+      trackActions.PLAYLIST_DOWNVOTE,
+    ]
+    , addVote)
+}
+
+function addVote(action) {
+  console.log("action:",action);
+  const { item } = action
+  backend.call('add_vote', {
+    id: item.id,
+    vote: action.user_vote,
+    type: item.type
+  })
+}
+
+export default [searchSaga, addVoteSaga];
