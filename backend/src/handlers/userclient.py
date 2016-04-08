@@ -101,13 +101,14 @@ class UserClient(BaseHandler):
     def action_remove_item(self, data):
         item = ItemService.get_item(data)
         if not item:
-            return ITEM + DELETE + FAIL, ""
+            return ITEM + DELETE + FAIL, "No such item"
 
-        if self._user.get("cid") == item.cid or ADMIN_GROUP in self._user.get("groups"):
-            UserClientActionsService.delete_item(item)
-            return ItemService.get_item_uri(item) + DELETE + SUCCESS, item.get_dictionary()
+        if self.get_cid() == item.cid or ADMIN_GROUP in self._user.get("groups"):
+            item = UserClientActionsService.delete_item(item)
+            ClientsService.broadcast_to_user_clients(ITEM+DELETE, item.get_dictionary(), exclude_clients=[self])
+            return ITEM + DELETE + SUCCESS, item.get_dictionary()
         else:
-            return ItemService.get_item_uri(item) + DELETE + FAIL, "Not your item to delete and you're not admin"
+            return ITEM + DELETE + FAIL, "Not your item to delete and you're not admin"
 
     @Authorized(group=ADMIN_GROUP)
     def action_set_limit(self, data):

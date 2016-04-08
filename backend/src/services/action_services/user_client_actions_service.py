@@ -55,5 +55,5 @@ class UserClientActionsService(object):
 
     @staticmethod
     def delete_item(item):
-        ClientsService.broadcast_to_user_clients(ITEM+DELETE, item.get_dictionary())
-        return item.delete_instance()
+        item.delete_instance()
+        return item

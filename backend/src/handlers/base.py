@@ -40,10 +40,11 @@ class BaseHandler(websocket.WebSocketHandler):
         self.send("GREETING")
 
     def on_message(self, message):
-        logging.info("Message received: %s" % message)
+        logging.debug("Message received: %s" % message)
 
         try:
             method, dump = re.split("\s", message, 1)
+            logging.info("Method: %s" % method)
         except ValueError:
             self.close(400, "Invalid format, expecting 'METHOD DATA' got %s " % message)
             return
@@ -100,7 +101,9 @@ class BaseHandler(websocket.WebSocketHandler):
             dump = escape.json_encode(json.dumps("Internal server error", default=serializer))
 
         msg = "%s %s" % (topic, dump)
-        logging.info("Sending: "+msg)
+        if isinstance(obj, dict):
+            logging.info("%s %s" % (topic, obj.get('id', "No id")))
+        logging.debug("Sending: " + msg)
 
         super(BaseHandler, self).write_message(msg)
 
