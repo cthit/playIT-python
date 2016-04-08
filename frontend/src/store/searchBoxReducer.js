@@ -6,7 +6,8 @@ const initialState = {
   source: 'youtube',
   searchResultVisible: false,
   searchResults: [],
-  dropdownIndex: 0
+  dropdownIndex: 0,
+  searchQuery: ''
 }
 export default (state = initialState, action) => {
     switch (action.type) {
