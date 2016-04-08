@@ -4,7 +4,7 @@
   "description": "PlayIT frontend in react",
   "author": "Johan 'Ndushi' Lindskogen <johan@lindskogen.se>",
   "scripts": {
-    "start": "./node_modules/.bin/webpack-dev-server"
+    "start": "webpack-dev-server --host 0.0.0.0",
   },
   "license": "MIT",
   "repository": {
