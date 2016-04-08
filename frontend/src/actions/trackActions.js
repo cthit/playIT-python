@@ -8,6 +8,7 @@ export const TRACK_REMOVE = 'TRACK_REMOVE'
 export const TRACK_REQUEST_REMOVE = 'TRACK_REQUEST_REMOVE'
 export const TRACKS_REQUEST = 'TRACKS_REQUEST'
 export const TRACK_RECEIVE = 'TRACK_RECEIVE'
+export const TRACK_RECEIVE_SUCCESS = 'TRACK_RECEIVE_SUCCESS'
 export const TRACKS_RECEIVE_SUCCESS = 'TRACKS_RECEIVE_SUCCESS'
 export const TRACKS_RECEIVE_ERROR = 'TRACKS_RECEIVE_ERROR'
 export const TRACKS_FEED_NAVIGATE = 'TRACKS_FEED_NAVIGATE'
@@ -71,6 +72,11 @@ export const requestItems = () => ({
 export const receiveItemsSuccess = (tracks) => ({
     type: TRACKS_RECEIVE_SUCCESS,
     tracks
+})
+
+export const receiveItemSuccess = (item) => ({
+    type: TRACK_RECEIVE_SUCCESS,
+    item
 })
 
 export const receiveItemsError = (error) => ({

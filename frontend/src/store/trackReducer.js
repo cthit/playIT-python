@@ -27,6 +27,12 @@ export default (state = {items: [], selectedId: -1}, action) => {
             ...state,
             selectedId: (lastItem ? lastItem.id : -1)
           }
+      case trackActions.TRACK_RECEIVE_SUCCESS:
+          return {
+            ...state,
+            selectedId: action.item.id,
+            items: _.orderBy(reduceItems(state.items, action), ['value', 'created_at'], ['desc', 'asc'])
+          }
       case trackActions.TRACK_UPVOTE:
       case trackActions.TRACK_DOWNVOTE:
       case trackActions.TRACK_UPDATE:
@@ -37,7 +43,7 @@ export default (state = {items: [], selectedId: -1}, action) => {
           return {
             ...state,
             items: _.orderBy(reduceItems(state.items, action), ['value', 'created_at'], ['desc', 'asc'])
-        }
+          }
       default:
           return state
     }
@@ -71,10 +77,10 @@ const reduceItems = (state = [], action) => {
             })
         case trackActions.TRACK_UPDATE:
             return state.map(track => {
-                if (track.id === action.track.id) {
+                if (track.id === action.item.id) {
                     return {
                         ...track,
-                        ...action.track
+                        ...action.item
                     }
                 } else {
                     return track
@@ -83,12 +89,13 @@ const reduceItems = (state = [], action) => {
         case trackActions.TRACK_REQUEST_REMOVE:
         case trackActions.TRACK_REMOVE:
             return state.filter(item => item.id !== action.item.id)
+        case trackActions.TRACK_RECEIVE_SUCCESS:
         case trackActions.TRACK_RECEIVE:
             return [
                 ...state,
                 {
-                  ...action.track,
-                  value: action.track.value || 0
+                  ...action.item,
+                  value: action.item.value || 0
                 }
             ]
         case trackActions.TRACKS_RECEIVE_SUCCESS:

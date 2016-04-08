@@ -14,6 +14,9 @@ const VideoItem = React.createClass({
       }
     }
   },
+  componentDidMount() {
+    this.componentDidUpdate()
+  },
   propTypes: {
     item: React.PropTypes.shape({
       id: React.PropTypes.any.isRequired,
