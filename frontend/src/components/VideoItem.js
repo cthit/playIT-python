@@ -6,7 +6,12 @@ import Helpers from "../lib/helpers";
 const VideoItem = React.createClass({
   componentDidUpdate() {
     if (this.props.active) {
-      ReactDOM.findDOMNode(this).scrollIntoView(true);
+      const node = ReactDOM.findDOMNode(this);
+      if (node.scrollIntoViewIfNeeded) {
+        node.scrollIntoViewIfNeeded(false)
+      } else {
+        node.scrollIntoView();
+      }
     }
   },
   propTypes: {
