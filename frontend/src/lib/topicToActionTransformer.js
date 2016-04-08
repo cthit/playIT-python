@@ -17,6 +17,7 @@ export default (topic, args) => {
       case 'media_item/update':
         return trackActions.updateItem(args);
       case 'media_item/new':
+      case 'media_item/new/success':
         return trackActions.receiveItem(args);
       case 'media_item/delete':
         return trackActions.removeItem(args);
