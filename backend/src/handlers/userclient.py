@@ -2,15 +2,15 @@ import logging
 
 from src.constants import *
 from src.handlers.base import BaseHandler
-from src.handlers.authorized import ADMIN_GROUP, Authorized
+from src.handlers.decorators.authorized import ADMIN_GROUP, Authorized
+from src.services.action_services.admin_actions_service import AdminActionsService
+from src.services.action_services.user_client_actions_service import UserClientActionsService
 from src.services.clients_service import ClientsService
 from src.services.integration_services.spotify_oauth_service import SpotifyOauthService
 from src.services.item_service import ItemService
 from src.services.token_cache_service import TokenCacheService
 from src.services.user_service import UserService
 from src.services.voting_service import VotingService
-from src.services.action_services.user_client_actions_service import UserClientActionsService
-from src.services.action_services.admin_actions_service import AdminActionsService
 
 
 class UserClient(BaseHandler):

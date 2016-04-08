@@ -1,5 +1,7 @@
 from peewee import ForeignKeyField, CharField
-from src.models.base import BaseModel, EnumField
+
+from src.models.base import BaseModel
+from src.models.fields.enum_field import EnumField
 from src.models.media_item import MediaItem
 from src.models.playlist_item import PlaylistItem
 

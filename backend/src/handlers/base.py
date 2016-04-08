@@ -4,8 +4,8 @@ import re
 
 from tornado import websocket, escape
 
-from src.handlers.authorized import AuthenticationError
-from src.models.base import Serializer
+from src.handlers.decorators.authorized import AuthenticationError
+from src.models.serializer import Serializer
 from src.services.token_cache_service import TokenCacheService
 
 
@@ -98,14 +98,14 @@ class BaseHandler(websocket.WebSocketHandler):
             dump = escape.json_encode(dump)
 
         if not dump:
-            dump = escape.json_encode(json.dumps("Internal server error", default=serializer))
+            dump = escape.json_encode(json.dumps("Internal server error when serialising", default=serializer))
 
         msg = "%s %s" % (topic, dump)
         if isinstance(obj, dict):
             logging.info("%s %s" % (topic, obj.get('id', "No id")))
         logging.debug("Sending: " + msg)
 
-        super(BaseHandler, self).write_message(msg)
+        super().write_message(msg)
 
 handlers = [
     (r'/ws', BaseHandler)
