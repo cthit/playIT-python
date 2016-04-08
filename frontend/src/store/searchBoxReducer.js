@@ -9,6 +9,7 @@ const initialState = {
   dropdownIndex: 0,
   searchQuery: ''
 }
+
 export default (state = initialState, action) => {
     switch (action.type) {
         case searchBoxActions.SET_SEARCH_SOURCE:
