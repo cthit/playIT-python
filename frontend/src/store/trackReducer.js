@@ -31,6 +31,7 @@ export default (state = {items: [], selectedId: -1}, action) => {
       case trackActions.TRACK_DOWNVOTE:
       case trackActions.TRACK_UPDATE:
       case trackActions.TRACK_REMOVE:
+      case trackActions.TRACK_REQUEST_REMOVE:
       case trackActions.TRACK_RECEIVE:
       case trackActions.TRACKS_RECEIVE_SUCCESS:
           return {
@@ -79,6 +80,7 @@ const reduceItems = (state = [], action) => {
                     return track
                 }
             })
+        case trackActions.TRACK_REQUEST_REMOVE:
         case trackActions.TRACK_REMOVE:
             return state.filter(item => item.id !== action.item.id)
         case trackActions.TRACK_RECEIVE:

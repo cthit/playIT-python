@@ -5,6 +5,7 @@ export const TRACK_UPVOTE = 'TRACK_UPVOTE'
 export const TRACK_DOWNVOTE = 'TRACK_DOWNVOTE'
 export const TRACK_UPDATE = 'TRACK_UPDATE'
 export const TRACK_REMOVE = 'TRACK_REMOVE'
+export const TRACK_REQUEST_REMOVE = 'TRACK_REQUEST_REMOVE'
 export const TRACKS_REQUEST = 'TRACKS_REQUEST'
 export const TRACK_RECEIVE = 'TRACK_RECEIVE'
 export const TRACKS_RECEIVE_SUCCESS = 'TRACKS_RECEIVE_SUCCESS'
@@ -52,6 +53,13 @@ export const updateItem = (track) => ({
 export const removeItem = (item) => {
   return {
     type: TRACK_REMOVE,
+    item
+  }
+}
+
+export const requestRemoveItem = (item) => {
+  return {
+    type: TRACK_REQUEST_REMOVE,
     item
   }
 }

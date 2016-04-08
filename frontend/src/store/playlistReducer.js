@@ -30,6 +30,7 @@ export default (state = {items: [], selectedId: null}, action) => {
       case playlistActions.PLAYLIST_DOWNVOTE:
       case playlistActions.PLAYLIST_UPDATE:
       case playlistActions.PLAYLIST_REMOVE:
+      case playlistActions.PLAYLIST_REQUEST_REMOVE:
       case playlistActions.PLAYLIST_RECEIVE:
       case playlistActions.PLAYLISTS_RECEIVE_SUCCESS:
           return {
@@ -78,6 +79,7 @@ const reduceItems = (state = [], action) => {
                     return playlist
                 }
             })
+        case playlistActions.PLAYLIST_REQUEST_REMOVE:
         case playlistActions.PLAYLIST_REMOVE:
             return state.filter(playlist => playlist.id !== action.playlist.id)
         case playlistActions.PLAYLIST_RECEIVE:

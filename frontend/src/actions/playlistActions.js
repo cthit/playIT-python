@@ -3,6 +3,7 @@ export const PLAYLIST_UPVOTE = 'PLAYLIST_UPVOTE'
 export const PLAYLIST_DOWNVOTE = 'PLAYLIST_DOWNVOTE'
 export const PLAYLIST_UPDATE = 'PLAYLIST_UPDATE'
 export const PLAYLIST_REMOVE = 'PLAYLIST_REMOVE'
+export const PLAYLIST_REQUEST_REMOVE = 'PLAYLIST_REQUEST_REMOVE'
 export const PLAYLISTS_REQUEST = 'PLAYLISTS_REQUEST'
 export const PLAYLIST_RECEIVE = 'PLAYLIST_RECEIVE'
 export const PLAYLISTS_RECEIVE_SUCCESS = 'PLAYLISTS_RECEIVE_SUCCESS'
@@ -43,6 +44,11 @@ export const updateItem = (playlist) => ({
 
 export const removeItem = (playlist) => ({
     type: PLAYLIST_REMOVE,
+    playlist
+})
+
+export const requestRemoveItem = (playlist) => ({
+    type: PLAYLIST_REQUEST_REMOVE,
     playlist
 })
 

@@ -48,8 +48,8 @@ export function* addItemSaga() {
 export function* removeItemSaga() {
   yield* takeEvery(
     [
-      trackActions.TRACK_REMOVE,
-      playlistActions.PLAYLIST_REMOVE
+      trackActions.TRACK_REQUEST_REMOVE,
+      playlistActions.PLAYLIST_REQUEST_REMOVE
     ]
     , removeItem)
 }
