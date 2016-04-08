@@ -19,11 +19,11 @@ class UserClient(BaseHandler):
 
     def open(self):
         logging.info("UserClient opened new connection")
-        super(BaseHandler, self).open()
+        super().open()
         ClientsService.add_user_client(self)
 
     def close(self, *args, **kwargs):
-        super(BaseHandler, self).close(args, kwargs)
+        super().close(args, kwargs)
         ClientsService.remove_user_client(self)
 
     def action_get_queue(self, data):

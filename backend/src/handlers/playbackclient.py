@@ -14,11 +14,11 @@ class PlaybackClient(BaseHandler):
     _index = 0
 
     def open(self):
-        super(BaseHandler, self).open()
+        super().open()
         ClientsService.add_playback_client(self)
 
     def close(self, *args, **kwargs):
-        super(BaseHandler, self).close(args, kwargs)
+        super().close(args, kwargs)
         ClientsService.remove_playback_client(self)
 
     @Authorized(group="player")
