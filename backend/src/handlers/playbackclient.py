@@ -1,5 +1,6 @@
 from src.constants import *
-from src.handlers.base import BaseHandler, Authorized
+from src.handlers.base import BaseHandler
+from src.handlers.authorized import Authorized
 from src.models.media_item import MediaItem
 from src.models.playlist_item import PlaylistItem
 from src.services.clients_service import ClientsService
