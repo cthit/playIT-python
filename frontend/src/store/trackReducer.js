@@ -80,7 +80,7 @@ const reduceItems = (state = [], action) => {
                 }
             })
         case trackActions.TRACK_REMOVE:
-            return state.filter(track => track.id !== action.track.id)
+            return state.filter(item => item.id !== action.item.id)
         case trackActions.TRACK_RECEIVE:
             return [
                 ...state,

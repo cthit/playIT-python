@@ -49,13 +49,10 @@ export const updateItem = (track) => ({
     track
 })
 
-export const removeItem = (track) => {
-  backend.call('remove_item', {
-    ...track
-  });
+export const removeItem = (item) => {
   return {
     type: TRACK_REMOVE,
-    track
+    item
   }
 }
 

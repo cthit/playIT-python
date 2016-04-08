@@ -45,6 +45,15 @@ export function* addItemSaga() {
     , addItem)
 }
 
+export function* removeItemSaga() {
+  yield* takeEvery(
+    [
+      trackActions.TRACK_REMOVE,
+      playlistActions.PLAYLIST_REMOVE
+    ]
+    , removeItem)
+}
+
 function addVote(action) {
   console.log("action:",action);
   const { item } = action
@@ -62,4 +71,11 @@ function* addItem(action) {
   });
 }
 
-export default [searchSaga, addVoteSaga, addItemSaga];
+export function* removeItem(action) {
+  const { item } = action
+  backend.call('remove_item', {
+    ...item
+  });
+}
+
+export default [searchSaga, addVoteSaga, addItemSaga, removeItemSaga];
