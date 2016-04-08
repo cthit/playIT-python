@@ -6,6 +6,8 @@ $color-text: black;
 $color-text-faded: rgb(118, 118, 118);
 $color-text-accented: white;
 
+$list-separator-border: 1px solid rgba(0, 0, 0, 0.117647);
+
 html {
   box-sizing: border-box;
 }
@@ -55,24 +57,23 @@ ol.view-feed {
     padding: 1em;
     width: 100%;
     background: $color-body-background;
+    border-top: $list-separator-border;
 }
 
 .app {
     display: flex;
     flex-direction: column;
     height: 100%;
-
-    .search-form {
-        background: $color-body-background;
-        padding: 1em;
-        justify-content: center;
-        flex-direction: row;
-        display: flex;
-        position: relative;
-    }
 }
 
 .search-form {
+    background: $color-body-background;
+    padding: 1em;
+    justify-content: center;
+    flex-direction: row;
+    display: flex;
+    position: relative;
+    border-bottom: $list-separator-border;
 
     .toggle-button {
         min-width: 60px;
@@ -131,7 +132,7 @@ ol.view-feed {
             overflow-y: scroll;
             background: $color-body-background;
             list-style-type: none;
-            border: 1px solid rgba(0, 0, 0, 0.117647);
+            border: $list-separator-border;
 
             @media (max-width: 750px) {
                 padding: 0;
@@ -140,7 +141,7 @@ ol.view-feed {
             li {
                 display: flex;
                 padding: 0.5em;
-                border-bottom: 1px solid rgba(0, 0, 0, 0.117647);
+                border-bottom: $list-separator-border;
 
                 &:last-child {
                     border-bottom: 0;
