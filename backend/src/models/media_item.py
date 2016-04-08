@@ -1,6 +1,6 @@
 import importlib
 from peewee import CharField, IntegerField, TextField, fn
-from src.utils.auth import Auth
+from src.services.user_service import UserService
 from src.models.base import BaseModel
 from tornado.options import options
 
@@ -129,7 +129,7 @@ class MediaItem(BaseModel):
         item.duration = item_dict.get("duration")
         item.permalink_url = item_dict.get("permalink_url")
 
-        user = Auth.get_user(cid)
+        user = UserService.get_user_by_id(cid)
         item.cid = cid
         if user:
             item.nick = user.get("nick", "")

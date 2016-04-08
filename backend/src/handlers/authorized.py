@@ -31,7 +31,7 @@ class Authorized(object):
                 return method(cls, *args, **kwargs)
 
             cls._token = token
-            user = UserService.get_user(token)
+            user = UserService.get_user_by_token(token)
 
             if not user:
                     raise AuthenticationError("INVALID TOKEN")

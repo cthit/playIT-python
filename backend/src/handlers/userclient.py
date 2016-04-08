@@ -29,7 +29,7 @@ class UserClient(BaseHandler):
     def action_get_queue(self, data):
         user = None
         if not self._token:
-            user = UserService.get_user(data.get("token"))
+            user = UserService.get_user_by_token(data.get("token"))
 
         cid = "NO_CID"
         if user:

@@ -9,7 +9,15 @@ TOKEN_CHECK_URL = "https://account.chalmers.it/userInfo.php?token=%s"
 class UserService(object):
 
     @staticmethod
-    def get_user(token):
+    def get_user_by_id(user_id):
+        user = cache.get(user_id)
+        if user:
+            return user
+        else:
+            return dict()
+
+    @staticmethod
+    def get_user_by_token(token):
         if not token:
             return None
 
@@ -22,7 +30,7 @@ class UserService(object):
             if data.get("cid"):
                 user = data
                 TokenCacheService.set_token(token, user)
-                cache.set("token:" + token, user)
+                cache.set(user.get("cid"), user)
 
         return user
 

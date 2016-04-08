@@ -3,7 +3,7 @@ import importlib
 from peewee import CharField, IntegerField, fn
 
 from src.models.base import BaseModel
-from src.utils.auth import Auth
+from src.services.user_service import UserService
 from src.cache import cache
 
 SPOTIFY_LIST = "spotify_list"
@@ -109,7 +109,7 @@ class PlaylistItem(BaseModel):
         item.thumbnail = item_dict.get("thumbnail", "")
         item.item_count = item_dict.get("item_count")
 
-        user = Auth.get_user(cid)
+        user = UserService.get_user_by_id(cid)
         if user:
             item.nick = user.get("nick", "")
 
