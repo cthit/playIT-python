@@ -57,7 +57,8 @@ export default class Searchbox extends Component {
       setShowResults,
       searchResults,
       searchQuery,
-      dropdownIndex
+      dropdownIndex,
+      connected
     } = this.props
     const hidden = activeFeedId !== 'tracks'
     const options = ["spotify", "youtube", "soundcloud"]
@@ -80,6 +81,7 @@ export default class Searchbox extends Component {
                  onChange={(event) => this.handleOnChange(event)}
                  onFocus={() => setShowResults(true)}
                  id="insert_video"
+                 disabled={!connected}
                  autoComplete="off"
                  value={searchQuery} />
           {searchResultVisible && Boolean(searchResults.length) && (

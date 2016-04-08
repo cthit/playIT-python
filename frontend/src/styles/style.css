@@ -46,10 +46,8 @@ ol.view-feed {
     flex: 1 1;
 }
 
-.tglbutton {
-    position: absolute;
-    top: 20px;
-    right: 10px;
+.offline .now-playing {
+    background: red;
 }
 
 .now-playing {
@@ -96,6 +94,9 @@ ol.view-feed {
 
     input {
         flex: 1;
+        &[disabled] {
+            opacity: 0.4;
+        }
     }
 
     .up-down-arrows {
@@ -233,6 +234,10 @@ section {
         display: flex;
         margin-right: 20px;
 
+        @media (max-width: 720px) {
+            display: none;
+        }
+
         a {
             display: flex;
             justify-content: center;
@@ -302,11 +307,6 @@ section {
 .upvoted.upvote { color: orange; }
 .downvoted.downvote { color: #4444FF; }
 
-@media all and (max-width: 720px) {
-	.media .image {
-		display: none;
-	}
-}
 .x-button {
 	display: none;
 }
