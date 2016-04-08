@@ -99,15 +99,15 @@ const reduceItems = (state = [], action) => {
                 }
             ]
         case trackActions.TRACKS_RECEIVE_SUCCESS:
-          return action.tracks.map(track => {
-            const oldTrack = state.find(oldTrack => oldTrack.id === track.id)
-            if (oldTrack) {
+          return action.items.map(item => {
+            const oldItem = state.find(item => item.id === item.id)
+            if (oldItem) {
               return {
-                ...oldTrack,
-                ...track
+                ...oldItem,
+                ...item
               }
             } else {
-              return track
+              return item
             }
           })
         default:

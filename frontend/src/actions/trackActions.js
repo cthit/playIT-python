@@ -23,10 +23,10 @@ export const addNewItem = (item) => {
   }
 }
 
-export const receiveItem = (track) => {
+export const receiveItem = (item) => {
   return {
     type: TRACK_RECEIVE,
-    track
+    item
   }
 }
 
@@ -46,9 +46,9 @@ export const downvoteItem = (item) => {
     }
 }
 
-export const updateItem = (track) => ({
+export const updateItem = (item) => ({
     type: TRACK_UPDATE,
-    track
+    item
 })
 
 export const removeItem = (item) => {
@@ -69,9 +69,9 @@ export const requestItems = () => ({
     type: TRACKS_REQUEST
 })
 
-export const receiveItemsSuccess = (tracks) => ({
+export const receiveItemsSuccess = (items) => ({
     type: TRACKS_RECEIVE_SUCCESS,
-    tracks
+    items
 })
 
 export const receiveItemSuccess = (item) => ({
@@ -89,9 +89,9 @@ export const feedNavigate = (direction) => ({
     direction
 })
 
-export const setFeedNavigate = (trackId) => ({
+export const setFeedNavigate = (itemId) => ({
     type: TRACKS_FEED_NAVIGATE_SET,
-    trackId
+    itemId
 })
 
 export const feedNavigateTop = () => ({
