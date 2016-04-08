@@ -15,15 +15,9 @@ class VotingService(object):
             VotingService._create_vote(cid, item, data)
             item.check_value()
 
-            if item.deleted:
-                ClientsService.broadcast_to_user_clients(ItemService.get_item_uri(item) + DELETE, item)
-            elif not new:
-                ClientsService.broadcast_to_user_clients(ItemService.get_item_uri(item) + UPDATE,
-                                                         ItemService.convert_from_query_item_and_decorate_item_user_voted(item.with_value(), cid))  # noqa
-
-            return VOTE + NEW + SUCCESS, ""
+            return True, "", item, new
         else:
-            return VOTE + NEW + FAIL, "No such item %s" % data.get("id", "NO_ID_SUPPLIED")
+            return False, "Could not find item with id: %s" % (data.get("id", "NO_ID_SUPPLIED")), None, None
 
     @staticmethod
     def _create_vote(cid, item, data):

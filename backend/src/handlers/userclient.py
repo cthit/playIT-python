@@ -1,8 +1,7 @@
 import logging
 
-
 from src.constants import *
-from src.handlers.base import Authorized, BaseHandler, ADMIN_GROUP, AuthenticationError
+from src.handlers.base import Authorized, BaseHandler, ADMIN_GROUP
 from src.services.clients_service import ClientsService
 from src.services.integration_services.spotify_oauth_service import SpotifyOauthService
 from src.services.item_service import ItemService
@@ -14,7 +13,6 @@ from src.services.action_services.admin_actions_service import AdminActionsServi
 
 
 class UserClient(BaseHandler):
-
     def data_received(self, chunk):
         raise NotImplementedError("Not supported yet")
 
@@ -36,10 +34,10 @@ class UserClient(BaseHandler):
         if user:
             cid = user.get("cid")
 
-        return QUEUE+UPDATE, UserClientActionsService.get_queue(cid)
+        return QUEUE + UPDATE, UserClientActionsService.get_queue(cid)
 
     def action_get_playlist_queue(self, data):
-        return LIST+"/"+QUEUE+UPDATE, UserClientActionsService.get_playlist_queue(self.get_cid())
+        return LIST + "/" + QUEUE + UPDATE, UserClientActionsService.get_playlist_queue(self.get_cid())
 
     def get_cid(self):
         user = TokenCacheService.get_token(self._token)
@@ -57,7 +55,7 @@ class UserClient(BaseHandler):
         (success, msg, item) = UserClientActionsService.add_item(cid, data, external_id, media_type)
 
         if success:
-            ClientsService.broadcast_to_user_clients(ITEM+NEW, item.get_dictionary(), exclude_clients=[self])
+            ClientsService.broadcast_to_user_clients(ITEM + NEW, item.get_dictionary(), exclude_clients=[self])
             if not ItemService.get_current():
                 ClientsService.broadcast_to_playback_clients(QUEUE + UPDATE, item.get_dictionary())
 
@@ -69,69 +67,82 @@ class UserClient(BaseHandler):
     def action_add_vote(self, data):
         item = ItemService.get_internal_item(data)
         cid = self.get_cid()
+        (success, msg, item, _) = VotingService.add_vote(cid, item, data)
 
-        return VotingService.add_vote(cid, item, data)
+        if success:
+            if item.deleted:
+                ClientsService.broadcast_to_user_clients(ITEM + DELETE, item.get_dictionary())
+            else:
+                ClientsService.broadcast_to_user_clients(ITEM + UPDATE,
+                                                         ItemService.convert_from_query_item_and_decorate_item_user_voted(
+                                                             item),
+                                                         exclude_clients=[self])
+            return VOTE + NEW + SUCCESS, ItemService.convert_from_query_item_and_decorate_item_user_voted(item, cid)
+
+        else:
+            return VOTE + NEW + FAIL, msg
 
     @Authorized()
     def action_remove_vote(self, data):
         item = ItemService.get_item(data)
         cid = self.get_cid()
         if VotingService.remove_vote(cid, item):
-            return VOTE+DELETE+SUCCESS, "Success: removed vote for %s" % item.title
+            return VOTE + DELETE + SUCCESS, "Success: removed vote for %s" % item.title
         else:
-            return VOTE+DELETE+FAIL, "No such item: %s" % data.get("id", "NO_ID_SUPPLIED")
+            return VOTE + DELETE + FAIL, "No such item: %s" % data.get("id", "NO_ID_SUPPLIED")
 
     # noinspection PyUnusedLocal
     @staticmethod
     def action_get_current(data):
-        return PLAYING+STATUS, ItemService.get_current()
+        return PLAYING + STATUS, ItemService.get_current()
 
     @Authorized()
     def action_remove_item(self, data):
         item = ItemService.get_item(data)
         if not item:
-            return ITEM+DELETE+FAIL, ""
+            return ITEM + DELETE + FAIL, ""
 
         if self._user.get("cid") == item.cid or ADMIN_GROUP in self._user.get("groups"):
             UserClientActionsService.delete_item(item)
-            return ItemService.get_item_uri(item)+DELETE+SUCCESS, item.get_dictionary()
+            return ItemService.get_item_uri(item) + DELETE + SUCCESS, item.get_dictionary()
         else:
-            return ItemService.get_item_uri(item)+DELETE+FAIL, "Not your item to delete and you're not admin"
+            return ItemService.get_item_uri(item) + DELETE + FAIL, "Not your item to delete and you're not admin"
 
     @Authorized(group=ADMIN_GROUP)
     def action_set_limit(self, data):
         media_type = data.get("type")
         if not media_type:
-            return SETTINGS+UPDATE+FAIL, "Missing media_type"
+            return SETTINGS + UPDATE + FAIL, "Missing media_type"
 
         limit = data.get("limit")
         if not limit:
-            return SETTINGS+UPDATE+FAIL, "Missing limit"
+            return SETTINGS + UPDATE + FAIL, "Missing limit"
 
         (success, limit) = AdminActionsService.change_limit(media_type, limit)
         if success:
-            return SETTINGS+UPDATE+SUCCESS, "Limit for %s update to %s" % (media_type, limit)
+            return SETTINGS + UPDATE + SUCCESS, "Limit for %s update to %s" % (media_type, limit)
         else:
-            return SETTINGS+UPDATE+FAIL, "Limit not update for %s" % media_type
+            return SETTINGS + UPDATE + FAIL, "Limit not update for %s" % media_type
 
     # noinspection PyUnusedLocal
     @Authorized()
     def action_spotify_is_authorized(self, data):
         if SpotifyOauthService.get_token(self.get_cid()):
-            return SPOTIFY_SERVICE+AUTHORIZED+SUCCESS, ""
+            return SPOTIFY_SERVICE + AUTHORIZED + SUCCESS, ""
         else:
-            return SPOTIFY_SERVICE+AUTHORIZED+FAIL, "Not authorized with spotify"
+            return SPOTIFY_SERVICE + AUTHORIZED + FAIL, "Not authorized with spotify"
 
     # noinspection PyUnusedLocal
     @Authorized()
     def action_get_spotify_authorize_url(self, data):
-        return SPOTIFY_SERVICE+UPDATE+SUCCESS, SpotifyOauthService.get_authorize_uri()
+        return SPOTIFY_SERVICE + UPDATE + SUCCESS, SpotifyOauthService.get_authorize_uri()
 
     @Authorized()
     def action_spotify_auth(self, data):
         code = data.get("spotify_code")
         cid = self.get_cid()
         SpotifyOauthService.authorize(cid, code)
+
 
 handlers = [
     (r'/ws/action', UserClient)
