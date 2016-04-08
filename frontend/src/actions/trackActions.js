@@ -89,9 +89,9 @@ export const feedNavigate = (direction) => ({
     direction
 })
 
-export const setFeedNavigate = (itemId) => ({
+export const setFeedNavigate = (id) => ({
     type: TRACKS_FEED_NAVIGATE_SET,
-    itemId
+    id
 })
 
 export const feedNavigateTop = () => ({

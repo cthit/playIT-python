@@ -13,7 +13,7 @@ export default (state = {items: [], selectedId: -1}, action) => {
       case trackActions.TRACKS_FEED_NAVIGATE_SET:
           return {
               ...state,
-              selectedId: action.trackId
+              selectedId: action.id
           }
       case trackActions.TRACKS_FEED_NAVIGATE_TOP:
           const firstItem = state.items[0]

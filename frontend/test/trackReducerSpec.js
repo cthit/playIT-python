@@ -18,4 +18,17 @@ describe('trackReducer', () => {
       selectedId: 5
     })
   });
+
+  it('should navigate to track id', () => {
+    const state = {items: [
+      {id: 0},
+      {id: 1}
+    ]}
+    expect(
+      trackReducer(state, trackActions.setFeedNavigate(1))
+    ).toEqual({
+      ...state,
+      selectedId: 1
+    })
+  })
 });
