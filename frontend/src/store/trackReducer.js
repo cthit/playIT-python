@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux'
+import _ from 'lodash'
 
 import * as trackActions from '../actions/trackActions'
 
@@ -34,7 +35,7 @@ export default (state = {items: [], selectedId: -1}, action) => {
       case trackActions.TRACKS_RECEIVE_SUCCESS:
           return {
             ...state,
-            items: _.orderBy(reduceItems(state.items, action), ["value", "created_at"], ['desc', 'asc'])
+            items: _.orderBy(reduceItems(state.items, action), ['value', 'created_at'], ['desc', 'asc'])
         }
       default:
           return state

@@ -1,5 +1,4 @@
 import { connect } from "react-redux"
-import _ from 'lodash'
 
 import * as trackActions from '../actions/trackActions'
 import * as playlistActions from '../actions/playlistActions'
