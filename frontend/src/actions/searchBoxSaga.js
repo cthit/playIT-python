@@ -36,6 +36,15 @@ export function* addVoteSaga() {
     , addVote)
 }
 
+export function* addItemSaga() {
+  yield* takeEvery(
+    [
+      trackActions.TRACK_ADD_NEW,
+      playlistActions.PLAYLIST_ADD_NEW,
+    ]
+    , addItem)
+}
+
 function addVote(action) {
   console.log("action:",action);
   const { item } = action
@@ -46,4 +55,11 @@ function addVote(action) {
   })
 }
 
-export default [searchSaga, addVoteSaga];
+function* addItem(action) {
+  const { item } = action
+  backend.call('add_item', {
+    ...item
+  });
+}
+
+export default [searchSaga, addVoteSaga, addItemSaga];

@@ -14,13 +14,10 @@ export const TRACKS_FEED_NAVIGATE_SET = 'TRACKS_FEED_NAVIGATE_SET'
 export const TRACKS_FEED_NAVIGATE_TOP = 'TRACKS_FEED_NAVIGATE_TOP'
 export const TRACKS_FEED_NAVIGATE_BOTTOM = 'TRACKS_FEED_NAVIGATE_BOTTOM'
 
-export const addNewItem = (track) => {
-  backend.call('add_item', {
-    ...track
-  });
+export const addNewItem = (item) => {
   return {
     type: TRACK_ADD_NEW,
-    track
+    item
   }
 }
 
