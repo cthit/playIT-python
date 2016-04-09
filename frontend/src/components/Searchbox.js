@@ -4,6 +4,11 @@ import endpoints from "../lib/media_endpoints";
 
 const titleCase = (string) => string[0].toUpperCase() + string.slice(1);
 
+const feedIdToClassName = {
+  playlists: 'fa-align-justify',
+  tracks: 'fa-music'
+}
+
 export default class Searchbox extends Component {
   submitResultItem(resultItem) {
     this.props.submitMedia(resultItem)
@@ -94,7 +99,7 @@ export default class Searchbox extends Component {
             </div>
           )}
         </form>
-        <button onClick={onToggleButton}>{titleCase(activeFeedId)}</button>
+        <button onClick={onToggleButton} className="toggle-button"><i className={"fa " + feedIdToClassName[activeFeedId]}></i></button>
       </div>
     );
   }
