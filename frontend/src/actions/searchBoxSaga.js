@@ -58,24 +58,19 @@ export function addVote(action) {
   console.log("action:",action);
   const { item } = action
   backend.call('add_vote', {
-    id: item.id,
-    vote: action.user_vote,
-    type: item.type
+    ...item,
+    vote: action.user_vote
   })
 }
 
 export function* addItem(action) {
   const { item } = action
-  backend.call('add_item', {
-    ...item
-  });
+  backend.call('add_item', item);
 }
 
 export function* removeItem(action) {
   const { item } = action
-  backend.call('remove_item', {
-    ...item
-  });
+  backend.call('remove_item', item);
 }
 
 export default [searchSaga, addVoteSaga, addItemSaga, removeItemSaga];
