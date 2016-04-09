@@ -34,6 +34,40 @@ describe('trackReducer', () => {
     })
   })
 
+  it('should upvote track', () => {
+    const state = {
+      items: [
+        {id: 5, value: 1, user_vote: 0},
+        {id: 6, value: 5, user_vote: 0}
+      ],
+      selectedId: 6
+    }
+
+    expect(
+      trackReducer(state, trackActions.upvoteItem({id: 6})).items
+    ).toEqual([
+      {id: 6, value: 6, user_vote: 1},
+      {id: 5, value: 1, user_vote: 0}
+    ])
+  })
+
+  it('should downvote track', () => {
+    const state = {
+      items: [
+        {id: 5, value: 1},
+        {id: 6, value: 5}
+      ],
+      selectedId: 6
+    }
+
+    expect(
+      trackReducer(state, trackActions.downvoteItem({id: 6})).items
+    ).toEqual([
+      {id: 6, value: 4, user_vote: -1},
+      {id: 5, value: 1}
+    ])
+  })
+
   it('should navigate next id when selected is removed', () => {
     const state = {items: [
       {id: 0},

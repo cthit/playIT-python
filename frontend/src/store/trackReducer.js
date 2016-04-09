@@ -82,7 +82,7 @@ const reduceItems = (state = [], action) => {
                     return {
                         ...track,
                         user_vote: 1,
-                        value: track.value + (track.user_vote === 0 ? 1 : 2)
+                        value: track.value + (track.user_vote === -1 ? 2 : 1)
                     }
                 } else {
                     return track
@@ -94,7 +94,7 @@ const reduceItems = (state = [], action) => {
                     return {
                         ...track,
                         user_vote: -1,
-                        value: track.value - (track.user_vote === 0 ? 1 : 2)
+                        value: track.value - (track.user_vote === 1 ? 2 : 1)
                     }
                 } else {
                     return track
