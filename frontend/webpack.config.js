@@ -18,11 +18,15 @@ module.exports = {
   entry: entry,
   output: {
     path: __dirname + '/static',
-    publicPath: '/static/'
+    publicPath: '/static/',
+    filename: 'bundle.js'
   },
   plugins: [
-    new webpack.NoErrorsPlugin(),
-    new webpack.HotModuleReplacementPlugin()
+    new webpack.DefinePlugin({
+       __DEV__: !production,
+       'process.env.NODE_ENV': '"' + process.env.NODE_ENV + '"'
+    }),
+    new webpack.NoErrorsPlugin()
   ],
   resolve: {
     extensions: ['', '.js', '.jsx']
@@ -42,7 +46,6 @@ module.exports = {
   },
   postcss: function() { return [autoprefixer, precss] },
   devServer: {
-    hot: true,
     stats: {
       color: true,
       chunks: false
