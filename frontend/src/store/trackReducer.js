@@ -2,6 +2,7 @@ import { combineReducers } from 'redux'
 import _ from 'lodash'
 
 import * as trackActions from '../actions/trackActions'
+import * as mainActions from '../actions/mainActions'
 
 export default (state = {items: [], selectedId: -1}, action) => {
     switch (action.type) {
@@ -33,6 +34,7 @@ export default (state = {items: [], selectedId: -1}, action) => {
             selectedId: action.item.id,
             items: _.orderBy(reduceItems(state.items, action), ['value', 'created_at'], ['desc', 'asc'])
           }
+      case mainActions.SET_NOW_PLAYING:
       case trackActions.TRACK_UPVOTE:
       case trackActions.TRACK_DOWNVOTE:
       case trackActions.TRACK_UPDATE:
@@ -86,6 +88,7 @@ const reduceItems = (state = [], action) => {
                     return track
                 }
             })
+        case mainActions.SET_NOW_PLAYING:
         case trackActions.TRACK_REQUEST_REMOVE:
         case trackActions.TRACK_REMOVE:
             return state.filter(item => item.id !== action.item.id)
