@@ -89,6 +89,9 @@ const reduceItems = (state = [], action) => {
                 }
             })
         case mainActions.SET_NOW_PLAYING:
+          if (!action.item) {
+            return state
+          }
         case trackActions.TRACK_REQUEST_REMOVE:
         case trackActions.TRACK_REMOVE:
             return state.filter(item => item.id !== action.item.id)
