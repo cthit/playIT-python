@@ -35,10 +35,16 @@ export default (state = {items: [], selectedId: -1}, action) => {
             items: _.orderBy(reduceItems(state.items, action), ['value', 'created_at'], ['desc', 'asc'])
           }
       case mainActions.SET_NOW_PLAYING:
+      case trackActions.TRACK_REQUEST_REMOVE:
+      case trackActions.TRACK_REMOVE:
+        return {
+          ...state,
+          selectedId: nextSelectedIdOnDelete(state, action),
+          items: _.orderBy(reduceItems(state.items, action), ['value', 'created_at'], ['desc', 'asc'])
+        }
       case trackActions.TRACK_UPVOTE:
       case trackActions.TRACK_DOWNVOTE:
       case trackActions.TRACK_UPDATE:
-      case trackActions.TRACK_REMOVE:
       case trackActions.TRACK_REQUEST_REMOVE:
       case trackActions.TRACK_RECEIVE:
       case trackActions.TRACKS_RECEIVE_SUCCESS:
@@ -49,6 +55,23 @@ export default (state = {items: [], selectedId: -1}, action) => {
       default:
           return state
     }
+}
+
+const nextSelectedIdOnDelete = (state, action) => {
+  const newItems = _.orderBy(reduceItems(state.items, action), ['value', 'created_at'], ['desc', 'asc'])
+  const itemIndex = newItems.findIndex((item) => item.id === state.selectedId)
+  if (itemIndex !== -1 || newItems.length === 0) {
+    return state.selectedId
+  }
+
+  const oldItemIndex = state.items.findIndex((item) => item.id === state.selectedId)
+  const newLastItem = newItems[newItems.length-1]
+
+  if (oldItemIndex >= newItems.length) {
+    return newLastItem.id
+  } else {
+    return newItems[oldItemIndex].id
+  }
 }
 
 const reduceItems = (state = [], action) => {
