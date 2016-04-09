@@ -3,8 +3,10 @@ export const PLAYLIST_UPVOTE = 'PLAYLIST_UPVOTE'
 export const PLAYLIST_DOWNVOTE = 'PLAYLIST_DOWNVOTE'
 export const PLAYLIST_UPDATE = 'PLAYLIST_UPDATE'
 export const PLAYLIST_REMOVE = 'PLAYLIST_REMOVE'
+export const PLAYLIST_REQUEST_REMOVE = 'PLAYLIST_REQUEST_REMOVE'
 export const PLAYLISTS_REQUEST = 'PLAYLISTS_REQUEST'
 export const PLAYLIST_RECEIVE = 'PLAYLIST_RECEIVE'
+export const PLAYLIST_RECEIVE_SUCCESS = 'PLAYLIST_RECEIVE_SUCCESS'
 export const PLAYLISTS_RECEIVE_SUCCESS = 'PLAYLISTS_RECEIVE_SUCCESS'
 export const PLAYLISTS_RECEIVE_ERROR = 'PLAYLISTS_RECEIVE_ERROR'
 export const PLAYLISTS_FEED_NAVIGATE = 'PLAYLISTS_FEED_NAVIGATE'
@@ -12,36 +14,50 @@ export const PLAYLISTS_FEED_NAVIGATE_SET = 'PLAYLISTS_FEED_NAVIGATE_SET'
 export const PLAYLISTS_FEED_NAVIGATE_TOP = 'PLAYLISTS_FEED_NAVIGATE_TOP'
 export const PLAYLISTS_FEED_NAVIGATE_BOTTOM = 'PLAYLISTS_FEED_NAVIGATE_BOTTOM'
 
-export const addNewItem = (playlist) => ({
+export const addNewItem = (item) => ({
     type: PLAYLIST_ADD_NEW,
-    playlist
+    item
 })
 
-export const receiveItem = (playlist) => {
+export const receiveItem = (item) => {
   return {
     type: PLAYLIST_RECEIVE,
-    playlist
+    item
   }
 }
 
-export const upvoteItem = (playlist) => ({
+export const receiveItemSuccess = (item) => {
+  return {
+    type: PLAYLIST_RECEIVE_SUCCESS,
+    item
+  }
+}
+
+export const upvoteItem = (item) => ({
     type: PLAYLIST_UPVOTE,
-    playlist
+    user_vote: 1,
+    item
 })
 
-export const downvoteItem = (playlist) => ({
+export const downvoteItem = (item) => ({
     type: PLAYLIST_DOWNVOTE,
-    playlist
+    user_vote: -1,
+    item
 })
 
-export const updateItem = (playlist) => ({
+export const updateItem = (item) => ({
     type: PLAYLIST_UPDATE,
-    playlist
+    item
 })
 
-export const removeItem = (playlist) => ({
+export const removeItem = (item) => ({
     type: PLAYLIST_REMOVE,
-    playlist
+    item
+})
+
+export const requestRemoveItem = (item) => ({
+    type: PLAYLIST_REQUEST_REMOVE,
+    item
 })
 
 export const requestItem = () => ({

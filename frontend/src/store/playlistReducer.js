@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux'
 
 import * as playlistActions from '../actions/playlistActions'
+import * as mainActions from '../actions/mainActions'
 
 export default (state = {items: [], selectedId: null}, action) => {
     switch (action.type) {
@@ -26,10 +27,16 @@ export default (state = {items: [], selectedId: null}, action) => {
             ...state,
             selectedId: (lastItem ? lastItem.id : null)
           }
+      case playlistActions.PLAYLIST_RECEIVE_SUCCESS:
+        return {
+          ...state,
+          selectedId: action.item.id,
+        }
       case playlistActions.PLAYLIST_UPVOTE:
       case playlistActions.PLAYLIST_DOWNVOTE:
       case playlistActions.PLAYLIST_UPDATE:
       case playlistActions.PLAYLIST_REMOVE:
+      case playlistActions.PLAYLIST_REQUEST_REMOVE:
       case playlistActions.PLAYLIST_RECEIVE:
       case playlistActions.PLAYLISTS_RECEIVE_SUCCESS:
           return {
@@ -78,8 +85,11 @@ const reduceItems = (state = [], action) => {
                     return playlist
                 }
             })
+        case mainActions.SET_NOW_PLAYING:
+        case playlistActions.PLAYLIST_REQUEST_REMOVE:
         case playlistActions.PLAYLIST_REMOVE:
             return state.filter(playlist => playlist.id !== action.playlist.id)
+        case playlistActions.PLAYLIST_RECEIVE_SUCCESS:
         case playlistActions.PLAYLIST_RECEIVE:
             return [
                 ...state,

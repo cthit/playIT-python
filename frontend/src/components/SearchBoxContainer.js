@@ -13,7 +13,8 @@ const mapStateToProps = (state) => ({
   searchResultVisible: state.searchBox.searchResultVisible,
   searchQuery: state.searchBox.searchQuery,
   searchResults: state.searchBox.searchResults,
-  dropdownIndex: state.searchBox.dropdownIndex
+  dropdownIndex: state.searchBox.dropdownIndex,
+  connected: state.main.connected
 })
 
 const mapDispatchToProps = (dispatch) => {

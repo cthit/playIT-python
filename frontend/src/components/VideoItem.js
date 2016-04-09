@@ -6,8 +6,16 @@ import Helpers from "../lib/helpers";
 const VideoItem = React.createClass({
   componentDidUpdate() {
     if (this.props.active) {
-      ReactDOM.findDOMNode(this).scrollIntoView(true);
+      const node = ReactDOM.findDOMNode(this);
+      if (node.scrollIntoViewIfNeeded) {
+        node.scrollIntoViewIfNeeded(false)
+      } else {
+        node.scrollIntoView();
+      }
     }
+  },
+  componentDidMount() {
+    this.componentDidUpdate()
   },
   propTypes: {
     item: React.PropTypes.shape({
@@ -33,9 +41,9 @@ const VideoItem = React.createClass({
           </a>
         </div>
         <div className="info">
-          <h3>{item.title} {itemIsPlaylist && '[' + Helpers.format_time(item.duration) + ']'}</h3>
-          <small><strong>{item.author}</strong> — Added by: <span title={item.cid}>{item.nick}</span></small>
-          <p>{item.description}</p>
+          <div className="title">{item.title} {itemIsPlaylist && '[' + Helpers.format_time(item.duration) + ']'}</div>
+          <small className="more">{item.author} — Added by: <span title={item.cid}>{item.nick}</span></small>
+          {item.description && <p>{item.description}</p>}
         </div>
       </li>
     )

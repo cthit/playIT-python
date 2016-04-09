@@ -40,7 +40,7 @@ const KeyBindsListener = React.createClass({
         }
       });
       Mousetrap.bind('d d', () => {
-        this.props.dispatch(this.currentFeedObject.removeItem(this.props.selectedItem))
+        this.props.dispatch(this.currentFeedObject.requestRemoveItem(this.props.selectedItem))
       });
     },
 

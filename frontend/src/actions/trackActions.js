@@ -5,8 +5,10 @@ export const TRACK_UPVOTE = 'TRACK_UPVOTE'
 export const TRACK_DOWNVOTE = 'TRACK_DOWNVOTE'
 export const TRACK_UPDATE = 'TRACK_UPDATE'
 export const TRACK_REMOVE = 'TRACK_REMOVE'
+export const TRACK_REQUEST_REMOVE = 'TRACK_REQUEST_REMOVE'
 export const TRACKS_REQUEST = 'TRACKS_REQUEST'
 export const TRACK_RECEIVE = 'TRACK_RECEIVE'
+export const TRACK_RECEIVE_SUCCESS = 'TRACK_RECEIVE_SUCCESS'
 export const TRACKS_RECEIVE_SUCCESS = 'TRACKS_RECEIVE_SUCCESS'
 export const TRACKS_RECEIVE_ERROR = 'TRACKS_RECEIVE_ERROR'
 export const TRACKS_FEED_NAVIGATE = 'TRACKS_FEED_NAVIGATE'
@@ -14,59 +16,52 @@ export const TRACKS_FEED_NAVIGATE_SET = 'TRACKS_FEED_NAVIGATE_SET'
 export const TRACKS_FEED_NAVIGATE_TOP = 'TRACKS_FEED_NAVIGATE_TOP'
 export const TRACKS_FEED_NAVIGATE_BOTTOM = 'TRACKS_FEED_NAVIGATE_BOTTOM'
 
-function addVote(track, vote) {
-  backend.call('add_vote', {
-    vote,
-    id: track.id,
-    type: track.type
-  })
-}
-
-export const addNewItem = (track) => {
-  backend.call('add_item', {
-    ...track
-  });
+export const addNewItem = (item) => {
   return {
     type: TRACK_ADD_NEW,
-    track
+    item
   }
 }
 
-export const receiveItem = (track) => {
+export const receiveItem = (item) => {
   return {
     type: TRACK_RECEIVE,
-    track
+    item
   }
 }
 
-export const upvoteItem = (track) => {
-    addVote(track, 1)
+export const upvoteItem = (item) => {
     return {
       type: TRACK_UPVOTE,
-      track
+      user_vote: 1,
+      item
     }
 }
 
-export const downvoteItem = (track) => {
-    addVote(track, -1)
+export const downvoteItem = (item) => {
     return {
       type: TRACK_DOWNVOTE,
-      track
+      user_vote: -1,
+      item
     }
 }
 
-export const updateItem = (track) => ({
+export const updateItem = (item) => ({
     type: TRACK_UPDATE,
-    track
+    item
 })
 
-export const removeItem = (track) => {
-  backend.call('remove_item', {
-    ...track
-  });
+export const removeItem = (item) => {
   return {
     type: TRACK_REMOVE,
-    track
+    item
+  }
+}
+
+export const requestRemoveItem = (item) => {
+  return {
+    type: TRACK_REQUEST_REMOVE,
+    item
   }
 }
 
@@ -74,9 +69,14 @@ export const requestItems = () => ({
     type: TRACKS_REQUEST
 })
 
-export const receiveItemsSuccess = (tracks) => ({
+export const receiveItemsSuccess = (items) => ({
     type: TRACKS_RECEIVE_SUCCESS,
-    tracks
+    items
+})
+
+export const receiveItemSuccess = (item) => ({
+    type: TRACK_RECEIVE_SUCCESS,
+    item
 })
 
 export const receiveItemsError = (error) => ({
@@ -89,9 +89,9 @@ export const feedNavigate = (direction) => ({
     direction
 })
 
-export const setFeedNavigate = (trackId) => ({
+export const setFeedNavigate = (id) => ({
     type: TRACKS_FEED_NAVIGATE_SET,
-    trackId
+    id
 })
 
 export const feedNavigateTop = () => ({

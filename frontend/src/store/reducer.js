@@ -7,8 +7,18 @@ import searchBox from './searchBoxReducer'
 import tracks from './trackReducer'
 import playlists from './playlistReducer'
 
-const main = (state = { show: 'tracks' }, action) => {
+const main = (state = { show: 'tracks', connected: false }, action) => {
     switch (action.type) {
+        case mainActions.SET_CONNECTED:
+            return {
+                ...state,
+                connected: true
+            }
+        case mainActions.SET_DISCONNECTED:
+            return {
+                ...state,
+                connected: false
+            }
         case mainActions.SHOW_TRACKS:
             return {
                 ...state,
