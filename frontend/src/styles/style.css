@@ -207,8 +207,8 @@ section {
     flex: 1 0;
     display: flex;
 	flex-direction: row;
-    align-items: center;
-	padding: 5px;
+    align-items: stretch;
+	padding: 5px 0;
     border-bottom: 1px solid rgba(0, 0, 0, 0.117647);
 
     &:last-child { margin: 0; }
@@ -227,7 +227,7 @@ section {
         }
 
         .vote-arrow {
-            display: block;
+            display: flex;
         }
     }
 
@@ -251,6 +251,9 @@ section {
 		}
     }
     .info {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
         width: 100%;
 
         .title {
@@ -287,20 +290,25 @@ section {
     }
 }
 
-.vote-arrow {
-    display: none;
-}
-
 .vote {
-	min-width: 50px;
-	text-align: center;
- 	flex-direction: column;
 	display: flex;
+    flex: 1;
+    min-width: 50px;
+    flex-direction: column;
+    align-items: space-around;
 	-webkit-touch-callout: none;
 	user-select: none;
 
-    span {
+    div {
         flex: 1;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+
+        &.vote-arrow {
+            display: none;
+        }
     }
 }
 
