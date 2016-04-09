@@ -12,6 +12,7 @@ const VideoFeed = ({ items, onUpvote, onClickItem, onDownvote, selectedId }) => 
                  onUpvote={() => onUpvote(item)}
                  onDownvote={() => onDownvote(item)} />
     ))}
+    {!items.length && <li className="error-item">No items in queue</li>}
   </ol>
 );
 

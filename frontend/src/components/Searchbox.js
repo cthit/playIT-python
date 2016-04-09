@@ -88,6 +88,7 @@ export default class Searchbox extends Component {
                  id="insert_video"
                  disabled={!connected}
                  autoComplete="off"
+                 placeholder={this.searchPlaceholder()}
                  value={searchQuery} />
           {searchResultVisible && Boolean(searchResults.length) && (
             <div className="results-container">

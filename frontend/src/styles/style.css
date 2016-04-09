@@ -46,6 +46,15 @@ ol.view-feed {
     display: flex;
     flex-direction: column;
     flex: 1 1;
+
+    .error-item {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 20vh;
+        color: $color-text-faded;
+        font-size: 1.5em;
+    }
 }
 
 .offline .now-playing {
