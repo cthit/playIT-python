@@ -1,4 +1,6 @@
+import logging
 from dogpile.cache.api import CacheBackend, NO_VALUE
+
 
 
 class DictionaryBackend(CacheBackend):
@@ -12,4 +14,7 @@ class DictionaryBackend(CacheBackend):
         self.cache[key] = value
 
     def delete(self, key):
-        self.cache.pop(key)
+        try:
+            self.cache.pop(key)
+        except KeyError:
+            logging.info("Could not delete key: %r" % key)

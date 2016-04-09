@@ -33,10 +33,10 @@ class BaseHandler(websocket.WebSocketHandler):
 
     def close(self, code=None, reason=None):
         self.destroy()
-        super(BaseHandler, self).close(code, reason)
+        super().close(code, reason)
 
     def open(self):
-        logging.info("New connection")
+        logging.debug("New connection")
         self.send("GREETING")
 
     def on_message(self, message):
@@ -84,7 +84,7 @@ class BaseHandler(websocket.WebSocketHandler):
 
     def on_close(self):
         self.destroy()
-        logging.info("Connection closed")
+        logging.debug("Connection closed")
 
     def send(self, topic, obj=dict(), serializer=Serializer.datetime):
         dump = None

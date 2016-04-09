@@ -56,7 +56,9 @@ class UserClient(BaseHandler):
         (success, msg, item) = UserClientActionsService.add_item(cid, data, external_id, media_type)
 
         if success:
-            ClientsService.broadcast_to_user_clients(ITEM + NEW, item.get_dictionary(), exclude_clients=[self])
+            ClientsService.broadcast_to_user_clients(ITEM + NEW,
+                                                     ItemService.convert_from_query_item_and_decorate_item_user_voted(item),
+                                                     exclude_clients=[self])
             if not ItemService.get_current():
                 ClientsService.broadcast_to_playback_clients(QUEUE + UPDATE, item.get_dictionary())
 
