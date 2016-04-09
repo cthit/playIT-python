@@ -215,7 +215,7 @@ class PlayIt(object):
         vprint("Playing youtube video: " + item['title']
                + " requested by " + item['nick'])
         youtube_url = "https://youtu.be/" + item['external_id']
-        
+
         playback_functions = [self._play_youtube_mpv, self._play_youtube_dl_stream]
 
         for func in playback_functions:
@@ -223,7 +223,7 @@ class PlayIt(object):
                 break
         else:
             vprint("Failed to play youtube video")
-        
+
 
         self.CURRENT_PROC = None
 
@@ -231,7 +231,7 @@ class PlayIt(object):
 
         cmd = ['mpv', '--fs', '--screen',
                str(self.monitor_number), youtube_url]
-        
+
         process = subprocess.Popen(cmd, stdin=subprocess.DEVNULL,
                                    stdout=subprocess.DEVNULL,
                                    stderr=subprocess.DEVNULL)
@@ -262,7 +262,7 @@ class PlayIt(object):
             vprint("Failed to play stream using youtube-dl.")
 
         return success
-                
+
 
     def _play_spotify(self, item):
         """ Play the supplied spotify track using mopidy and mpc. """
