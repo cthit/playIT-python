@@ -32,15 +32,16 @@ export default (state = {items: [], selectedId: -1}, action) => {
           return {
             ...state,
             selectedId: action.item.id,
-            items: _.orderBy(reduceItems(state.items, action), ['value', 'created_at'], ['desc', 'asc'])
+            items: reduceAndSortItems(state.items, action)
           }
       case mainActions.SET_NOW_PLAYING:
       case trackActions.TRACK_REQUEST_REMOVE:
       case trackActions.TRACK_REMOVE:
+        const reducedItems = reduceAndSortItems(state.items, action)
         return {
           ...state,
-          selectedId: nextSelectedIdOnDelete(state, action),
-          items: _.orderBy(reduceItems(state.items, action), ['value', 'created_at'], ['desc', 'asc'])
+          selectedId: nextSelectedIdOnDelete(state, reducedItems, action),
+          items: reducedItems
         }
       case trackActions.TRACK_UPVOTE:
       case trackActions.TRACK_DOWNVOTE:
@@ -50,15 +51,14 @@ export default (state = {items: [], selectedId: -1}, action) => {
       case trackActions.TRACKS_RECEIVE_SUCCESS:
           return {
             ...state,
-            items: _.orderBy(reduceItems(state.items, action), ['value', 'created_at'], ['desc', 'asc'])
+            items: reduceAndSortItems(state.items, action)
           }
       default:
           return state
     }
 }
 
-const nextSelectedIdOnDelete = (state, action) => {
-  const newItems = _.orderBy(reduceItems(state.items, action), ['value', 'created_at'], ['desc', 'asc'])
+export const nextSelectedIdOnDelete = (state, newItems, action) => {
   const itemIndex = newItems.findIndex((item) => item.id === state.selectedId)
   if (itemIndex !== -1 || newItems.length === 0) {
     return state.selectedId
@@ -67,12 +67,14 @@ const nextSelectedIdOnDelete = (state, action) => {
   const oldItemIndex = state.items.findIndex((item) => item.id === state.selectedId)
   const newLastItem = newItems[newItems.length-1]
 
-  if (oldItemIndex >= newItems.length) {
+  if (oldItemIndex >= newItems.length || oldItemIndex === -1) {
     return newLastItem.id
   } else {
     return newItems[oldItemIndex].id
   }
 }
+
+export const reduceAndSortItems = (items, action) => _.orderBy(reduceItems(items, action), ['value', 'created_at'], ['desc', 'asc'])
 
 const reduceItems = (state = [], action) => {
     switch (action.type) {
