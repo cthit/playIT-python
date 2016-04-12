@@ -11,6 +11,7 @@ from src.services.item_service import ItemService
 from src.services.token_cache_service import TokenCacheService
 from src.services.user_service import UserService
 from src.services.voting_service import VotingService
+from src.models.playlist_item import PlaylistItem
 
 
 class UserClient(BaseHandler):
@@ -54,17 +55,19 @@ class UserClient(BaseHandler):
         cid = self.get_cid()
 
         (success, msg, item) = UserClientActionsService.add_item(cid, data, external_id, media_type)
-
+        MediaItemType=ITEM
+        if(isinstance(item,PlaylistItem)):
+            MediaItemType=LIST
         if success:
-            ClientsService.broadcast_to_user_clients(ITEM + NEW,
-                                                     ItemService.convert_from_query_item_and_decorate_item_user_voted(item),
-                                                     exclude_clients=[self])
+            ClientsService.broadcast_to_user_clients(MediaItemType + NEW,
+                                                 ItemService.convert_from_query_item_and_decorate_item_user_voted(item),
+                                                    exclude_clients=[self])
             if not ItemService.get_current():
                 ClientsService.broadcast_to_playback_clients(QUEUE + UPDATE, item.get_dictionary())
 
-            return ITEM + NEW + SUCCESS, ItemService.convert_from_query_item_and_decorate_item_user_voted(item, cid)
+            return MediaItemType + NEW + SUCCESS, ItemService.convert_from_query_item_and_decorate_item_user_voted(item, cid)
         else:
-            return ITEM + NEW + FAIL, msg
+            return MediaItemType + NEW + FAIL, msg
 
     @Authorized()
     def action_add_vote(self, data):
