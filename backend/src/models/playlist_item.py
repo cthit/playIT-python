@@ -37,10 +37,10 @@ class PlaylistItem(BaseModel):
         ).exists()
 
     def _get_votes(self):
-        from src.models.vote import Vote
-        vote = Vote.fetch(
-            fn.Sum(Vote.value).alias("value")
-        ).where(Vote.item == self).first()
+        from src.models.vote import PlaylistVote
+        vote = PlaylistVote.fetch(
+            fn.Sum(PlaylistVote.value).alias("value")
+        ).where(PlaylistVote.item == self).first()
 
         return vote
 
