@@ -9,11 +9,13 @@ polyfill();
 import KeyBindsListener from "./components/KeyBindsListener";
 import NowPlaying from "./components/NowPlaying";
 import ActiveVideoFeed from "./components/ActiveVideoFeed";
+import DropHandler from "./components/DropHandler";
 import SearchBoxContainer from "./components/SearchBoxContainer";
 import backend from './lib/backend.js';
 import store from './store/store';
 
 import * as mainActions from "./actions/mainActions";
+import * as trackActions from "./actions/trackActions";
 
 window.React = React;
 
@@ -38,15 +40,24 @@ const App = React.createClass({
   render() {
     return (
       <div className={"app " + (this.props.connected ? 'online' : 'offline')}>
-        <KeyBindsListener />
-        <SearchBoxContainer />
-        <ActiveVideoFeed />
-        <NowPlaying />
+        <DropHandler addNewItem={this.props.addNewItem}>
+          <KeyBindsListener />
+          <SearchBoxContainer />
+          <ActiveVideoFeed />
+          <NowPlaying />
+        </DropHandler>
       </div>
     )
   }
 })
 
-export default connect(state => ({
+const mapStateToProps = state => ({
   connected: state.main.connected
-}), dispatch => bindActionCreators(mainActions, dispatch))(App)
+})
+
+const mapDispatchToProps = dispatch => bindActionCreators({
+  ...mainActions,
+  ...trackActions
+}, dispatch)
+
+export default connect(mapStateToProps, mapDispatchToProps)(App)
