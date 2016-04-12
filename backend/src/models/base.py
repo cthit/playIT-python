@@ -1,7 +1,7 @@
 import datetime
 import json
-
-from peewee import Model, DateTimeField, BooleanField, ForeignKeyField
+import uuid
+from peewee import Model, DateTimeField, BooleanField, ForeignKeyField,CharField
 
 from src.database import database
 from src.models.serializer import Serializer
@@ -11,6 +11,7 @@ class BaseModel(Model, Serializer):
     created_at = DateTimeField(default=datetime.datetime.now)
     modified_at = DateTimeField(default=datetime.datetime.now)
     deleted = BooleanField(default=False)
+    uuid = CharField(null=False)
 
     class Meta:
         database = database
@@ -20,6 +21,7 @@ class BaseModel(Model, Serializer):
         return cls.select(*selection).where(cls.deleted == False)  # noqa
 
     def save(self, *args, **kwargs):
+        self.uuid=str(uuid.uuid4())
         self.modified_at = datetime.datetime.now()
         return super(BaseModel, self).save(*args, **kwargs)
 
@@ -73,5 +75,5 @@ class BaseModel(Model, Serializer):
                 data[field_name] = BaseModel.get_dictionary_from_model(rel_obj, fields, exclude)
             else:
                 data[field_name] = field_data
-
+        data['id']=data['uuid']
         return data

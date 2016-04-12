@@ -46,12 +46,16 @@ class UserClientActionsService(object):
     def get_queue(cid):
         items = MediaItem.get_queue()
         items = map(lambda i: ItemService.convert_from_query_item_and_decorate_item_user_voted(i, cid), items)
-        return [i for i in items]
+        playLists = [ItemService.convert_from_query_item_and_decorate_playlist_item_user_voted(i, cid) for i in PlaylistItem.get_queue(cid)]
+        playItems = [i for i in items]
+        
+        playItems.extend(playLists)
+        return playItems
 
-    @staticmethod
-    def get_playlist_queue(cid):
-        return [ItemService.convert_from_query_item_and_decorate_playlist_item_user_voted(i, cid) for i in
-                PlaylistItem.get_queue(cid)]
+#    @staticmethod
+#    def get_playlist_queue(cid):
+#        return [ItemService.convert_from_query_item_and_decorate_playlist_item_user_voted(i, cid) for i in
+#                PlaylistItem.get_queue(cid)]
 
     @staticmethod
     def delete_item(item):

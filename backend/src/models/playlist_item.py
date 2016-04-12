@@ -30,6 +30,7 @@ class PlaylistItem(BaseModel):
     external_id = CharField()
     item_count = IntegerField()
 
+
     def exists(self):
         return PlaylistItem.fetch().where(
             PlaylistItem.external_id == self.external_id,

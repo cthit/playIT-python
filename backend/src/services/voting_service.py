@@ -54,6 +54,6 @@ class VotingService(object):
     @staticmethod
     def find_list_vote(cid, item):
         return PlaylistVote.fetch().where(
-            (Vote.cid == cid) &
-            (Vote.item == item)
+            (PlaylistVote.cid == cid) &
+            (PlaylistVote.item == item)
         ).first()

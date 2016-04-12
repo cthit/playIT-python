@@ -41,7 +41,7 @@ class MediaItem(BaseModel):
     duration = IntegerField(null=True)
     album = CharField(null=True)
     permalink_url = CharField(null=True)
-
+    
     def exists(self):
         return MediaItem.fetch().where(
             MediaItem.external_id == self.external_id,
@@ -49,11 +49,12 @@ class MediaItem(BaseModel):
         ).exists()
 
     def save(self, *args, **kwargs):
+        print("media item save func")
         allowed_duration = DURATION_LIMIT_MAP.get(self.type)
         if self.duration > allowed_duration:
             raise MediaItemError(u"duration {0:d} is longer then allowed {1:d}".format(self.duration, allowed_duration))
 
-        super(MediaItem, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def _get_votes(self):
         from src.models.vote import Vote
