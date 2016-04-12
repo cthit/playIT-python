@@ -5,7 +5,6 @@ import * as trackActions from '../actions/trackActions'
 
 import searchBox from './searchBoxReducer'
 import tracks from './trackReducer'
-import playlists from './playlistReducer'
 
 export const main = (state = { show: 'tracks', connected: false, nowPlaying: null }, action) => {
     switch (action.type) {
@@ -42,6 +41,5 @@ export const main = (state = { show: 'tracks', connected: false, nowPlaying: nul
 export default combineReducers({
     main,
     tracks,
-    playlists,
     searchBox
 })

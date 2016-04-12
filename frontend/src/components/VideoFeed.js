@@ -20,14 +20,14 @@ const VideoFeed = ({ items, onUpvote, onClickItem, onDownvote, selectedId }) => 
 
 VideoFeed.propTypes = {
   items: React.PropTypes.arrayOf(React.PropTypes.shape({
-    id: React.PropTypes.any.isRequired,
+    id: React.PropTypes.string.isRequired,
     user_vote: React.PropTypes.number,
     value: React.PropTypes.number.isRequired
   }).isRequired).isRequired,
   onUpvote: React.PropTypes.func.isRequired,
   onClickItem: React.PropTypes.func.isRequired,
   onDownvote: React.PropTypes.func.isRequired,
-  selectedId: React.PropTypes.number.isRequired
+  selectedId: React.PropTypes.string.isRequired
 }
 
 export default VideoFeed

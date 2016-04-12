@@ -25,7 +25,6 @@ const App = React.createClass({
       .then((backend) => {
         backend.call('get_current');
         backend.call('get_queue');
-        backend.call('get_playlist_queue');
         window.backend = backend;
         this.props.setConnected();
     });

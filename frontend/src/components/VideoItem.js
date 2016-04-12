@@ -19,7 +19,7 @@ const VideoItem = React.createClass({
   },
   propTypes: {
     item: React.PropTypes.shape({
-      id: React.PropTypes.any.isRequired,
+      id: React.PropTypes.string.isRequired,
       user_vote: React.PropTypes.number,
       value: React.PropTypes.number.isRequired
     }).isRequired,

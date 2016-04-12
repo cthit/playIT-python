@@ -1,6 +1,5 @@
 import * as searchBoxActions from '../actions/searchBoxActions'
 import * as trackActions from '../actions/trackActions'
-import * as playlistActions from '../actions/playlistActions'
 
 const initialState = {
   source: 'youtube',
@@ -51,7 +50,7 @@ export default (state = initialState, action) => {
             ...state,
             dropdownIndex: newValue
           }
-        case trackActions.TRACK_ADD_NEW: case playlistActions.PLAYLIST_ADD_NEW:
+        case trackActions.TRACK_ADD_NEW:
           return {
             ...initialState,
             source: state.source
