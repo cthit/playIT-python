@@ -43,7 +43,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   ...dispatchProps,
   ...dispatchProps[stateProps.activeFeedId],
   setSearchQuery: (query, searchSource) => dispatchProps.setSearchQuery(query, searchSource, stateProps.activeFeedId),
-});
+})
 
 export default connect(
   mapStateToProps,
