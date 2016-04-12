@@ -8,6 +8,8 @@ $color-text-accented: white;
 
 $list-separator-border: 1px solid rgba(0, 0, 0, 0.117647);
 
+$mobile-max-width: 750px;
+
 html {
   box-sizing: border-box;
 }
@@ -69,7 +71,7 @@ ol.view-feed {
     border-top: $list-separator-border;
 }
 
-.app {
+.app, .drop-zone {
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -143,7 +145,7 @@ ol.view-feed {
             list-style-type: none;
             border: $list-separator-border;
 
-            @media (max-width: 750px) {
+            @media (max-width: $mobile-max-width) {
                 padding: 0;
             }
 
@@ -325,14 +327,21 @@ section {
         align-items: center;
 
         &.vote-arrow {
-            display: none;
+            opacity: 0.5;
+            color: $color-text-faded;
+            cursor: pointer;
+
+            &.upvoted { color: orange; }
+            &.downvoted { color: #4444ff; }
+        }
+
+        @media (max-width: $mobile-max-width) {
+            &.vote-arrow {
+                display: none;
+            }
         }
     }
 }
-
-.upvote, .downvote { cursor: pointer; }
-.upvoted.upvote { color: orange; }
-.downvoted.downvote { color: #4444FF; }
 
 .x-button {
 	display: none;
