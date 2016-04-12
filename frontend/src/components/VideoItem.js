@@ -30,7 +30,7 @@ const VideoItem = React.createClass({
   },
   render() {
     const { item, onUpvote, onDownvote, onClick, active } = this.props;
-    const itemIsPlaylist = item.type.indexOf('_list') !== -1;
+    const itemIsTrack = item.type.indexOf('_list') === -1;
 
     return (
       <li className={['media', item.type, (active ? 'selected' : '')].join(' ')} onClick={onClick}>
@@ -41,7 +41,7 @@ const VideoItem = React.createClass({
           </a>
         </div>
         <div className="info">
-          <div className="title">{item.title} {itemIsPlaylist && '[' + Helpers.format_time(item.duration) + ']'}</div>
+          <div className="title">{item.title} {itemIsTrack && '[' + Helpers.format_time(item.duration) + ']'}</div>
           <small className="more">{item.author} — Added by: <span title={item.cid}>{item.nick}</span></small>
           {item.description && <p>{item.description}</p>}
         </div>

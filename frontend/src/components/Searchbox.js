@@ -14,7 +14,7 @@ export default class Searchbox extends Component {
     this.props.submitMedia(resultItem)
   }
   captureArrowKeys(event) {
-    const { setShowResults } = this.props
+    const { setShowResults, activeFeedId, searchQuery } = this.props
     switch (event.key) {
       case 'ArrowUp': case 'ArrowDown':
         event.preventDefault();
@@ -23,7 +23,18 @@ export default class Searchbox extends Component {
 
       case 'Enter':
         event.preventDefault();
-        this.submitResultItem(this.props.searchResults[this.props.dropdownIndex]);
+        if (activeFeedId === 'playlists') {
+          const matches = searchQuery.match(/list=([^&]+)/)
+          if (matches && matches[1]) {
+            this.submitResultItem({
+              type: 'youtube_list',
+              external_id: matches[1],
+              id: matches[1]
+            });
+          }
+        } else {
+          this.submitResultItem(this.props.searchResults[this.props.dropdownIndex]);
+        }
         break;
 
       case 'Escape':

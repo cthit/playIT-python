@@ -10,7 +10,7 @@ export default (state = {items: [], selectedId: null}, action) => {
             ...state,
             selectedId: navigateId(state.items, state.selectedId, action.direction)
           }
-      case playlistActions.PLAYLISTS_FEED_NAVIGATE_SETSET:
+      case playlistActions.PLAYLISTS_FEED_NAVIGATE_SET:
           return {
               ...state,
               selectedId: action.playlistId
@@ -52,7 +52,7 @@ const reduceItems = (state = [], action) => {
     switch (action.type) {
         case playlistActions.PLAYLIST_UPVOTE:
             return state.map(playlist => {
-                if (playlist.id === action.playlist.id) {
+                if (playlist.id === action.item.id) {
                     return {
                         ...playlist,
                         user_vote: 1,
@@ -64,7 +64,7 @@ const reduceItems = (state = [], action) => {
             })
         case playlistActions.PLAYLIST_DOWNVOTE:
             return state.map(playlist => {
-                if (playlist.id === action.playlist.id) {
+                if (playlist.id === action.item.id) {
                     return {
                         ...playlist,
                         user_vote: -1,
@@ -76,7 +76,7 @@ const reduceItems = (state = [], action) => {
             })
         case playlistActions.PLAYLIST_UPDATE:
             return state.map(playlist => {
-                if (playlist.id === action.playlist.id) {
+                if (playlist.id === action.item.id) {
                     return {
                         ...playlist,
                         ...action.playlist
@@ -88,7 +88,7 @@ const reduceItems = (state = [], action) => {
         case mainActions.SET_NOW_PLAYING:
         case playlistActions.PLAYLIST_REQUEST_REMOVE:
         case playlistActions.PLAYLIST_REMOVE:
-            return state.filter(playlist => playlist.id !== action.playlist.id)
+            return state.filter(playlist => playlist.id !== action.item.id)
         case playlistActions.PLAYLIST_RECEIVE_SUCCESS:
         case playlistActions.PLAYLIST_RECEIVE:
             return [
