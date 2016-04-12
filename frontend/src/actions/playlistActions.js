@@ -80,7 +80,7 @@ export const feedNavigate = (direction) => ({
 })
 
 export const setFeedNavigate = (playlistId) => ({
-    type: TRACKS_FEED_NAVIGATE_SET,
+    type: PLAYLISTS_FEED_NAVIGATE_SET,
     playlistId
 })
 

@@ -2,7 +2,7 @@ import { takeLatest, takeEvery } from 'redux-saga'
 import { put, call } from 'redux-saga/effects'
 import * as searchBoxActions from "./searchBoxActions"
 import * as trackActions from "./trackActions"
-import * as playlistActions from "./trackActions"
+import * as playlistActions from "./playlistActions"
 import endpoints from "../lib/media_endpoints";
 
 export function* searchSaga() {
@@ -30,8 +30,8 @@ export function* addVoteSaga() {
     [
       trackActions.TRACK_UPVOTE,
       trackActions.TRACK_DOWNVOTE,
-      trackActions.PLAYLIST_UPVOTE,
-      trackActions.PLAYLIST_DOWNVOTE,
+      playlistActions.PLAYLIST_UPVOTE,
+      playlistActions.PLAYLIST_DOWNVOTE,
     ]
     , addVote)
 }
