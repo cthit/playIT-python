@@ -15,79 +15,75 @@ export const PLAYLISTS_FEED_NAVIGATE_TOP = 'PLAYLISTS_FEED_NAVIGATE_TOP'
 export const PLAYLISTS_FEED_NAVIGATE_BOTTOM = 'PLAYLISTS_FEED_NAVIGATE_BOTTOM'
 
 export const addNewItem = (item) => ({
-    type: PLAYLIST_ADD_NEW,
-    item
+  type: PLAYLIST_ADD_NEW,
+  item
 })
 
-export const receiveItem = (item) => {
-  return {
-    type: PLAYLIST_RECEIVE,
-    item
-  }
-}
+export const receiveItem = (item) => ({
+  type: PLAYLIST_RECEIVE,
+  item
+})
 
-export const receiveItemSuccess = (item) => {
-  return {
-    type: PLAYLIST_RECEIVE_SUCCESS,
-    item
-  }
-}
+export const receiveItemSuccess = (item) => ({
+  type: PLAYLIST_RECEIVE_SUCCESS,
+  item
+})
 
 export const upvoteItem = (item) => ({
-    type: PLAYLIST_UPVOTE,
-    user_vote: 1,
-    item
+  type: PLAYLIST_UPVOTE,
+  user_vote: 1,
+  item
 })
 
 export const downvoteItem = (item) => ({
-    type: PLAYLIST_DOWNVOTE,
-    user_vote: -1,
-    item
+  type: PLAYLIST_DOWNVOTE,
+  user_vote: -1,
+  item
 })
 
 export const updateItem = (item) => ({
-    type: PLAYLIST_UPDATE,
-    item
+  type: PLAYLIST_UPDATE,
+  item
 })
 
 export const removeItem = (item) => ({
-    type: PLAYLIST_REMOVE,
-    item
+  type: PLAYLIST_REMOVE,
+  item
 })
 
 export const requestRemoveItem = (item) => ({
-    type: PLAYLIST_REQUEST_REMOVE,
-    item
+  type: PLAYLIST_REQUEST_REMOVE,
+  item
 })
 
 export const requestItem = () => ({
-    type: PLAYLISTS_REQUEST
+  type: PLAYLISTS_REQUEST
 })
 
 export const receiveItemsSuccess = (playlists) => ({
-    type: PLAYLISTS_RECEIVE_SUCCESS,
-    playlists
+  type: PLAYLISTS_RECEIVE_SUCCESS,
+  playlists
 })
 
 export const receiveItemsError = (error) => ({
-    type: PLAYLISTS_RECEIVE_ERROR,
-    error
+  type: PLAYLISTS_RECEIVE_ERROR,
+  error
 })
 
 export const feedNavigate = (direction) => ({
-    type: PLAYLISTS_FEED_NAVIGATE,
-    direction
+  type: PLAYLISTS_FEED_NAVIGATE,
+  direction
 })
 
 export const setFeedNavigate = (playlistId) => ({
-    type: PLAYLISTS_FEED_NAVIGATE_SET,
-    playlistId
+  type: PLAYLISTS_FEED_NAVIGATE_SET,
+  playlistId
 })
 
 export const feedNavigateTop = () => ({
-    type: PLAYLISTS_FEED_NAVIGATE_TOP
+  type: PLAYLISTS_FEED_NAVIGATE_TOP
 })
 
 export const feedNavigateBottom = () => ({
-    type: PLAYLISTS_FEED_NAVIGATE_BOTTOM
+  type: PLAYLISTS_FEED_NAVIGATE_BOTTOM
 })

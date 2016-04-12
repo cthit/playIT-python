@@ -26,6 +26,12 @@ export default (topic, args) => {
         return playlistActions.receiveItemsSuccess(args);
       case 'media_list/update':
         return playlistActions.updateItem(args);
+      case 'media_list/new':
+        return playlistActions.receiveItem(args);
+      case 'media_list/new/success':
+        return playlistActions.receiveItemSuccess(args);
+      case 'media_list/delete':
+        return playlistActions.removeItem(args);
       default:
         return null;
     }
