@@ -30,6 +30,7 @@ export default (state = {items: [], selectedId: null}, action) => {
       case playlistActions.PLAYLIST_RECEIVE_SUCCESS:
         return {
           ...state,
+          items: reduceItems(state.items, action),
           selectedId: action.item.id,
         }
       case playlistActions.PLAYLIST_UPVOTE:
@@ -37,6 +38,7 @@ export default (state = {items: [], selectedId: null}, action) => {
       case playlistActions.PLAYLIST_UPDATE:
       case playlistActions.PLAYLIST_REMOVE:
       case playlistActions.PLAYLIST_REQUEST_REMOVE:
+      case playlistActions.PLAYLIST_RECEIVE_SUCCESS:
       case playlistActions.PLAYLIST_RECEIVE:
       case playlistActions.PLAYLISTS_RECEIVE_SUCCESS:
           return {
@@ -56,7 +58,7 @@ const reduceItems = (state = [], action) => {
                     return {
                         ...playlist,
                         user_vote: 1,
-                        value: playlist.value + (playlist.user_vote === 0 ? 1 : 2)
+                        value: playlist.value + + (playlist.user_vote === -1 ? 2 : 1)
                     }
                 } else {
                     return playlist
@@ -68,7 +70,7 @@ const reduceItems = (state = [], action) => {
                     return {
                         ...playlist,
                         user_vote: -1,
-                        value: playlist.value - (playlist.user_vote === 0 ? 1 : 2)
+                        value: playlist.value - (playlist.user_vote === 1 ? 2 : 1)
                     }
                 } else {
                     return playlist
@@ -94,8 +96,8 @@ const reduceItems = (state = [], action) => {
             return [
                 ...state,
                 {
-                  ...action.playlist,
-                  value: action.playlist.value || 0
+                  ...action.item,
+                  value: action.item.value || 0
                 }
             ]
         case playlistActions.PLAYLISTS_RECEIVE_SUCCESS:
