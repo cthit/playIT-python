@@ -16,88 +16,76 @@ export const TRACKS_FEED_NAVIGATE_SET = 'TRACKS_FEED_NAVIGATE_SET'
 export const TRACKS_FEED_NAVIGATE_TOP = 'TRACKS_FEED_NAVIGATE_TOP'
 export const TRACKS_FEED_NAVIGATE_BOTTOM = 'TRACKS_FEED_NAVIGATE_BOTTOM'
 
-export const addNewItem = (item) => {
-  return {
-    type: TRACK_ADD_NEW,
-    item
-  }
-}
-
-export const receiveItem = (item) => {
-  return {
-    type: TRACK_RECEIVE,
-    item
-  }
-}
-
-export const upvoteItem = (item) => {
-    return {
-      type: TRACK_UPVOTE,
-      user_vote: 1,
-      item
-    }
-}
-
-export const downvoteItem = (item) => {
-    return {
-      type: TRACK_DOWNVOTE,
-      user_vote: -1,
-      item
-    }
-}
-
-export const updateItem = (item) => ({
-    type: TRACK_UPDATE,
-    item
+export const addNewItem = (item) => ({
+  type: TRACK_ADD_NEW,
+  item
 })
 
-export const removeItem = (item) => {
-  return {
-    type: TRACK_REMOVE,
-    item
-  }
-}
+export const receiveItem = (item) => ({
+  type: TRACK_RECEIVE,
+  item
+})
 
-export const requestRemoveItem = (item) => {
-  return {
-    type: TRACK_REQUEST_REMOVE,
-    item
-  }
-}
+export const upvoteItem = (item) => ({
+  type: TRACK_UPVOTE,
+  user_vote: 1,
+  item
+})
+
+export const downvoteItem = (item) => ({
+  type: TRACK_DOWNVOTE,
+  user_vote: -1,
+  item
+})
+
+export const updateItem = (item) => ({
+  type: TRACK_UPDATE,
+  item
+})
+
+export const removeItem = (item) => ({
+  type: TRACK_REMOVE,
+  item
+})
+
+export const requestRemoveItem = (item) => ({
+  type: TRACK_REQUEST_REMOVE,
+  item
+})
 
 export const requestItems = () => ({
-    type: TRACKS_REQUEST
+  type: TRACKS_REQUEST
 })
 
 export const receiveItemsSuccess = (items) => ({
-    type: TRACKS_RECEIVE_SUCCESS,
-    items
+  type: TRACKS_RECEIVE_SUCCESS,
+  items
 })
 
 export const receiveItemSuccess = (item) => ({
-    type: TRACK_RECEIVE_SUCCESS,
-    item
+  type: TRACK_RECEIVE_SUCCESS,
+  item
 })
 
 export const receiveItemsError = (error) => ({
-    type: TRACKS_RECEIVE_ERROR,
-    error
+  type: TRACKS_RECEIVE_ERROR,
+  error
 })
 
 export const feedNavigate = (direction) => ({
-    type: TRACKS_FEED_NAVIGATE,
-    direction
+  type: TRACKS_FEED_NAVIGATE,
+  direction
 })
 
 export const setFeedNavigate = (id) => ({
-    type: TRACKS_FEED_NAVIGATE_SET,
-    id
+  type: TRACKS_FEED_NAVIGATE_SET,
+  id
 })
 
 export const feedNavigateTop = () => ({
-    type: TRACKS_FEED_NAVIGATE_TOP
+  type: TRACKS_FEED_NAVIGATE_TOP
 })
 
 export const feedNavigateBottom = () => ({
-    type: TRACKS_FEED_NAVIGATE_BOTTOM
+  type: TRACKS_FEED_NAVIGATE_BOTTOM
 })
