@@ -36,11 +36,15 @@ class ClientsService(object):
             try:
                 client.send(topic, msg)
             except WebSocketClosedError:
-                try:
-                    ClientsService.PLAYBACK_CLIENTS.remove(client)
-                    ClientsService.USER_CLIENTS.remove(client)
-                except ValueError:
-                    pass  # Allow trying to delete clients not in list
+                ClientService._safe_remove(client, ClientsService.PLAYBACK_CLIENTS)
+                ClientService._safe_remove(client, ClientsService.USER_CLIENTS)
+
+    @staticmethod
+    def _safe_remove(e, es):
+        try:
+            es.remove(e)
+        except ValueError:
+            pass  # Allow trying to delete items not in list
 
     @staticmethod
     def remove_playback_client(client):
