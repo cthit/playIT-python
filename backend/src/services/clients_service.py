@@ -36,8 +36,8 @@ class ClientsService(object):
             try:
                 client.send(topic, msg)
             except WebSocketClosedError:
-                ClientService._safe_remove(client, ClientsService.PLAYBACK_CLIENTS)
-                ClientService._safe_remove(client, ClientsService.USER_CLIENTS)
+                ClientsService._safe_remove(client, ClientsService.PLAYBACK_CLIENTS)
+                ClientsService._safe_remove(client, ClientsService.USER_CLIENTS)
 
     @staticmethod
     def _safe_remove(e, es):
