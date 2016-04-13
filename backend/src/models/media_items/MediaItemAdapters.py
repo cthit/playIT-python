@@ -1,6 +1,7 @@
-from src.services.youtube_service import YoutubeService
-from src.services.spotify_service import SpotifyService
-from src.services.soundcloud_service import SoundcloudService
+from src.services.integration_services.soundcloud_service import SoundcloudService
+from src.services.integration_services.spotify_service import SpotifyService
+from src.services.integration_services.youtube_service import YoutubeService
+
 
 class YoutubeMediaItemAdapter(object):
 
@@ -8,11 +9,13 @@ class YoutubeMediaItemAdapter(object):
     def create_item(item):
         return YoutubeService.video(item.external_id)
 
+
 class SoundcloudMediaItemAdapter(object):
 
     @staticmethod
     def create_item(item):
-        return  SoundcloudService.get_track(item.external_id)
+        return SoundcloudService.get_track(item.external_id)
+
 
 class SpotifyMediaItemAdapter(object):
 

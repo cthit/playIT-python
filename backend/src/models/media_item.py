@@ -1,9 +1,6 @@
-import requests
-import logging
-import isodate
 import importlib
 from peewee import CharField, IntegerField, TextField, fn
-from src.utils.auth import Auth
+from src.services.user_service import UserService
 from src.models.base import BaseModel
 from tornado.options import options
 
@@ -13,9 +10,9 @@ SOUNDCLOUD = "soundcloud"
 
 VOTE_LIMIT = -2
 DURATION_LIMIT_MAP = {
-    YOUTUBE: 60*60*3,  # 3 hour
-    SPOTIFY: 60*60,  # 1 hour
-    SOUNDCLOUD: 60*60,  # 1 hour
+    YOUTUBE: 60 * 60 * 3,  # 3 hour
+    SPOTIFY: 60 * 60,  # 1 hour
+    SOUNDCLOUD: 60 * 60,  # 1 hour
 }
 
 YOUTUBE_URL = "https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=%s&fields=items&key="
@@ -33,7 +30,6 @@ class MediaItemError(Exception):
 
 
 class MediaItem(BaseModel):
-
     title = CharField(default="")
     author = CharField(default="", null=True)
     description = TextField(default="", null=True)
@@ -55,7 +51,7 @@ class MediaItem(BaseModel):
     def save(self, *args, **kwargs):
         allowed_duration = DURATION_LIMIT_MAP.get(self.type)
         if self.duration > allowed_duration:
-            raise MediaItemError("duration %d is longer then allowed %d" % (self.duration, allowed_duration))
+            raise MediaItemError(u"duration {0:d} is longer then allowed {1:d}".format(self.duration, allowed_duration))
 
         super(MediaItem, self).save(*args, **kwargs)
 
@@ -90,11 +86,7 @@ class MediaItem(BaseModel):
             MediaItem.id == self.id
         ).join(Vote).group_by(MediaItem.external_id).order_by(fn.Sum(Vote.value).desc())
 
-        item = query.first()
-        item_dict = item.get_dictionary()
-        item_dict["value"] = item.value
-
-        return item_dict
+        return query.first()
 
     def delete_instance(self, permanently=False, recursive=False, delete_nullable=False):
         from src.models.vote import Vote
@@ -103,11 +95,20 @@ class MediaItem(BaseModel):
         return super(MediaItem, self).delete_instance(permanently, recursive, delete_nullable)
 
     @staticmethod
-    def get_item(media_type, external_id):
-        return MediaItem.fetch().where(
+    def get_item(media_type, external_id, user_id=None):
+        item = MediaItem.fetch().where(
             (MediaItem.external_id == external_id) &
             (MediaItem.type == media_type)
         ).first()
+
+        if user_id:
+            item = MediaItem.decorate_with_self_voted(item, user_id)
+
+        return item
+
+    @staticmethod
+    def get_item_with_id(item_id):
+        return MediaItem.fetch().where(MediaItem.id == item_id).first()
 
     @staticmethod
     def create_media_item(cid, media_type, external_id):
@@ -120,7 +121,7 @@ class MediaItem(BaseModel):
             raise MediaItemError("Item already exists")
 
         item_dict = creator(item)
-        
+
         item.title = item_dict.get("title")
         item.author = item_dict.get('author')
         item.thumbnail = item_dict.get("thumbnail", "")
@@ -128,7 +129,7 @@ class MediaItem(BaseModel):
         item.duration = item_dict.get("duration")
         item.permalink_url = item_dict.get("permalink_url")
 
-        user = Auth.get_user(cid)
+        user = UserService.get_user_by_id(cid)
         item.cid = cid
         if user:
             item.nick = user.get("nick", "")
@@ -137,6 +138,7 @@ class MediaItem(BaseModel):
 
     @staticmethod
     def get_creator(media_type):
+        # noinspection PyPep8Naming
         Klass = MediaItem.get_class(media_type)
         return getattr(Klass, "create_item")
 
@@ -154,9 +156,12 @@ class MediaItem(BaseModel):
     @staticmethod
     def get_queue():
         from src.models.vote import Vote
-        return MediaItem.fetch(
+        items = MediaItem.fetch(
             MediaItem, fn.Sum(Vote.value).alias("value")
-        ).join(Vote).group_by(MediaItem.external_id).order_by(fn.Sum(Vote.value).desc(), MediaItem.created_at)
+        ).join(Vote).group_by(MediaItem.external_id) \
+            .order_by(fn.Sum(Vote.value).desc(), MediaItem.created_at)
+
+        return items
 
     @staticmethod
     def change_limit(media_type, limit):

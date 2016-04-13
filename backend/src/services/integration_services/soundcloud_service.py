@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 import soundcloud as sc
-import argparse
 from tornado.options import options
+
 from src.utils import DictNoNone
 
 SOUNDCLOUD_KEY = options.soundcloud_key

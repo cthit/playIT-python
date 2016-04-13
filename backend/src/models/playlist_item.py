@@ -1,11 +1,10 @@
-import requests
 import importlib
-from tornado.options import options
+
 from peewee import CharField, IntegerField, fn
-from src.utils.auth import Auth
+
 from src.models.base import BaseModel
-from src.models.media_item import MediaItem
-from src.utils.memcache import RedisMemcache
+from src.services.user_service import UserService
+from src.cache import cache
 
 SPOTIFY_LIST = "spotify_list"
 
@@ -16,13 +15,11 @@ URL_MAP = {
 }
 
 
-
 class PlaylistItemError(Exception):
     pass
 
 
 class PlaylistItem(BaseModel):
-
     title = CharField(default="")
     author = CharField(default="")
     description = CharField(default="")
@@ -40,10 +37,10 @@ class PlaylistItem(BaseModel):
         ).exists()
 
     def _get_votes(self):
-        from src.models.vote import Vote
-        vote = Vote.fetch(
-            fn.Sum(Vote.value).alias("value")
-        ).where(Vote.item == self).first()
+        from src.models.vote import PlaylistVote
+        vote = PlaylistVote.fetch(
+            fn.Sum(PlaylistVote.value).alias("value")
+        ).where(PlaylistVote.item == self).first()
 
         return vote
 
@@ -90,25 +87,29 @@ class PlaylistItem(BaseModel):
         ).first()
 
     @staticmethod
+    def get_item_with_id(item_id):
+        return PlaylistItem.fetch().where(PlaylistItem.id == item_id).first()
+
+    @staticmethod
     def create_media_item(cid, media_type, external_id):
         creator = PlaylistItem.get_creator(media_type)
 
         item = PlaylistItem()
         item.external_id = external_id
         item.type = media_type
+        item.cid = cid
 
         if item.exists():
             raise PlaylistItemError("Item already exists")
 
         item_dict = creator(item)
-        
+
         item.title = item_dict.get("title")
         item.author = item_dict.get('author')
         item.thumbnail = item_dict.get("thumbnail", "")
         item.item_count = item_dict.get("item_count")
 
-        user = Auth.get_user(cid)
-        item.cid = cid
+        user = UserService.get_user_by_id(cid)
         if user:
             item.nick = user.get("nick", "")
 
@@ -116,6 +117,7 @@ class PlaylistItem(BaseModel):
 
     @staticmethod
     def get_creator(media_type):
+        # noinspection PyPep8Naming
         Klass = PlaylistItem.get_class(media_type)
         return getattr(Klass, "create_item")
 
@@ -125,9 +127,9 @@ class PlaylistItem(BaseModel):
         klass_name = media_type[:-5].capitalize() + 'PlaylistItemAdapter'
         return getattr(mod, klass_name)
 
-
     @staticmethod
     def get_cacher(media_type):
+        # noinspection PyPep8Naming
         Klass = PlaylistItem.get_class(media_type)
         return getattr(Klass, "cache_list")
 
@@ -137,36 +139,33 @@ class PlaylistItem(BaseModel):
         return isinstance(cid, str) and len(cid) > 0
 
     @staticmethod
-    def get_queue():
+    def get_queue(cid=None):
         from src.models.vote import PlaylistVote
         return PlaylistItem.fetch(
             PlaylistItem, fn.Sum(PlaylistVote.value).alias("value")
-        ).join(PlaylistVote).group_by(PlaylistItem.external_id)\
+        ).join(PlaylistVote).group_by(PlaylistItem.external_id) \
             .order_by(fn.Sum(PlaylistVote.value).desc(), PlaylistItem.created_at)
 
     @staticmethod
     def _retrieve_cache(external_id, media_type):
-        items = RedisMemcache.get(external_id)
+        items = cache.get(external_id)
         if items:
             return items
         else:
             cacher = PlaylistItem.get_cacher(media_type)
             cacher(external_id)
-            return RedisMemcache.get(external_id)
+            return cache.get(external_id)
 
     @staticmethod
     def get_index(playlist, index):
-        print(index)
         items = PlaylistItem._retrieve_cache(playlist.external_id, playlist.type)
         if not items:
             return
 
-        index = index % len(items)
-        print(len(items))
+        index %= len(items)
         item = items[index]
         if item:
             item["type"] = playlist.type[:-5]
             item["nick"] = playlist.nick
-            print(item)
 
         return item

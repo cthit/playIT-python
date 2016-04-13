@@ -2,7 +2,6 @@
 import isodate
 from tornado.options import options
 from apiclient.discovery import build
-from apiclient.errors import HttpError
 
 YOUTUBE_KEY = options.youtube_key
 YOUTUBE_API_SERVICE_NAME = "youtube"
@@ -49,8 +48,7 @@ class YoutubeService:
                 author=snippet.get('channelTitle'),
                 thumbnail=YoutubeService.best_thumbnail(snippet.get("thumbnails")),
                 item_count=playlist.get('contentDetails').get('itemCount')
-                )
-
+            )
 
     @staticmethod
     def _chunks(l, n):
@@ -60,7 +58,7 @@ class YoutubeService:
 
     @staticmethod
     def video(video_id):
-        videos = YoutubeService.videos([video_id]) 
+        videos = YoutubeService.videos([video_id])
         if videos:
             return videos[0]
         return dict()
@@ -69,7 +67,6 @@ class YoutubeService:
     def videos(video_ids):
         chunks = YoutubeService._chunks(video_ids, YOUTUBE_MAX_RESULTS)
         videos = []
-
 
         for c in chunks:
             search_request = youtube.videos().list(
@@ -111,5 +108,5 @@ class YoutubeService:
         keys = ["maxres", "standard", "high", "medium", "default"]
         for key in keys:
             item = thumbnail.get(key)
-            if (item):
+            if item:
                 return item.get("url")

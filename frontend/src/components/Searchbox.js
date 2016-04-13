@@ -1,159 +1,118 @@
 import React, { Component } from "react";
-import MediaEndpoints from "../lib/media_endpoints.js";
 import ResultItem from "./ResultItem";
-import ToggleButton from "./ToggleButton";
+import endpoints from "../lib/media_endpoints";
 
+const titleCase = (string) => string[0].toUpperCase() + string.slice(1);
 
-let endpoints = new MediaEndpoints();
-
-let lastSearch;
+const feedIdToClassName = {
+  playlists: 'fa-align-justify',
+  tracks: 'fa-music'
+}
 
 export default class Searchbox extends Component {
-  constructor(props) {
-    super(props);
-    var type = localStorage.getItem('type');
-    this.state =  {
-      type: type || 'youtube',
-      tracks: 'tracks',
-      show: false,
-      selectedIndex: null,
-      results: []
-    };
-  }
-  getOptionValues() {
-    return [
-      ["spotify", "Spotify"],
-      ["youtube", "YouTube"],
-      ["soundcloud", "SoundCloud"]
-    ];
-  }
-  _update_type() {
-    let value = React.findDOMNode(this.refs.type).value;
-    localStorage.setItem('type', value);
-    this.setState({type: value, results: []});
-  }
-  navigateDropdown(keyName) {
-    let currentIndex = this.state.selectedIndex;
-    let selectedIndex = currentIndex;
-    if (keyName === 'ArrowUp') {
-        selectedIndex = Math.max(currentIndex - 1, 0);
-    } else {
-        selectedIndex = Math.min(currentIndex + 1, this.state.results.length - 1);
-    }
-    this.setState({ selectedIndex });
+  submitResultItem(resultItem) {
+    this.props.submitMedia(resultItem)
   }
   captureArrowKeys(event) {
-    // console.log(event.key);
+    const { setShowResults, activeFeedId, searchQuery } = this.props
     switch (event.key) {
       case 'ArrowUp': case 'ArrowDown':
         event.preventDefault();
-        this.navigateDropdown(event.key);
+        this.props.navigateDropdown(event.key === 'ArrowUp' ? -1 : 1)
         break;
 
       case 'Enter':
         event.preventDefault();
-        if (this.state.results[this.state.selectedIndex]) {
-          this.resultClicked(this.state.results[this.state.selectedIndex]);
+        if (activeFeedId === 'playlists') {
+          const matches = searchQuery.match(/list=([^&]+)/)
+          if (matches && matches[1]) {
+            this.submitResultItem({
+              type: 'youtube_list',
+              external_id: matches[1],
+              id: matches[1]
+            });
+          }
+        } else {
+          this.submitResultItem(this.props.searchResults[this.props.dropdownIndex]);
         }
         break;
 
       case 'Escape':
-        this.showResults(false);
+        this.props.setShowResults(false)
         break;
-
-      default:
-        let query = React.findDOMNode(this.refs.query).value;
-        this.searchMedia(query);
     }
   }
-  showResults(show) {
-    this.setState({ show });
-  }
-  _submitForm(e) {
-    e.preventDefault();
-    let query = React.findDOMNode(this.refs.query).value;
-    let urlResults = endpoints.urlToMediaItem(query);
 
-    if (urlResults.length > 0) {
-      let [result] = urlResults;
-      this.resultClicked(result);
-      return;
-    } else {
-      this.searchMedia(query);
-    }
+  handleOnChange(event) {
+    this.props.setSearchQuery(event.target.value, this.props.searchSource)
   }
-  searchMedia(query) {
-    if (query === lastSearch) {
-      return;
-    }
-    lastSearch = query;
 
-    if (!query || this.state.tracks === 'playlists') {
-      this.setState({results: []});
-      return;
-    }
-
-    endpoints['search_' + this.state.type](query).then((results) => {
-      this.setState({ results, selectedIndex: 0, showResults: true });
-    }).catch(err => { throw err; });
-  }
-  resultClicked(result) {
-    this.props.addItem(result);
-    React.findDOMNode(this.refs.query).blur();
-  }
-  setQueueType(type) {
-    this.props.changeQueueType(type);
-    this.setState({
-      tracks: type
-    });
-  }
   searchPlaceholder() {
-    let switchType = this.state.type;
-    if (this.state.tracks === 'playlists') {
-      switchType = 'playlists';
+    const {searchSource, activeFeedId} = this.props
+    if (activeFeedId === 'playlists') {
+      return "Enter playlist URL"
     }
-    switch (switchType) {
+    switch (searchSource) {
       case "spotify":
         return "Search for tracks on Spotify";
       case "soundcloud":
         return "Search for tracks on SoundCloud";
       case "youtube":
         return "Search for YouTube videos";
-      case "playlists":
-        return "Enter playlist URL";
       default:
         return "Search for videos or music";
     }
   }
   render() {
-    let resultContainer;
-    if (this.state.show && this.state.results.length > 0) {
-      let results = this.state.results.map((result, index) =>
-        (<ResultItem key={result.id} onClick={this.resultClicked.bind(this)} setSelectedNode={this.setSelectedNode} selected={index === this.state.selectedIndex} result={result} />)
-      );
-      resultContainer = (
-      <div className="results-container">
-        <ul className="results-list" ref="resultsList">{results}</ul>
-      </div>);
+    const {
+      onToggleButton,
+      activeFeedId,
+      searchSource,
+      onSelectSource,
+      searchResultVisible,
+      setShowResults,
+      searchResults,
+      searchQuery,
+      dropdownIndex,
+      connected
+    } = this.props
+    const hidden = activeFeedId !== 'tracks'
+    const options = ["spotify", "youtube", "soundcloud"]
 
-    }
-    let options = this.getOptionValues().map(([value, display]) =>
-      (<option key={value} value={value}>{display}</option>)
-    );
-    let hidden = this.state.tracks !== 'tracks';
     return (
       <div className="search-form">
-        <form onSubmit={this._submitForm.bind(this)}>
-          <select ref="type" style={{'visibility': hidden ? 'hidden' : ''}} value={this.state.type} onChange={this._update_type.bind(this)} className={'search-type-select match-' + this.state.type}>
-            {options}
+        <form onSubmit={e => e.preventDefault()}>
+          <select ref={elem => this.type = elem}
+                  style={{'visibility': hidden ? 'hidden' : ''}}
+                  value={searchSource}
+                  onChange={(event) => onSelectSource(event.target.value)}
+                  className={'search-type-select match-' + searchSource}>
+            {options.map((value) =>
+              (<option key={value} value={value}>{value}</option>)
+            )}
           </select>
-          <input ref="query" type="search" onKeyUp={this.captureArrowKeys.bind(this)} onBlur={() => setTimeout(() => this.showResults(false), 1000) } onFocus={() => this.showResults(true)} id="insert_video" placeholder={this.searchPlaceholder()} />
-          <br/>
-          {resultContainer}
+          <input ref={elem => this.query = elem}
+                 type="search"
+                 onKeyDown={this.captureArrowKeys.bind(this)}
+                 onChange={(event) => this.handleOnChange(event)}
+                 onFocus={() => setShowResults(true)}
+                 id="insert_video"
+                 disabled={!connected}
+                 autoComplete="off"
+                 placeholder={this.searchPlaceholder()}
+                 value={searchQuery} />
+          {searchResultVisible && Boolean(searchResults.length) && (
+            <div className="results-container">
+              <ul className="results-list" ref={elem => this.resultsList = elem}>
+                {searchResults.map((result, index) =>
+                  (<ResultItem key={result.id} onClick={() => this.submitResultItem(result)} selected={index === dropdownIndex} result={result} />)
+                )}
+              </ul>
+            </div>
+          )}
         </form>
-        <ToggleButton options={['tracks', 'playlists']} onChange={this.setQueueType.bind(this)} default={this.state.tracks} />
+        <button onClick={onToggleButton} className="toggle-button"><i className={"fa " + feedIdToClassName[activeFeedId]}></i></button>
       </div>
     );
   }
 }
-

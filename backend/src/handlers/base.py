@@ -1,76 +1,18 @@
-__author__ = 'horv'
-
-from tornado import websocket, escape
-import re
-import peewee
-import requests
-import functools
 import json
 import logging
-from src.models.base import BaseModel, Serializer
-from src.utils.memcache import RedisMemcache
-clients = set()
+import re
 
-TOKEN_CHECK_URL = "https://account.chalmers.it/userInfo.php?token=%s"
-PLAYER_TOKEN = "42BabaYetuHerpaderp"
-ADMIN_GROUP = "playITAdmin"
+from tornado import websocket, escape
 
-SUCCESS = "/SUCCESS"
-NEW = "/NEW"
-UPDATE = "/UPDATE"
-FAIL = "/FAIL"
-DELETE = "/DELETE"
-STATUS = "/STATUS"
-
-
-class AuthenticationError(Exception):
-    pass
-
-
-class Authorized(object):
-    """Decorate methods with this to require that the user be logged in.
-    """
-
-    def __init__(self, group=None):
-        self._group = group
-
-    def __call__(self, method):
-
-        @functools.wraps(method)
-        def wrapper(cls, *args, **kwargs):
-
-            token = args[0].get("token")
-
-            if not token:
-                raise AuthenticationError("NO TOKEN")
-
-            if token == PLAYER_TOKEN:
-                return method(cls, *args, **kwargs)
-
-            cls._token = token
-            user = RedisMemcache.get(token)
-
-            if not user:
-                url = TOKEN_CHECK_URL % token
-                response = requests.get(url)
-                data = response.json()
-                if data.get("cid"):
-                    user = data
-                    RedisMemcache.set("token:"+token, user)
-                else:
-                    raise AuthenticationError("INVALID TOKEN")
-
-            if self._group and self._group not in user.get("groups"):
-                raise AuthenticationError("You need to be member of %s to do that" % self._group)
-
-            cls._user = user
-
-            return method(cls, *args, **kwargs)
-
-        return wrapper
+from src.handlers.decorators.authorized import AuthenticationError
+from src.models.serializer import Serializer
+from src.services.token_cache_service import TokenCacheService
 
 
 class BaseHandler(websocket.WebSocketHandler):
+
+    def data_received(self, chunk):
+        raise NotImplementedError("Not implemented yet")
 
     _token = ""
     _user = None
@@ -87,23 +29,22 @@ class BaseHandler(websocket.WebSocketHandler):
             return False
 
     def destroy(self):
-        clients.remove(self)
-        RedisMemcache.delete("token:"+self._token)
+        TokenCacheService.delete_token(self._token)
 
     def close(self, code=None, reason=None):
         self.destroy()
-        super(BaseHandler, self).close(code, reason)
+        super().close(code, reason)
 
     def open(self):
-        clients.add(self)
-        logging.info("New connection")
+        logging.debug("New connection")
         self.send("GREETING")
 
     def on_message(self, message):
-        logging.info("Message received: %s" % message)
+        logging.debug("Message received: %s" % message)
 
         try:
             method, dump = re.split("\s", message, 1)
+            logging.info("Method: %s" % method)
         except ValueError:
             self.close(400, "Invalid format, expecting 'METHOD DATA' got %s " % message)
             return
@@ -135,44 +76,36 @@ class BaseHandler(websocket.WebSocketHandler):
                 package = response[1]
             else:
                 package = dict()
-            if no_responses > 2:
-                formatter = response[2]
-            else:
-                formatter = lambda x: x # noqa
 
-            self.send(topic, package, formater=formatter)
+            self.send(topic, package)
         else:
             logging.error("No response")
             self.close(500, "Internal server error")
 
     def on_close(self):
         self.destroy()
-        logging.info("Connection closed")
+        logging.debug("Connection closed")
 
-    @staticmethod
-    def broadcast(topic, msg, formater=lambda x: x, client_type=None):
-        for client in clients:
-            if not client_type or type(client) == client_type:
-                client.send(topic, msg, formater=formater)
-
-    def send(self, topic, obj=dict(), serializer=Serializer.datetime, formater=lambda x: x, format_dict=True):
-        if isinstance(obj, BaseModel):
-            dump = obj.to_json()
-        else:
-            if isinstance(obj, peewee.SelectQuery):
-                obj = [formater(d) for d in obj.dicts(dicts=format_dict)]
-            else:
-                obj = formater(obj)
-
+    def send(self, topic, obj=dict(), serializer=Serializer.datetime):
+        dump = None
+        try:
             dump = json.dumps(obj, default=serializer)
+        except Exception as e:
+            msg = "Failed to JSON dump item of type: %s with representation %r with error: %r" % (type(obj), obj, e)
+            logging.error(msg)
 
         if isinstance(dump, dict):
-            dump = formater(dump)
             dump = escape.json_encode(dump)
 
+        if not dump:
+            dump = escape.json_encode(json.dumps("Internal server error when serialising", default=serializer))
+
         msg = "%s %s" % (topic, dump)
-        logging.info("Sending: "+msg)
-        super(BaseHandler, self).write_message(msg)
+        if isinstance(obj, dict):
+            logging.info("%s %s" % (topic, obj.get('id', "No id")))
+        logging.debug("Sending: " + msg)
+
+        super().write_message(msg)
 
 handlers = [
     (r'/ws', BaseHandler)
