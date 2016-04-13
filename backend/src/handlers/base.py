@@ -68,6 +68,8 @@ class BaseHandler(WebSocketHandler):
             return
         except Exception as e:
             self.close(500, e.__str__())
+            logging.error("Exceptption")
+            logging.error(e)
             return
 
         no_responses = len(response)

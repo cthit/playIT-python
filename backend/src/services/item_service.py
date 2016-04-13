@@ -39,8 +39,6 @@ class ItemService(object):
     @staticmethod
     def set_current(item):
         ItemService.CURRENT_ITEM = item
-        if item:
-            item = item.get_dictionary()
         ClientsService.broadcast(PLAYING + STATUS, item)
 
     @staticmethod

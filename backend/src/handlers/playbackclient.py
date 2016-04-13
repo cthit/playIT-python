@@ -1,3 +1,5 @@
+import logging
+
 from src.constants import *
 from src.handlers.base import BaseHandler
 from src.handlers.decorators.authorized import Authorized
@@ -48,14 +50,13 @@ class PlaybackClient(BaseHandler):
         return self._send_item(playlist, self._index)
 
     def _send_item(self, playlist, index):
-        item = PlaylistItem.get_index(playlist, index)
+        item_dict = PlaylistItem.get_index(playlist, index)
 
         self._current_playlist = playlist
         self._index = index + 1
-        item_dict = item.get_dictionary()
         self._current_item = item_dict
         ItemService.set_current(item_dict)
-        ClientsService.broadcast(ITEM+NEW, item_dict)
+        ClientsService.broadcast_to_playback_clients(ITEM+NEW, item_dict)
 
         return ITEM+SUCCESS, ""
 
