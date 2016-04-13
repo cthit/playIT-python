@@ -2,14 +2,15 @@ import json
 import logging
 import re
 
-from tornado import websocket, escape
+from tornado import escape
+from tornado.websocket import WebSocketHandler
 
 from src.handlers.decorators.authorized import AuthenticationError
 from src.models.serializer import Serializer
 from src.services.token_cache_service import TokenCacheService
 
 
-class BaseHandler(websocket.WebSocketHandler):
+class BaseHandler(WebSocketHandler):
 
     def data_received(self, chunk):
         raise NotImplementedError("Not implemented yet")
@@ -25,13 +26,14 @@ class BaseHandler(websocket.WebSocketHandler):
             return json.loads(string)
         except ValueError as e:
             msg = "Invalid JSON  Parser gave error: %r" % e
-            self.close(400, reason=msg)
+            self.close(400, msg)
             return False
 
     def destroy(self):
         TokenCacheService.delete_token(self._token)
 
-    def close(self, code=None, reason=None):
+    def close(self, *args, **kwargs):
+        (code, reason) = args[0]
         self.destroy()
         super().close(code, reason)
 
@@ -62,10 +64,10 @@ class BaseHandler(websocket.WebSocketHandler):
         try:
             response = func(data)
         except AuthenticationError as e:
-            self.close(403, e)
+            self.close(403, e.message)
             return
         except Exception as e:
-            self.close(500, e)
+            self.close(500, e.__str__())
             return
 
         no_responses = len(response)

@@ -7,7 +7,10 @@ ADMIN_GROUP = "playITAdmin"
 
 
 class AuthenticationError(Exception):
-    pass
+
+    def __init__(self, message=""):
+        super().__init__()
+        self.message = message
 
 
 class Authorized(object):
@@ -25,7 +28,7 @@ class Authorized(object):
             token = args[0].get("token")
 
             if not token:
-                raise AuthenticationError("NO TOKEN")
+                raise AuthenticationError("No token")
 
             if token == PLAYER_TOKEN:
                 return method(cls, *args, **kwargs)
@@ -34,7 +37,7 @@ class Authorized(object):
             user = UserService.get_user_by_token(token)
 
             if not user:
-                    raise AuthenticationError("INVALID TOKEN")
+                    raise AuthenticationError("Invalid token")
 
             if self._group and self._group not in user.get("groups"):
                 raise AuthenticationError("You need to be member of %s to do that" % self._group)
