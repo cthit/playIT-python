@@ -26,11 +26,12 @@ class PlaybackClient(BaseHandler):
         item = MediaItem.get_queue().first()
         if not item:
             return self._play_playlist_item()
+        item = item.get_dictionary()
 
         self._current_item = item
         ItemService.set_current(item)
         item.delete_instance()
-        ClientsService.broadcast_to_playback_clients(ITEM+NEW, item.get_dictionary())
+        ClientsService.broadcast_to_playback_clients(ITEM+NEW, item)
 
         return ITEM+SUCCESS, ""
 

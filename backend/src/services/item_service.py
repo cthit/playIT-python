@@ -46,7 +46,7 @@ class ItemService(object):
     @staticmethod
     def get_current():
         if ItemService.CURRENT_ITEM:
-            return ItemService.CURRENT_ITEM.get_dictionary()
+            return ItemService.CURRENT_ITEM
         else:
             return None
 
