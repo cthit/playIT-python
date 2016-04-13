@@ -6,7 +6,7 @@ $color-text: black;
 $color-text-faded: rgb(118, 118, 118);
 $color-text-accented: white;
 
-$list-separator-border: 1px solid rgba(0, 0, 0, 0.117647);
+$list-separator-border: 1px solid rgba(0, 0, 0, 0.1);
 
 $mobile-max-width: 750px;
 
@@ -44,7 +44,6 @@ ol.view-feed {
     overflow-y: scroll;
     margin: 0;
     padding: 0;
-    border-bottom: 1px solid $color-body-background;
     display: flex;
     flex-direction: column;
     flex: 1 1;
