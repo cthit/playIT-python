@@ -214,6 +214,9 @@ section {
 	display: none !important;
 }
 
+$transition-speed-fast: 50ms;
+/* 20ms; */
+
 .media {
     flex: 0 0;
     display: flex;
@@ -221,13 +224,17 @@ section {
     align-items: stretch;
 	padding: 5px 0;
     border-bottom: 1px solid rgba(0, 0, 0, 0.117647);
+    min-height: 90px;
+    transition: min-height $transition-speed-fast ease-in;
 
     &:last-child { margin: 0; }
 
     &.selected {
         background: $color-active-item-background;
+        min-height: 150px;
 
         .image {
+            transition: all $transition-speed-fast ease-in;
             max-height: 139px;
             max-width: 185px;
             min-width: 185px;
@@ -252,6 +259,7 @@ section {
         display: flex;
         min-width: 90px;
         max-width: 90px;
+        transition: max-width $transition-speed-fast ease-in, min-width $transition-speed-fast ease-in;
 
         @media (max-width: 720px) {
             display: none;
@@ -260,10 +268,11 @@ section {
         a {
             flex: 1;
             display: flex;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: center;
         }
         img {
+            transition: max-height $transition-speed-fast ease-in, max-width $transition-speed-fast ease-in;
 			max-height: 70px;
 			max-width: 90px;
 			cursor: pointer;
@@ -363,4 +372,18 @@ section {
 	color: #fff;
 	text-shadow: none;
 	background-color: #002224;
+}
+
+.swipe-enter, .swipe-leave.swipe-leave-active {
+    transform: translate(-100%);
+    transition: opacity .5s ease-in, transform .5s ease-out;
+
+}
+
+.swipe-enter.swipe-enter-active {
+    transform: translate(0);
+}
+
+.swipe-leave {
+    transform: translate(100%);
 }
