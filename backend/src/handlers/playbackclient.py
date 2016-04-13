@@ -26,12 +26,12 @@ class PlaybackClient(BaseHandler):
         item = MediaItem.get_queue().first()
         if not item:
             return self._play_playlist_item()
-        item = item.get_dictionary()
 
-        self._current_item = item
-        ItemService.set_current(item)
+        item_dict = item.get_dictionary()
+        self._current_item = item_dict
+        ItemService.set_current(item_dict)
         item.delete_instance()
-        ClientsService.broadcast_to_playback_clients(ITEM+NEW, item)
+        ClientsService.broadcast_to_playback_clients(ITEM+NEW, item_dict)
 
         return ITEM+SUCCESS, ""
 
@@ -52,9 +52,10 @@ class PlaybackClient(BaseHandler):
 
         self._current_playlist = playlist
         self._index = index + 1
-        self._current_item = item
-        ItemService.set_current(item)
-        ClientsService.broadcast(ITEM+NEW, item)
+        item_dict = item.get_dictionary()
+        self._current_item = item_dict
+        ItemService.set_current(item_dict)
+        ClientsService.broadcast(ITEM+NEW, item_dict)
 
         return ITEM+SUCCESS, ""
 
