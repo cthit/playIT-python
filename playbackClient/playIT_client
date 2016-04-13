@@ -132,11 +132,13 @@ class PlayIt(object):
                             default="ws://playit.chalmers.it:8888")
         parser.add_argument('-v', '--verbose', action='store_true')
         parser.add_argument('-S', '--slave', action='store_true')
+        parser.add_argument('--no-video', action='store_true', default=False)
         args = parser.parse_args()
 
         global VERBOSE
         VERBOSE = args.verbose
         self.SLAVE = args.slave
+        self.VIDEO = not args.no_video
 
         if args.server is None:
             print("Please supply a server by: -s ws://www.example.org:port",
@@ -229,7 +231,7 @@ class PlayIt(object):
 
     def _play_youtube_mpv(self, youtube_url):
 
-        cmd = ['mpv', '--fs', '--screen',
+        cmd = ['mpv', '--fs', ('' if self.VIDEO else '--no-video'), '--screen',
                str(self.monitor_number), youtube_url]
 
         process = subprocess.Popen(cmd, stdin=subprocess.DEVNULL,
