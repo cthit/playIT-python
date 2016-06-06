@@ -3,9 +3,10 @@ import VideoItem from "./VideoItem"
 import ReactCSSTransitionGroup from "react-addons-css-transition-group"
 
 
-const VideoFeed = ({ items, onUpvote, onClickItem, onDownvote, selectedId }) => (
-  <ol className="view-feed">
-    <ReactCSSTransitionGroup transitionName="swipe" transitionAppear={false} transitionEnterTimeout={500} transitionLeaveTimeout={300}>
+const VideoFeed = ({ items, activeFeedId, onUpvote, onClickItem, onDownvote, selectedId }) => (
+  <ol className={"view-feed " + activeFeedId}>
+    <ReactCSSTransitionGroup transitionName="swipe" transitionAppear={false} transitionEnterTimeout={500} transitionLeaveTimeout={500}>
+      {!items.length && <li className="error-item">No items in queue</li>}
       {items.map(item => (
         <VideoItem key={item.id}
                    item={item}
@@ -14,7 +15,6 @@ const VideoFeed = ({ items, onUpvote, onClickItem, onDownvote, selectedId }) => 
                    onUpvote={() => onUpvote(item)}
                    onDownvote={() => onDownvote(item)} />
       ))}
-      {!items.length && <li className="error-item">No items in queue</li>}
     </ReactCSSTransitionGroup>
   </ol>
 );

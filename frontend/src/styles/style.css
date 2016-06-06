@@ -50,6 +50,9 @@ ol.view-feed {
     flex: 1 1;
 
     .error-item {
+        position: absolute;
+        top: 2em;
+        width: 100%;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -380,16 +383,52 @@ $transition-speed-fast: 50ms;
 	background-color: #002224;
 }
 
+.swipe-enter.swipe-enter-active, .swipe-leave.swipe-leave-active {
+    transition: opacity .1s ease-in, transform .5s ease-out;
+}
+
+.tracks {
+    .swipe-enter {
+        transform: translate(-100%);
+    }
+    .swipe-enter.swipe-enter-active {
+        transform: translate(0);
+    }
+
+    .swipe-leave {
+        transform: translate(0);
+    }
+
+    .swipe-leave.swipe-leave-active {
+        transform: translate(100%);
+    }
+}
+
+.playlists {
+    .swipe-enter {
+        transform: translate(100%);
+    }
+    .swipe-enter.swipe-enter-active {
+        transform: translate(0);
+    }
+    .swipe-leave {
+        transform: translate(0);
+    }
+    .swipe-leave.swipe-leave-active {
+        transform: translate(-100%);
+    }
+}
+
 .swipe-enter, .swipe-leave.swipe-leave-active {
-    transform: translate(-100%);
-    transition: opacity .5s ease-in, transform .5s ease-out;
-
+    &.error-item {
+        transform: translate(0);
+        opacity: 0;
+    }
 }
 
-.swipe-enter.swipe-enter-active {
-    transform: translate(0);
-}
-
-.swipe-leave {
-    transform: translate(100%);
+.swipe-leave, .swipe-enter.swipe-enter-active {
+    &.error-item {
+        transform: translate(0);
+        opacity: 1;
+    }
 }
