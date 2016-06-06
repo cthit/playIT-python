@@ -59,8 +59,15 @@ ol.view-feed {
     }
 }
 
-.offline .now-playing {
-    background: red;
+.offline {
+
+    ol.view-feed {
+        border-bottom-color: #db4343;
+    }
+
+    .now-playing {
+        background: red;
+    }
 }
 
 .now-playing {
@@ -68,7 +75,6 @@ ol.view-feed {
     padding: 1em;
     width: 100%;
     background: $color-body-background;
-    border-top: $list-separator-border;
 }
 
 .app, .drop-zone {
