@@ -3,6 +3,7 @@ import logging
 from src.constants import *
 from src.handlers.base import BaseHandler
 from src.handlers.decorators.authorized import ADMIN_GROUP, Authorized
+from src.models.client_config_provider import get_config
 from src.services.action_services.admin_actions_service import AdminActionsService
 from src.services.action_services.user_client_actions_service import UserClientActionsService
 from src.services.clients_service import ClientsService
@@ -40,6 +41,9 @@ class UserClient(BaseHandler):
 
     def action_get_playlist_queue(self, data):
         return LIST + "/" + QUEUE + UPDATE, UserClientActionsService.get_playlist_queue(self.get_cid())
+
+    def action_get_config(self, data):
+        return CLIENT + '/' + CONFIG, get_config()
 
     def get_cid(self):
         user = TokenCacheService.get_token(self._token)

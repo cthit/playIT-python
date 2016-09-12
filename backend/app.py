@@ -7,6 +7,7 @@ from tornado.options import options, define
 
 define('server', default=True, help='Launching tornado webserver.')
 define('port', default=80, help='Webserver listening port.')
+define('auth_provider', default='account', help='Authentication provider')
 define('cors_host', default='http://localhost/', help='Setting cors for host')
 define('static_path', default='static/', help='Setup static url path.')
 define('debug', default=False, help='Enables debug output.')
