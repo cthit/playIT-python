@@ -5,8 +5,8 @@ import endpoints from "../lib/media_endpoints";
 const titleCase = (string) => string[0].toUpperCase() + string.slice(1);
 
 const feedIdToClassName = {
-  playlists: 'fa-align-justify',
-  tracks: 'fa-music'
+  playlists: 'fa-music',
+  tracks: 'fa-align-justify'
 }
 
 export default class Searchbox extends Component {

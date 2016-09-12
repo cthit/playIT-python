@@ -1,5 +1,5 @@
 $color-header-background: #f1f1f1;
-$color-body-background: #44aedb;
+$color-body-background: #222;
 $color-active-item-background: white;
 
 $color-text: black;
@@ -96,7 +96,13 @@ ol.view-feed {
     border-bottom: $list-separator-border;
 
     .toggle-button {
+        margin-left: 1em;
         min-width: 60px;
+
+        &:hover {
+          background-color: #bbb;
+          cursor: pointer;
+        }
     }
 
     input, button, select {
@@ -125,14 +131,20 @@ ol.view-feed {
     }
 
     .search-type-select {
-        width: 50px;
-        background: none;
+        width: 56px;
+        background: #ddd;
         color: transparent;
         outline: none;
         -webkit-appearance: none;
 
+        &:hover {
+          background-color: #bbb;
+          cursor: pointer;
+        }
+
         option {
-            color: black;
+          color: black;
+          background-color: #ddd;
         }
     }
 
@@ -188,6 +200,14 @@ ol.view-feed {
                     }
                 }
 
+                &:hover {
+                  cursor: pointer;
+                  background: $color-header-background;
+                  .details {
+                      color: $color-text;
+                  }
+                }
+
                 &.selected {
                     background: $color-header-background;
                     .details {
@@ -202,16 +222,13 @@ ol.view-feed {
 
     .match-spotify, .match-youtube, .match-soundcloud {
         background-repeat: no-repeat;
-        background-position: right 20px center;
+        background-position: center;
         background-size: 25px;
-        padding-left: 40px;
     }
 
     .match-spotify { background-image: url('../img/spotify.png'); }
     .match-youtube { background-image: url('../img/youtube.png'); }
     .match-soundcloud { background-image: url('../img/soundcloud.png'); }
-
-
 }
 
 section {
@@ -353,8 +370,8 @@ $transition-speed-fast: 50ms;
                 color: $color-text;
             }
 
-            &.upvoted { color: orange; cursor: default; }
-            &.downvoted { color: #4444ff; cursor: default; }
+            &.upvoted { color: #00c7c7; }
+            &.downvoted { color: orange; }
         }
 
         @media (max-width: $mobile-max-width) {

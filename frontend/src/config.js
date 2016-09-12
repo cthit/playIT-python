@@ -1,2 +1,2 @@
-export const url = 'ws://bark.chalmers.it:8888/ws/action'
+export const url = 'ws://tejp.chalmers.it:8080/ws/action'
 export const cookieName = 'chalmersItAuth'
