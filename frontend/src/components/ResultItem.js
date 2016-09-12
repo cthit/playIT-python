@@ -16,7 +16,7 @@ export default class ResultItem extends Component {
   render() {
     const { result, onClick, selected } = this.props;
     return (
-      <li onClick={() => onClick(result)} className={classNames({selected: 'selected'})}>
+      <li onClick={() => onClick(result)} className={classNames({selected: selected})}>
         <img src={result.thumbnail} className="video-thumbnail" />
         <div className="details">
           <div className="name">
