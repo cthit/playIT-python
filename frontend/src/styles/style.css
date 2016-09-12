@@ -349,8 +349,12 @@ $transition-speed-fast: 50ms;
             color: $color-text-faded;
             cursor: pointer;
 
-            &.upvoted { color: orange; }
-            &.downvoted { color: #4444ff; }
+            &:hover {
+                color: $color-text;
+            }
+
+            &.upvoted { color: orange; cursor: default; }
+            &.downvoted { color: #4444ff; cursor: default; }
         }
 
         @media (max-width: $mobile-max-width) {
