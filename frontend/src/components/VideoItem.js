@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import classNames from "classnames";
 import VotingArrows from "./VotingArrows";
 import Helpers from "../lib/helpers";
 
@@ -33,7 +34,7 @@ const VideoItem = React.createClass({
     const itemIsTrack = item.type.indexOf('_list') === -1;
 
     return (
-      <li className={['media', item.type, (active ? 'selected' : '')].join(' ')} onClick={onClick}>
+      <li className={classNames('media', item.type, {selected: active})} onClick={onClick}>
         <VotingArrows {...item} onUpvote={onUpvote} onDownvote={onDownvote} />
         <div className="image">
           <a href={Helpers.get_link(item)} target="_blank">

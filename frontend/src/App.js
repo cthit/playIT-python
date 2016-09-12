@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
+import classNames from "classnames"
 
 import Mousetrap from "./lib/mousetrap";
 import polyfill from "./lib/polyfill";
@@ -39,7 +40,7 @@ const App = React.createClass({
   },
   render() {
     return (
-      <div className={"app " + (this.props.connected ? 'online' : 'offline')}>
+      <div className={classNames("app", {online: this.props.connected, offline: !this.props.connected})}>
         <DropHandler addNewItem={this.props.addNewItem}>
           <KeyBindsListener />
           <SearchBoxContainer />
