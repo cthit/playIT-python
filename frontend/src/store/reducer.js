@@ -7,12 +7,17 @@ import searchBox from './searchBoxReducer'
 import tracks from './trackReducer'
 import playlists from './playlistReducer'
 
-export const main = (state = { show: 'tracks', connected: false, nowPlaying: null }, action) => {
+export const main = (state = { show: 'tracks', connected: false, nowPlaying: null, error: null, config: {} }, action) => {
     switch (action.type) {
         case mainActions.SET_CONNECTED:
             return {
                 ...state,
                 connected: true
+            }
+        case mainActions.SET_CONFIG:
+            return {
+                ...state,
+                config: action.config
             }
         case mainActions.SET_DISCONNECTED:
             return {

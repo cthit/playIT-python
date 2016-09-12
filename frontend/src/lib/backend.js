@@ -1,23 +1,28 @@
-import { cookieName } from '../config';
-
 import transformTopicToAction from './topicToActionTransformer';
 
-function get_cookie() {
-  var re = new RegExp("(?:(?:^|.*;\\s*)" + cookieName + "\\s*\\=\\s*([^;]*).*$)|^.*$")
-  return document.cookie.replace(re, "$1");
-}
-
 class Backend {
-  connect(url, dispatch, onDisconnect) {
+  connect(url, store, onDisconnect) {
     this.url = url
-    this.dispatch = dispatch
+    this.dispatch = store.dispatch
+    store.subscribe(() => {
+      let state = store.getState()
+      if (this.cookieName !== state.main.config.cookie_name) {
+        this.cookieName = state.main.config.cookie_name;
+        console.log("cookieName", this.cookieName);
+      }
+    })
     this.onDisconnect = onDisconnect
+
     return new Promise((resolve, reject) => {
       this.socket = new WebSocket(this.url);
       this.socket.onmessage = this._messageReceived.bind(this);
       this.socket.onclose = this._socketClosed.bind(this);
       this.socket.onopen = () => resolve(this);
     });
+  }
+  getCookie() {
+    var re = new RegExp("(?:(?:^|.*;\\s*)" + this.cookieName + "\\s*\\=\\s*([^;]*).*$)|^.*$")
+    return document.cookie.replace(re, "$1");
   }
   normalizeEventName(name) {
     return name.toLowerCase();
@@ -44,7 +49,7 @@ class Backend {
     }
   }
   call(method, args = {}) {
-    args.token = get_cookie();
+    args.token = this.getCookie();
     this._clientLog(method, args);
     let data = [method, JSON.stringify(args)].join(' ');
     this.socket.send(data);

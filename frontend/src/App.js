@@ -22,8 +22,9 @@ window.React = React;
 
 const App = React.createClass({
   connect() {
-    backend.connect(this.props.url, store.dispatch, this.handleDisconnect)
+    backend.connect(this.props.url, store, this.handleDisconnect)
       .then((backend) => {
+        backend.call('get_config');
         backend.call('get_current');
         backend.call('get_queue');
         backend.call('get_playlist_queue');

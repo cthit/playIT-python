@@ -1,4 +1,5 @@
 export const SET_NOW_PLAYING = 'SET_NOW_PLAYING'
+export const SET_CONFIG = 'SET_CONFIG'
 export const SHOW_TRACKS = 'SHOW_TRACKS'
 export const SHOW_PLAYLISTS = 'SHOW_PLAYLISTS'
 export const FEED_NAVIGATE = 'FEED_NAVIGATE'
@@ -11,6 +12,11 @@ export const SET_DISCONNECTED = 'SET_DISCONNECTED'
 export const setNowPlaying = (item) => ({
     type: SET_NOW_PLAYING,
     item
+})
+
+export const setConfig = (config) => ({
+    type: SET_CONFIG,
+    config
 })
 
 export const showTracks = () => ({
