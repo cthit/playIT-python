@@ -17,7 +17,8 @@ export const main = (state = { show: 'tracks', connected: false, nowPlaying: nul
         case mainActions.SET_DISCONNECTED:
             return {
                 ...state,
-                connected: false
+                connected: false,
+                error: action.error
             }
         case mainActions.SHOW_TRACKS:
             return {

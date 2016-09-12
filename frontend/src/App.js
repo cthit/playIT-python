@@ -30,8 +30,8 @@ const App = React.createClass({
         this.props.setConnected();
     });
   },
-  handleDisconnect() {
-    this.props.setDisconnected();
+  handleDisconnect(errormsg) {
+    this.props.setDisconnected(errormsg);
     setTimeout(() => this.connect(), 10000);
   },
   componentWillMount() {

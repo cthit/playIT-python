@@ -38,6 +38,7 @@ export const setConnected = () => ({
     type: SET_CONNECTED
 })
 
-export const setDisconnected = () => ({
-    type: SET_DISCONNECTED
+export const setDisconnected = (error) => ({
+    type: SET_DISCONNECTED,
+    error
 })

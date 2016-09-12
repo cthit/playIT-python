@@ -63,7 +63,7 @@ class Backend {
   }
   _socketClosed(data) {
     this._serverLog('CLOSED, reason', data.reason);
-    this.onDisconnect();
+    this.onDisconnect(data.reason);
   }
 }
 
