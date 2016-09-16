@@ -12,6 +12,8 @@ export default (topic, args) => {
       case 'playing/status':
         return mainActions.setNowPlaying(args);
 
+      case 'client/config':
+        return mainActions.setConfig(args);
       case 'queue/update':
         return trackActions.receiveItemsSuccess(args);
       case 'media_item/update':
